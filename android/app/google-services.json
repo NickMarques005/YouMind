@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "84548222482",
+    "project_id": "oficialyoumindnotify-278bf",
+    "storage_bucket": "oficialyoumindnotify-278bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84548222482:android:ec1a0a706094c930f362cb",
+        "android_client_info": {
+          "package_name": "com.marquesnicolas.YouMind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnvdtCW6jry2VMf6smYDyYoALwWT6bB-8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
