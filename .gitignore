@@ -34,3 +34,6 @@ yarn-error.*
 # typescript
 *.tsbuildinfon
 
+#google services
+google-services.json
+
