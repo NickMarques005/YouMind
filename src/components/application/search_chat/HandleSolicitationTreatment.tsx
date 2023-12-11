@@ -64,4 +64,4 @@ function HandleSolicitationTreatment({handleLoading, requestData}: HandleSolicit
     )
 }
 
-export default HandleSolicitationTreatment
+export default HandleSolicitationTreatment;

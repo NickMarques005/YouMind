@@ -12,13 +12,14 @@ import { AppStackTypes } from '../../../routes/MainRouter';
 
 //retorna as dimensões do dispositivo 
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { MenuTypes, UseMenu } from '../../../contexts/MenuContext';
 
 const MenuPatient = () => {
     //Utilização do navigation: widget para o funcionamento da navegação entre telas através de Pilhas.
     //Será assim pelo navigation que tornará possível a mudança de widgets que retornarão na tela do dispositivo
     const navigation = useNavigation<AppStackTypes>();
 
-    const MenuPatientOptions = [         //Matriz contendo as propriedades de cada opção das opções do MenuPatient
+    const MenuPatientOptions: { name: string, screen: MenuTypes, icon: any }[] = [         //Matriz contendo as propriedades de cada opção das opções do MenuPatient
         { name: 'Home', screen: 'homeScreen', icon: require('../../../assets/app_patient/menu/menu_patient_home.png') },
         { name: 'Tratamento', screen: 'treatmentScreen', icon: require('../../../assets/app_patient/menu/menu_patient_treatment.png') },
         { name: 'Perfil', screen: 'profileScreen', icon: require('../../../assets/app_patient/menu/menu_patient_user.png') },
@@ -26,16 +27,12 @@ const MenuPatient = () => {
         { name: 'Bluetooth', screen: 'bluetoothScreen', icon: require('../../../assets/app_patient/menu/menu_patient_bluetooth.png') },
     ];
 
-    const [selectedOption, setSelectedOption] = useState('Home'); //
+    const {selectedMenuOption, handleMenuOptionPress} = UseMenu();
 
     var current_option: string | null = null;
 
-    const handleOptionPress = (option: string) => {
-        setSelectedOption(option);
-    };
-
     const renderContent = () => {
-        switch (selectedOption) {
+        switch (selectedMenuOption) {
             case 'homeScreen':
                 if (current_option == null || current_option != 'homeScreen') {
                     current_option = 'homeScreen';
@@ -81,7 +78,6 @@ const MenuPatient = () => {
             default:
                 return <Home />;
         }
-
     };
 
     //Oque será retornado na tela MenuPatient:
@@ -95,7 +91,7 @@ const MenuPatient = () => {
                 {MenuPatientOptions.map((option, index) => (     //Mapeamento de todas as opções geradas do MenuPatient
                     <TouchableOpacity
                         key={index}
-                        onPress={() => handleOptionPress(option.screen)}
+                        onPress={() => handleMenuOptionPress(option.screen)}
                         style={[
                             styleMenuPatient.MenuPatientButton,
                             //index == MenuPatientOptions.length - 1 && styleMenuPatient.bluetoothButton,

@@ -9,11 +9,16 @@ import { useNavigation } from '@react-navigation/native';
 //retorna as dimensões do dispositivo 
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { UseForm } from '../../../contexts/FormContext';
+import { MenuTypes, UseMenu } from '../../../contexts/MenuContext';
+import { UseHealthPage } from '../../../contexts/HealthPageContext';
 
 const Patient_Home = () => {
   const navigation = useNavigation<AppStackTypes>();
   const { formData } = UseForm();
   const [progress, setProgress] = useState(75); //progresso inicial
+
+  const { handleMenuOptionPress } = UseMenu();
+  const { handleCurrentHealthPage } = UseHealthPage();
 
   const [medicamentos, setMedicamentos] = useState(
     [
@@ -64,6 +69,14 @@ const Patient_Home = () => {
         </View>
       </TouchableOpacity>
     )
+  }
+
+  const handleGoToOption = (option: MenuTypes, page: string | undefined) => {
+    handleMenuOptionPress(option);
+    if (option === "healthScreen" && page) {
+      handleCurrentHealthPage(page);
+      console.log(page);
+    }
   }
 
 
@@ -118,7 +131,7 @@ const Patient_Home = () => {
 
               </View>
               <LinearGradient colors={['#b462e3', '#6d1370']} style={stylehome.infoQuestions_View}>
-                <TouchableOpacity style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                <TouchableOpacity onPress={() => handleGoToOption("healthScreen", "Questionários")} style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                   <Text style={stylehome.statisticsQuestions_Text}>Questionários Respondidos</Text>
                 </TouchableOpacity>
               </LinearGradient>
@@ -154,7 +167,7 @@ const Patient_Home = () => {
               <View style={stylehome.telefoneCall_View}>
                 <Text style={stylehome.telefoneCall_Text}>Ligue agora para CVV </Text>
                 <LinearGradient colors={['#b462e3', '#6d1370']} style={stylehome.telefoneCall_Linear}>
-                  <TouchableOpacity style={stylehome.telefoneCall_Button}>
+                  <TouchableOpacity onPress={() => handleGoToOption("healthScreen", "Call")} style={stylehome.telefoneCall_Button}>
                     <Text style={stylehome.telefoneCall_TextButton}>CALL</Text>
                   </TouchableOpacity>
                 </LinearGradient>
@@ -177,7 +190,7 @@ const Patient_Home = () => {
             <View style={stylehome.currentMed_View}>
               <Text style={stylehome.currentMed_Title}>Medicamentos Adicionados</Text>
 
-              <TouchableOpacity style={stylehome.currentMed_Button}>
+              <TouchableOpacity onPress={() => handleGoToOption("healthScreen", "Medicamentos")} style={stylehome.currentMed_Button}>
                 <Text style={stylehome.visualize_Text}>Visualizar</Text>
               </TouchableOpacity>
             </View>

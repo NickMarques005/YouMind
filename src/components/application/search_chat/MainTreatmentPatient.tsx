@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { UseAuth } from '../../../contexts/AuthContext';
@@ -9,13 +9,18 @@ import { UseTreatment } from '../../../contexts/TreatmentContext';
 import PatientTreatmentRunning from './treatment_pacient/PatientTreatmentRunning';
 import { useNavigation } from '@react-navigation/native';
 import { TreatmentStackTypes } from '../../../routes/MainRouter';
+import { UseChat, User } from '../../../contexts/ChatContext';
+import { UseHandleActiveChat } from '../../../functions/chat/HandleActiveChat';
+
 
 function MainTreatmentPatient() {
     const navigation = useNavigation<TreatmentStackTypes>();
     const { authData } = UseAuth();
+    const HandleActiveChat = UseHandleActiveChat();
     const { treatment_state } = UseTreatment();
     const [modalSearch, setSearch] = useState(false);
     const [solicitationTreatment, setSolicitationTreatment] = useState(false);
+    const { currentChat, redirectChat, handleRedirectChat } = UseChat();
 
     const userIcon = authData.type === 'patient' ? require("../../../assets/app_patient/chat/user_icon_chat.png") : require("../../../assets/app_doctor/chat/doctor_icon_chat.png");
     const iconSize = 26;
@@ -25,10 +30,20 @@ function MainTreatmentPatient() {
         setSearch(!modalSearch);
     }
 
+    useEffect(() => {
+        if (redirectChat) {
+            console.log("Redirect Chat!");
+            HandleActiveChat(redirectChat);
+            
+        }
+        else {
+            console.log("No redirect");
+        }
+    }, [redirectChat]);
+
     return (
         <>
             {
-
                 <View style={styleMainTreatmentPatient.screen_Messages}>
                     {
                         treatment_state.treatments.length === 0 ?
@@ -194,4 +209,4 @@ const styleMainTreatmentPatient = StyleSheet.create({
     },
 });
 
-export default MainTreatmentPatient
+export default MainTreatmentPatient;

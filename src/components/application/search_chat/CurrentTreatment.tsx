@@ -111,9 +111,9 @@ const CurrentTreatment: React.FC<CurrentTreatmentProps> = ({ isVisible, treatmen
         }
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         const fetchDataAndUpdateTreatment = async () => {
-            console.log("FETCH TREATMENT DATA!!");
+            console.log("\nFETCH TREATMENT DATA TEST!!\n");
             try {
                 if (!authData || !authData.token || !authData.type) {
                     console.error('Token ou tipo de autenticação ausentes.');
@@ -152,7 +152,7 @@ const CurrentTreatment: React.FC<CurrentTreatmentProps> = ({ isVisible, treatmen
 
         fetchDataAndUpdateTreatment();
 
-    }, []);
+    }, []);*/
 
     return (
         <>

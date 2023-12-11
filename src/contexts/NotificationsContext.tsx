@@ -15,8 +15,15 @@ export interface NotificationContentData {
         button_accept?: string,
         button_decline?: string
     };
-    sender:{
-        email: string;
+    sender_params:{
+        name?: string;
+        email?: string;
+        id?: string;
+    };
+    show_modal: boolean;
+    redirect_params?: {
+        screen: string;
+        menu_option: string;
     }
 }
 

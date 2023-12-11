@@ -10,6 +10,7 @@ import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { UseForm } from '../../../contexts/FormContext';
 import { UseNotifications } from '../../../contexts/NotificationsContext';
 import { UseAuth } from '../../../contexts/AuthContext';
+import { UseMenu } from '../../../contexts/MenuContext';
 
 const Doctor_Home = () => {
     const navigation = useNavigation<AppStackTypes>();
@@ -17,6 +18,8 @@ const Doctor_Home = () => {
     const { authData } = UseAuth();
     const [patientsProgress, setPatientsProgress] = useState(84);
     const [missMedicines, setMissMedicines] = useState(2);
+
+    const {handleMenuOptionPress} = UseMenu();
 
     const handleStackNotifications = () => {
         navigation.navigate('notifications');
@@ -55,8 +58,8 @@ const Doctor_Home = () => {
                                     </Text>
                                     <LinearGradient colors={['#35a5c4', '#186a73',]}
                                         start={{ x: 0, y: 0 }}
-                                        end={{ x: 0, y: 1 }} style={{ width: '80%', paddingHorizontal: 20, alignItems: 'center', borderRadius: 40, }}>
-                                        <TouchableOpacity style={{ paddingVertical: 15, }}>
+                                        end={{ x: 0, y: 1 }} style={{ width: '80%', alignItems: 'center', borderRadius: 40, }}>
+                                        <TouchableOpacity onPress={() => handleMenuOptionPress("treatmentScreen")} style={{ paddingVertical: 15, paddingHorizontal: 20, width: '100%', alignItems: 'center', borderRadius: 40, }}>
                                             <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'white' }}>Procurar</Text>
                                         </TouchableOpacity>
                                     </LinearGradient>
@@ -96,7 +99,7 @@ const Doctor_Home = () => {
                                                 </AnimatedCircularProgress>
 
                                                 <LinearGradient colors={['#62c5e3', '#135470']} style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 14, width: screenWidth * 0.4, borderRadius: 20, }}>
-                                                    <TouchableOpacity style={{ width: '100%', alignItems: 'center' }}>
+                                                    <TouchableOpacity onPress={() => handleMenuOptionPress("analysisScreen")} style={{ width: '100%', alignItems: 'center' }}>
                                                         <Text style={{ fontSize: 15, color: 'white' }}>Visualizar</Text>
                                                     </TouchableOpacity>
                                                 </LinearGradient>
@@ -116,7 +119,7 @@ const Doctor_Home = () => {
                                             </View>
                                             <View style={{ width: '100%', alignItems: 'center' }}>
                                                 <LinearGradient colors={['rgba(138, 173, 184, 0.3)', '#1f565c']} style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 14, width: '100%', borderRadius: 20, }}>
-                                                    <TouchableOpacity style={{ width: '100%', alignItems: 'center' }}>
+                                                    <TouchableOpacity onPress={() => handleMenuOptionPress("analysisScreen")} style={{ width: '100%', alignItems: 'center' }}>
                                                         <Text style={{ fontSize: 15, color: 'white' }}>Verificar</Text>
                                                     </TouchableOpacity>
                                                 </LinearGradient>
@@ -140,8 +143,8 @@ const Doctor_Home = () => {
                                     </Text>
                                     <LinearGradient colors={['#35a5c4', '#186a73',]}
                                         start={{ x: 0, y: 0 }}
-                                        end={{ x: 0, y: 1 }} style={{ width: '100%', paddingHorizontal: 20, alignItems: 'center', borderRadius: 40, }}>
-                                        <TouchableOpacity style={{ paddingVertical: 15, display: 'flex', flexDirection: 'row', gap: 10, }}>
+                                        end={{ x: 0, y: 1 }} style={{ width: '100%', alignItems: 'center', borderRadius: 40, }}>
+                                        <TouchableOpacity onPress={() => handleMenuOptionPress("notepadScreen")} style={{ paddingVertical: 15, paddingHorizontal: 20, display: 'flex', flexDirection: 'row', gap: 10, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                                             <Image style={{ height: screenWidth * 0.05, width: screenWidth * 0.05 }} source={require('../../../assets/app_doctor/home/notes_icon.png')} />
                                             <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'white' }}>Vamos Anotar!</Text>
                                         </TouchableOpacity>

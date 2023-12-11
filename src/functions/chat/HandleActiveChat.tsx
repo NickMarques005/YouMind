@@ -15,6 +15,7 @@ export const UseHandleActiveChat = () => {
 
         setCurrentChat(members);
         navigation.navigate('treatmentChat');
+        console.log("NAVIGATE TO CHAT!!");
 
     }
 

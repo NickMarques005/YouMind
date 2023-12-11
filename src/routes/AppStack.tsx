@@ -13,6 +13,9 @@ import ErrorApp from '../components/errors/ErrorApp';
 import { NotificationProvider } from '../contexts/NotificationsContext';
 import { NotepadProvider } from '../contexts/NotepadContext';
 import { AnalysisProvider } from '../contexts/AnalysisContext';
+import { HealthPageProvider } from '../contexts/HealthPageContext';
+import UseSocketService from '../services/socket/SocketService';
+
 
 interface UserData {
     id: string;
@@ -71,15 +74,17 @@ function AppStack({ data, errors, message, reloadData }: { data?: UserData, erro
                     authData.type === 'patient' ?
 
                         <BluetoothProvider>
-                            <CurrentDateProvider>
-                                <MedicineProvider>
-                                    <QuestionaireProvider>
-                                        <NotificationProvider>
-                                            <PatientApp />
-                                        </NotificationProvider>
-                                    </QuestionaireProvider>
-                                </MedicineProvider>
-                            </CurrentDateProvider>
+                            <HealthPageProvider>
+                                <CurrentDateProvider>
+                                    <MedicineProvider>
+                                        <QuestionaireProvider>
+                                            <NotificationProvider>
+                                                <PatientApp />
+                                            </NotificationProvider>
+                                        </QuestionaireProvider>
+                                    </MedicineProvider>
+                                </CurrentDateProvider>
+                            </HealthPageProvider>
                         </BluetoothProvider>
                         : authData.type === 'doctor' ?
                             <NotificationProvider>

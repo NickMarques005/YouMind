@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { UseAuth } from '../../../contexts/AuthContext';
@@ -13,17 +13,31 @@ import { useNavigation } from '@react-navigation/native';
 import { TreatmentStackTypes } from '../../../routes/MainRouter';
 import { UseHandleActiveChat } from '../../../functions/chat/HandleActiveChat';
 import CurrentTreatment from './CurrentTreatment';
+import { UseChat } from '../../../contexts/ChatContext';
 
 function MainTreatmentDoctor() {
     const navigation = useNavigation<TreatmentStackTypes>();
+    const HandleActiveChat = UseHandleActiveChat();
     const { authData } = UseAuth();
     const { treatment_state } = UseTreatment();
     const [modalSearch, setSearch] = useState(false);
     const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
     const [currentTreatmentVisible, setCurrentTreatmentVisible] = useState(false);
+    const { currentChat, redirectChat, handleRedirectChat } = UseChat();
 
     const userIcon = authData.type === 'patient' ? require("../../../assets/app_patient/chat/user_icon_chat.png") : require("../../../assets/app_doctor/chat/doctor_icon_chat.png");
     const iconSize = 26;
+
+    useEffect(() => {
+        if (redirectChat) {
+            console.log("Redirect Chat! ", redirectChat);
+            HandleActiveChat(redirectChat);
+            
+        }
+        else {
+            console.log("No redirect");
+        }
+    }, [redirectChat]);
 
     const handleSearchUsers = () => {
         console.log("HANDLE SEARCH");
@@ -41,8 +55,6 @@ function MainTreatmentDoctor() {
         setSelectedTreatment(null);
         console.log("CLOSE CURRENT TREATMENT");
     }
-
-    const HandleActiveChat = UseHandleActiveChat();
 
     return (
         <View style={styleMainTreatmentDoctor.screen_Messages}>
@@ -98,7 +110,7 @@ function MainTreatmentDoctor() {
             </ScrollView>
             {
                 currentTreatmentVisible && selectedTreatment ?
-                    <CurrentTreatment isVisible={currentTreatmentVisible} treatment={selectedTreatment} onClose={handleCloseCurrentTreatment}/>
+                    <CurrentTreatment isVisible={currentTreatmentVisible} treatment={selectedTreatment} onClose={handleCloseCurrentTreatment} />
                     : ""
             }
             <SearchUsers visible={modalSearch} onClose={handleSearchUsers} authData={authData} />
@@ -208,4 +220,4 @@ const styleMainTreatmentDoctor = StyleSheet.create({
 
 });
 
-export default MainTreatmentDoctor
+export default MainTreatmentDoctor;

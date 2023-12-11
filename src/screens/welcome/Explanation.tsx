@@ -45,9 +45,9 @@ const Explanation = () => {
             <View style={styleexplanation.containerLongText}>
                 <Text style={[styleexplanation.longText, { fontWeight: 'bold', color: '#6e2e82' }]}>Olá, bem-vindo ao YouMind!</Text>
 
-                <Text numberOfLines={6} style={styleexplanation.longText}>Esse aplicativo foi criado pela FWT, com a intenção de ajudar você, que enfrenta o transtorno de ansiedade e depressão, a vencer co o tratamento médico adequado. </Text>
+                <Text numberOfLines={6} style={styleexplanation.longText}>Esse aplicativo foi criado pela FWT, com a intenção de ajudar você, que enfrenta o transtorno de ansiedade e depressão, a vencer com o tratamento médico adequado. </Text>
 
-                <Text numberOfLines={7} style={styleexplanation.longText}>Aqui você pode ter uma melhor visualização do seu desempenho, sendo feito questionários de como você está se sentindo, além de proporcionar verificações de batimentos cardíacos com o propósito de alertar caso sua ansiedade esteja muito elevada.</Text>
+                <Text numberOfLines={7} style={styleexplanation.longText}>Aqui você pode ter uma melhor visualização do seu desempenho, sendo feito questionários de como você está se sentindo.</Text>
 
                 <Text numberOfLines={9} style={styleexplanation.longText}>Utilizando a parte de anotações, você pode marcar como você se sente a cada dia com cada etapa de tratamento e na função do medicamento registrador poderá ser adicionado horários para remédios, se você faz o uso de algum, sendo assim alertado para evitar que você esqueça. O intuito é que você consiga obter o melhor resultado para a melhora da sua saúde.</Text>
 

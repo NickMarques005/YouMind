@@ -41,8 +41,10 @@ const TreatmentContext = createContext<TreatmentContextProps | undefined>(undefi
 const TreatmentReducer = (prevState: State, action: Action): State => {
     switch (action.type) {
         case actionTypes.ADD_TREATMENT:
+            console.log("ADD_DISPATCH");
             return { ...prevState, treatments: [...prevState.treatments, action.payload] };
         case actionTypes.REMOVE_TREATMENT:
+            console.log("REMOVE DISPATCH!");
             return { ...prevState, treatments: prevState.treatments.filter(treatment => treatment !== action.payload) };
         default:
             return prevState;

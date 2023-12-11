@@ -29,6 +29,6 @@ function LastChatTemplate() {
 
 const styleLastChatTemplate = StyleSheet.create({
 
-})
+});
 
-export default LastChatTemplate
+export default LastChatTemplate;

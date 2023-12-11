@@ -4,14 +4,15 @@ import Health_Menu from '../../health_screen/Health_Menu';
 import Health_Questionaries from '../../health_screen/Health_Questionaries';
 import Health_Medicines from '../../health_screen/Health_Medicines';
 import Health_Call from '../../health_screen/Health_Call';
+import { UseHealthPage } from '../../../contexts/HealthPageContext';
 
 //retorna as dimensões do dispositivo 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const Patient_Health = () => {
-  const [currentHealthPage, setCurrentHealthPage] = useState('Medicamentos');
-
+  const {currentHealthPage, handleCurrentHealthPage} = UseHealthPage();
+  
   const renderCurrentPage = () => {
     switch (currentHealthPage) {
       case 'Medicamentos':
@@ -28,7 +29,7 @@ const Patient_Health = () => {
   return (
     <View style={stylehealth.screen_Health}>
       <View style={stylehealth.health}>
-        <Health_Menu setCurrentPage={setCurrentHealthPage} />
+        <Health_Menu setCurrentPage={handleCurrentHealthPage} />
         {renderCurrentPage()}
       </View>
     </View>

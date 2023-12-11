@@ -5,12 +5,15 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NotificationData, UseNotifications } from '../../contexts/NotificationsContext';
 import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
-import { AppStackTypes } from '../../routes/MainRouter';
+import { AppStackTypes, TreatmentStackTypes } from '../../routes/MainRouter';
 import { UseAuth } from '../../contexts/AuthContext';
 import { ConvertISODate } from '../../functions/dates/ConvertDate';
 import ModalNotification from './ModalNotification';
 import { UseForm } from '../../contexts/FormContext';
 import HandleNotification from './HandleNotification';
+import { UseMenu } from '../../contexts/MenuContext';
+import { CurrentChat, UseChat } from '../../contexts/ChatContext';
+import { Treatment } from '../../contexts/TreatmentContext';
 
 export interface RequestInitializeTreatmentData {
     url: string;
@@ -28,8 +31,10 @@ function Notifications() {
     const [filteredNotifications, setFilteredNotifications] = useState(notifications);
     const [notificationModal, setNotificationModal] = useState(false);
     const [selectedNotification, setSelectedNotification] = useState<any | null>(null);
-    const navigation = useNavigation<AppStackTypes>();
+    const menuNavigation = useNavigation<AppStackTypes>();
     const [notificationLoading, setNotificationLoading] = useState(false);
+    const { handleMenuOptionPress } = UseMenu();
+    const { setCurrentChat, handleRedirectChat } = UseChat();
 
     const [notificationHeights, setNotificationHeights] = useState(
         notifications ? notifications.map(() => ({
@@ -81,21 +86,23 @@ function Notifications() {
                     break;
                 case 'accept':
                     const url_treatment = 'initializeTreatment';
-                    const requestData: RequestInitializeTreatmentData = {
-                        url: url_treatment,
-                        method: 'POST',
-                        data: {
-                            email_1: formData.email,
-                            email_2: notification.data?.sender.email
-                        },
+                    if (notification.data?.sender_params.email) {
+                        const requestData: RequestInitializeTreatmentData = {
+                            url: url_treatment,
+                            method: 'POST',
+                            data: {
+                                email_1: formData.email,
+                                email_2: notification.data?.sender_params.email
+                            },
+                        }
 
-                    }
-                    console.log(requestData);
-                    if (requestData) {
-                        handleRemoveNotification(notification);
-                        handleCloseSpecificNotification();
-                        setRequestData(requestData);
-                        setNotificationLoading(true);
+                        console.log(requestData);
+                        if (requestData) {
+                            handleRemoveNotification(notification);
+                            handleCloseSpecificNotification();
+                            setRequestData(requestData);
+                            setNotificationLoading(true);
+                        }
                     }
 
                     break;
@@ -116,21 +123,56 @@ function Notifications() {
 
     //HANDLE FUNCTIONS
 
-    const handleNotificationPress = (notification: NotificationData) => {
+    //Função para lidar com a notificação após apertar botão
+    const handleNotificationPress = async (notification: NotificationData) => {
         setSelectedNotification(notification);
+        if (!notification.data?.show_modal) {
+            if (notification.data?.redirect_params) {
+                console.log("REDIRECT_PARAMS!");
+                switch (notification.data?.redirect_params.menu_option) {
+                    case "treatmentScreen":
+                        console.log("CHAT SCREEN REDIRECT!");
+                        if (notification.data?.sender_params.name && notification.data?.sender_params.email && notification.data?.sender_params.id) {
+                            const sender: Treatment = {
+                                _id: notification.data?.sender_params.id,
+                                name: notification.data?.sender_params.name,
+                                email: notification.data?.sender_params.email
+                            }
+                            console.log("Current Chat: ", sender);
+                            if (notification.data?.redirect_params.screen) {
+                                console.log("Chat with user");
+                                handleRedirectChat(sender);
+                                handleCloseNotifications();
+                                handleMenuOptionPress('treatmentScreen');
+                            }
+                        }
+
+
+
+                        break;
+                    default:
+                        console.log("Default -> No Screen Change");
+                        break;
+                }
+            }
+            return;
+        }
         setNotificationModal(true);
     }
 
+    // Fechar notificação após abrir modal
     const handleCloseSpecificNotification = () => {
         setSelectedNotification(undefined);
         setNotificationModal(!notificationModal);
     }
 
+    //Função para sair das notificações
     const handleCloseNotifications = () => {
         console.log("NOTIFICATIONS");
-        navigation.navigate('mainPage');
+        menuNavigation.navigate('mainPage');
     }
 
+    //Função para lidar com o funcionamento dos tipos de notificação
     const handleFilterButton = (index: any) => {
         // Atualize o estado isOn do botão clicado e os outros botões
         const updatedTypeNotifications = typeNotifications.map((item, i) => ({
@@ -143,14 +185,17 @@ function Notifications() {
         setTypeNotifications(updatedTypeNotifications);
     };
 
+    // Filtragem dos tipos de notificação
     const filterNotification = (index: any) => {
         handleFilterButton(index);
     }
 
+    // Função para remover notificação
     const handleRemoveNotification = (notification: any) => {
         removeNotification(notification);
     }
 
+    // Função para loading da resposta
     const handleLoadingResponse = () => {
         console.log("Set Loading Response");
         setNotificationLoading(false);

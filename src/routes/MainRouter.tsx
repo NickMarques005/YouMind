@@ -13,6 +13,7 @@ import { FormProvider } from '../contexts/FormContext';
 import { TreatmentProvider } from '../contexts/TreatmentContext';
 import MainApp from './MainApp';
 import { ChatProvider } from '../contexts/ChatContext';
+import { MenuProvider } from '../contexts/MenuContext';
 
 type WelcomeStackNavigation = {
     explanation: undefined;
@@ -64,16 +65,17 @@ export default function MainRouter() {
                         <LoadingMainScreen />
                         :
                         authData.token ?
-
-                            <TreatmentProvider>
-                                <FormProvider>
-                                    <ChatProvider>
-                                        {
-                                            <MainApp />
-                                        }
-                                    </ChatProvider>
-                                </FormProvider>
-                            </TreatmentProvider >
+                            <MenuProvider>
+                                <TreatmentProvider>
+                                    <FormProvider>
+                                        <ChatProvider>
+                                            {
+                                                <MainApp />
+                                            }
+                                        </ChatProvider>
+                                    </FormProvider>
+                                </TreatmentProvider>
+                            </MenuProvider>
                             : <AuthStack />
             }
             <LeaveModal
