@@ -5,8 +5,8 @@ import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import MiniLoading from '../../loading/MiniLoading';
 import Message, { MessageType } from './Message';
 import { UseForm } from '../../../contexts/FormContext';
-import { CurrentChat, User } from '../../../contexts/ChatContext';
-import { UseHandleBackChat } from '../../../functions/chat/HandleActiveChat';
+import { CurrentChat, UseChat, User } from '../../../contexts/ChatContext';
+import { UseHandleNavigateChat } from '../../../functions/chat/HandleActiveChat';
 import { ChatService, } from '../../../services/ChatService';
 import { UseAuth } from '../../../contexts/AuthContext';
 import io, { Socket } from 'socket.io-client';
@@ -18,15 +18,26 @@ interface ChatProps {
 }
 
 const ChatPatient: React.FC<ChatProps> = ({ user }: ChatProps) => {
-    const [messages, setMessages] = useState<MessageType[]>([]);
     const { authData } = UseAuth();
+    const { formData } = UseForm();
+    const { serverUrl } = USE_ENV();
+    const { redirectChat, handleRedirectChat} = UseChat();
+    const NavigateChat = UseHandleNavigateChat();
+
+    const [messages, setMessages] = useState<MessageType[]>([]);
     const [conversation, setConversation] = useState<string | null>(null);
     const [newMessage, setNewMessage] = useState("");
-    const { formData } = UseForm();
-    const BackChat = UseHandleBackChat();
     const [messagesLoading, setMessagesLoading] = useState(true);
-    const { serverUrl } = USE_ENV();
+
     const socket = UseSocketService({url: serverUrl ? serverUrl : ""});
+
+    const BackChat = () => {
+        NavigateChat();
+        if(redirectChat)
+        {
+            handleRedirectChat(null);
+        }
+    }
 
     const handleSocket = (conversationId: string) => {
         socket?.emit('joinRoom', conversationId);
@@ -38,8 +49,6 @@ const ChatPatient: React.FC<ChatProps> = ({ user }: ChatProps) => {
             console.log("MENSAGENS: ", messages);
             setMessages((prevMessages) => [data, ...prevMessages]);
         });
-
-
     }
 
     const handleSendNewMessage = async () => {

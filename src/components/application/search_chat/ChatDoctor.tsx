@@ -5,8 +5,8 @@ import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import Message, { MessageType } from './Message';
 import { UseForm } from '../../../contexts/FormContext';
 import MiniLoading from '../../loading/MiniLoading';
-import { CurrentChat, User } from '../../../contexts/ChatContext';
-import { UseHandleBackChat } from '../../../functions/chat/HandleActiveChat';
+import { CurrentChat, UseChat, User } from '../../../contexts/ChatContext';
+import { UseHandleNavigateChat } from '../../../functions/chat/HandleActiveChat';
 import { ChatService, ConversationTreatmentResponse } from '../../../services/ChatService';
 import { UseAuth } from '../../../contexts/AuthContext';
 import io, { Socket } from 'socket.io-client';
@@ -19,14 +19,25 @@ interface ChatProps {
 
 const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
     const { authData } = UseAuth();
+    const { redirectChat, handleRedirectChat} = UseChat();
+    const { formData } = UseForm();
+    const { serverUrl } = USE_ENV();
+
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [conversation, setConversation] = useState<string | null>(null);
     const [newMessage, setNewMessage] = useState("");
-    const { formData } = UseForm();
-    const BackChat = UseHandleBackChat();
+    
+    const NavigateChat = UseHandleNavigateChat();
     const [messagesLoading, setMessagesLoading] = useState(true);
-    const { serverUrl } = USE_ENV();
     const socket = UseSocketService({url: serverUrl ? serverUrl : ""});
+
+    const BackChat = () => {
+        NavigateChat();
+        if(redirectChat)
+        {
+            handleRedirectChat(null);
+        }
+    }
 
     const handleSocket = (conversationId: string) => {
 
@@ -135,48 +146,8 @@ const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
         return () => {
             
             socket?.disconnect();
-            
+            setMessages([]);
         };
-
-    }, [formData.email, user]);
-
-
-    useEffect(() => {
-        const FetchChatData = async () => {
-            try {
-                const ConversationTreatmentData = await ChatService.getConversationTreatment({
-                    email_1: formData.email,
-                    email_2: user?.email || ''
-                });
-
-                if (ConversationTreatmentData.success) {
-                    console.log("ID Conversation: ", ConversationTreatmentData.data);
-                    const conversationId = ConversationTreatmentData.data as string;
-                    setConversation(conversationId);
-                    const MessagesData = await ChatService.getMessages(conversationId);
-
-                    if (MessagesData.success) {
-                        const fetchedMessages = MessagesData.data?.reverse();
-                        console.log(fetchedMessages);
-                        if (fetchedMessages) {
-                            setMessages(fetchedMessages);
-                        }
-
-                    }
-                    else {
-                        console.log("Erro ao buscar dados de mensagens!!");
-                    }
-                }
-                else {
-                    console.log("Erro ao buscar dados de conversa");
-                }
-            }
-            catch (err) {
-                console.log("Deu erro ao buscar dados de conversa");
-            }
-        }
-
-        FetchChatData();
 
     }, [formData.email, user]);
 

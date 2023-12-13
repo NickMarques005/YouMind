@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, StackActions } from "@react-navigation/native";
 import { UseChat } from "../../contexts/ChatContext";
 import { Treatment } from "../../contexts/TreatmentContext";
 import { TreatmentStackTypes } from "../../routes/MainRouter";
@@ -22,12 +22,12 @@ export const UseHandleActiveChat = () => {
     return HandleActiveChat;
 }
 
-export const UseHandleBackChat = () => {
+export const UseHandleNavigateChat = () => {
     const navigation = useNavigation<TreatmentStackTypes>();
-    
-    const HandleBackChat = () => {
-        navigation.goBack();
+
+    const HandleNavigateChat = () => {
+        navigation.navigate('mainTreatment');
     }
 
-    return HandleBackChat;
+    return HandleNavigateChat;
 }

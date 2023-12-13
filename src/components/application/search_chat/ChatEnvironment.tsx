@@ -7,24 +7,35 @@ import ChatPatient from './ChatPatient';
 import ChatDoctor from './ChatDoctor';
 import { UseChat, User } from '../../../contexts/ChatContext';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
-
+import { UseHandleActiveChat } from '../../../functions/chat/HandleActiveChat';
 
 const ChatEnvironment = () => {
     const { authData } = UseAuth();
-    const { currentChat } = UseChat();
+    const { currentChat, redirectChat} = UseChat();
     const [singleMember, setSingleMember] = useState<User | null>(null);
+    const ActiveChat = UseHandleActiveChat();
 
     useEffect(() => {
-        if (currentChat && currentChat.members.length === 1) {
-            console.log(currentChat);
-            setSingleMember(currentChat.members[0])
+        if (currentChat) {
+            if (currentChat.members.length === 1) {
+                console.log(currentChat);
+                setSingleMember(currentChat.members[0])
+            }
+            else {
+                console.log("Mais de um membro");
+                console.log(currentChat);
+                setSingleMember(null);
+            }
         }
-        else {
-            console.log("Mais de um membro");
-            console.log(currentChat);
-            setSingleMember(null);
+        else{
+            if(redirectChat)
+            {
+                console.log(redirectChat);
+                ActiveChat(redirectChat);
+            }
         }
-    }, [currentChat]);
+
+    }, [currentChat, redirectChat]);
 
 
     return (
@@ -33,13 +44,13 @@ const ChatEnvironment = () => {
                 currentChat && currentChat.members ?
                     (
                         authData.type === 'patient' ? (
-                            <ChatPatient user={currentChat.members.length === 1 ? singleMember : null}/>
+                            <ChatPatient user={currentChat.members.length === 1 ? singleMember : null} />
                         ) : (
-                            <ChatDoctor user={currentChat.members.length === 1 ? singleMember : null}/>
+                            <ChatDoctor user={currentChat.members.length === 1 ? singleMember : null} />
                         )
                     )
-                : 
-                <LoadingAuthScreen/>
+                    :
+                    <LoadingAuthScreen />
             }
         </View>
     )

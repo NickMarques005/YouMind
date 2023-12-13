@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { screenHeight } from '../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import SearchUsers from './SearchUsers';
 import { Treatment, UseTreatment } from '../../../contexts/TreatmentContext';
 import MiniLoading from '../../loading/MiniLoading';
@@ -62,6 +62,7 @@ function MainTreatmentDoctor() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0.8, y: 0.28 }} style={styleMainTreatmentDoctor.headerMessages_View}>
                 <View style={styleMainTreatmentDoctor.headerIcons_View}>
+                    
                     <TouchableOpacity style={styleMainTreatmentDoctor.menuIcon_Button}>
                         <FontAwesome name="list" size={screenHeight * ((iconSize + 5) / 1000)} color="white" />
                     </TouchableOpacity>
@@ -76,7 +77,7 @@ function MainTreatmentDoctor() {
                 </View>
 
             </LinearGradient>
-            <ScrollView style={{ top: -20, flex: 1, width: '100%', }}>
+            <ScrollView style={{ top: -20, }} >
                 <View style={styleMainTreatmentDoctor.messagesContent_Container}>
                     <LinearGradient colors={[`#51828f`, `rgba(182, 200, 209, 0.6)`, 'rgba(114, 81, 130, 0.1)']}
                         start={{ x: 0, y: 0 }}
@@ -177,15 +178,18 @@ const styleMainTreatmentDoctor = StyleSheet.create({
         color: 'white',
     },
     messagesContent_Container: {
+        flex: 1,
         display: 'flex',
         gap: 20,
-        minHeight: screenHeight * 0.83,
-        width: '100%',
+        height: 'auto',
+        paddingBottom: '25%',
+        width: screenWidth,
+        
     },
     treatment_View: {
         display: 'flex',
         gap: 10,
-        height: '38%',
+        height: screenHeight * 0.3,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
         paddingTop: 45,
@@ -205,15 +209,14 @@ const styleMainTreatmentDoctor = StyleSheet.create({
         height: '85%',
     },
     lastChats_View: {
-        flex: 1,
         borderRadius: 20,
         paddingTop: 25,
         display: 'flex',
         gap: 25,
+        height: 'auto',
     },
     lastChatsInfo_View: {
         width: '100%',
-        minHeight: '40%',
         display: 'flex',
         justifyContent: 'flex-start',
     },
