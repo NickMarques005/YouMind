@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, FlatList, ScrollView, Image, TextInput, Platform, KeyboardAvoidingView, TouchableOpacity, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import Message, { MessageType } from './Message';
-import { UseForm } from '../../../contexts/FormContext';
-import MiniLoading from '../../loading/MiniLoading';
-import { CurrentChat, UseChat, User } from '../../../contexts/ChatContext';
-import { UseHandleNavigateChat } from '../../../functions/chat/HandleActiveChat';
-import { ChatService, ConversationTreatmentResponse } from '../../../services/ChatService';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { screenHeight, screenWidth } from '../../../screen_size/Screen_Size';
+import Message, { MessageType } from '../Message';
+import { UseForm } from '../../../../contexts/FormContext';
+import MiniLoading from '../../../loading/MiniLoading';
+import { CurrentChat, UseChat, User } from '../../../../contexts/ChatContext';
+import { UseHandleNavigateChat } from '../../../../functions/chat/HandleActiveChat';
+import { ChatService, ConversationTreatmentResponse } from '../../../../services/ChatService';
+import { UseAuth } from '../../../../contexts/AuthContext';
 import io, { Socket } from 'socket.io-client';
-import UseSocketService from '../../../services/socket/SocketService';
-import USE_ENV from '../../../services/server_url/ServerUrl';
+import UseSocketService from '../../../../services/socket/SocketService';
+import USE_ENV from '../../../../services/server_url/ServerUrl';
 
 interface ChatProps {
     user: User | null;
@@ -157,13 +157,13 @@ const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
         <>
             <LinearGradient colors={['#48c7b4', '#458aa1']} style={styleChatDoctor.header_Chat}>
                 <TouchableOpacity onPress={() => BackChat()}>
-                    <Image style={{ width: 30, height: 30 }} source={require('../../../assets/init/back/arrow_back_white.png')} />
+                    <Image style={{ width: 30, height: 30 }} source={require('../../../../assets/init/back/arrow_back_white.png')} />
                 </TouchableOpacity>
                 <View style={styleChatDoctor.otherAccount_View}>
 
                     <TouchableOpacity style={styleChatDoctor.otherAccount_Button}>
                         <Image
-                            source={require('../../../assets/app_doctor/chat/user_icon_chat.png')}
+                            source={require('../../../../assets/app_doctor/chat/user_icon_chat.png')}
                             style={styleChatDoctor.otherAccount_Image}
                         />
                     </TouchableOpacity>
@@ -184,7 +184,7 @@ const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
                 <View style={styleChatDoctor.threepoints_View}>
                     <TouchableOpacity style={styleChatDoctor.threepoints_Button}>
                         <Image
-                            source={require('../../../assets/three_points.png')}
+                            source={require('../../../../assets/three_points.png')}
                             style={styleChatDoctor.threepoints_Image}
                         />
                     </TouchableOpacity>
@@ -255,14 +255,14 @@ const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
                             <View style={styleChatDoctor.chatButtons_View}>
                                 <TouchableOpacity style={styleChatDoctor.chat_Button}>
                                     <Image
-                                        source={require('../../../assets/icon_emoji.png')}
+                                        source={require('../../../../assets/icon_emoji.png')}
                                         style={styleChatDoctor.chatEmoji_Image}
                                     />
                                 </TouchableOpacity>
 
                                 <TouchableOpacity onPress={() => handleSendNewMessage()} style={styleChatDoctor.chat_Button}>
                                     <Image
-                                        source={require('../../../assets/app_doctor/chat/icon_envio.png')}
+                                        source={require('../../../../assets/app_doctor/chat/icon_envio.png')}
                                         style={styleChatDoctor.chatEnvio_Image}
                                     />
                                 </TouchableOpacity>
@@ -273,7 +273,7 @@ const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
 
                         <TouchableOpacity style={styleChatDoctor.chatAudio_Button}>
                             <Image
-                                source={require('../../../assets/app_doctor/chat/icon_audio.png')}
+                                source={require('../../../../assets/app_doctor/chat/icon_audio.png')}
                                 style={styleChatDoctor.chatAudio_Image}
                             />
                         </TouchableOpacity>

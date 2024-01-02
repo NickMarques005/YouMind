@@ -3,8 +3,8 @@ import { View, StyleSheet, Image, TextInput, KeyboardAvoidingView, TouchableOpac
 import { LinearGradient } from 'expo-linear-gradient';
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { UseAuth } from '../../../contexts/AuthContext';
-import ChatPatient from './ChatPatient';
-import ChatDoctor from './ChatDoctor';
+import ChatPatient from './treatment_pacient/ChatPatient';
+import ChatDoctor from './treatment_doctor/ChatDoctor';
 import { UseChat, User } from '../../../contexts/ChatContext';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
 import { UseHandleActiveChat } from '../../../functions/chat/HandleActiveChat';

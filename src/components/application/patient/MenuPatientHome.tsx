@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Dimensions, FlatList, Text, Image, StyleSheet, ScrollView, ImageBackground, TouchableOpacity, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-//import LoginScreen from './src/screens/LoginScreen';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { AppStackTypes } from '../../../routes/MainRouter';
 import { useNavigation } from '@react-navigation/native';
+import CountNotifications from '../../notifications/CountNotifications';
 
 //retorna as dimensões do dispositivo 
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
@@ -95,6 +95,7 @@ const Patient_Home = () => {
                 source={require('../../../assets/icon_notification.png')}
                 style={stylehome.icon_Notification}
               />
+              <CountNotifications/>
             </TouchableOpacity>
           </View>
         </ImageBackground>

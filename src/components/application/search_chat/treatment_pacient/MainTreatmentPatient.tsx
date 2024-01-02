@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../../contexts/AuthContext';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { screenHeight } from '../../screen_size/Screen_Size';
-import SearchUsers from './SearchUsers';
-import { UseTreatment } from '../../../contexts/TreatmentContext';
-import PatientTreatmentRunning from './treatment_pacient/PatientTreatmentRunning';
+import { screenHeight } from '../../../screen_size/Screen_Size';
+import SearchUsers from '../SearchUsers';
+import { UseTreatment } from '../../../../contexts/TreatmentContext';
+import PatientTreatmentRunning from './PatientTreatmentRunning';
 import { useNavigation } from '@react-navigation/native';
-import { TreatmentStackTypes } from '../../../routes/MainRouter';
-import { UseChat, User } from '../../../contexts/ChatContext';
-import { UseHandleActiveChat } from '../../../functions/chat/HandleActiveChat';
+import { TreatmentStackTypes } from '../../../../routes/MainRouter';
+import { UseChat, User } from '../../../../contexts/ChatContext';
+import { UseHandleActiveChat } from '../../../../functions/chat/HandleActiveChat';
 
 
 function MainTreatmentPatient() {
@@ -22,7 +22,7 @@ function MainTreatmentPatient() {
     const [solicitationTreatment, setSolicitationTreatment] = useState(false);
     const { currentChat, redirectChat, handleRedirectChat } = UseChat();
 
-    const userIcon = authData.type === 'patient' ? require("../../../assets/app_patient/chat/user_icon_chat.png") : require("../../../assets/app_doctor/chat/doctor_icon_chat.png");
+    const userIcon = authData.type === 'patient' ? require("../../../../assets/app_patient/chat/user_icon_chat.png") : require("../../../../assets/app_doctor/chat/doctor_icon_chat.png");
     const iconSize = 26;
 
     const handleSearchUsers = () => {

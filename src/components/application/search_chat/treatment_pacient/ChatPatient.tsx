@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, FlatList, Image, TextInput, Platform, KeyboardAvoidingView, TouchableOpacity, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import MiniLoading from '../../loading/MiniLoading';
-import Message, { MessageType } from './Message';
-import { UseForm } from '../../../contexts/FormContext';
-import { CurrentChat, UseChat, User } from '../../../contexts/ChatContext';
-import { UseHandleNavigateChat } from '../../../functions/chat/HandleActiveChat';
-import { ChatService, } from '../../../services/ChatService';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { screenHeight, screenWidth } from '../../../screen_size/Screen_Size';
+import MiniLoading from '../../../loading/MiniLoading';
+import Message, { MessageType } from '../Message';
+import { UseForm } from '../../../../contexts/FormContext';
+import { CurrentChat, UseChat, User } from '../../../../contexts/ChatContext';
+import { UseHandleNavigateChat } from '../../../../functions/chat/HandleActiveChat';
+import { ChatService, } from '../../../../services/ChatService';
+import { UseAuth } from '../../../../contexts/AuthContext';
 import io, { Socket } from 'socket.io-client';
-import USE_ENV from '../../../services/server_url/ServerUrl';
-import UseSocketService from '../../../services/socket/SocketService';
+import USE_ENV from '../../../../services/server_url/ServerUrl';
+import UseSocketService from '../../../../services/socket/SocketService';
 
 interface ChatProps {
     user: User | null;
@@ -151,12 +151,12 @@ const ChatPatient: React.FC<ChatProps> = ({ user }: ChatProps) => {
         <>
             <LinearGradient colors={['#b049c9', '#9045a1']} style={styleChatPatient.header_Chat}>
                 <TouchableOpacity onPress={() => BackChat()}>
-                    <Image style={{ width: 30, height: 30 }} source={require('../../../assets/init/back/arrow_back_white.png')} />
+                    <Image style={{ width: 30, height: 30 }} source={require('../../../../assets/init/back/arrow_back_white.png')} />
                 </TouchableOpacity>
                 <View style={styleChatPatient.otherAccount_View}>
                     <TouchableOpacity style={styleChatPatient.otherAccount_Button}>
                         <Image
-                            source={require('../../../assets/app_patient/chat/doctor_icon_chat.png')}
+                            source={require('../../../../assets/app_patient/chat/doctor_icon_chat.png')}
                             style={styleChatPatient.otherAccount_Image}
                         />
                     </TouchableOpacity>
@@ -176,7 +176,7 @@ const ChatPatient: React.FC<ChatProps> = ({ user }: ChatProps) => {
                 <View style={styleChatPatient.threepoints_View}>
                     <TouchableOpacity style={styleChatPatient.threepoints_Button}>
                         <Image
-                            source={require('../../../assets/three_points.png')}
+                            source={require('../../../../assets/three_points.png')}
                             style={styleChatPatient.threepoints_Image}
                         />
                     </TouchableOpacity>
@@ -230,14 +230,14 @@ const ChatPatient: React.FC<ChatProps> = ({ user }: ChatProps) => {
                             <View style={styleChatPatient.chatButtons_View}>
                                 <TouchableOpacity style={styleChatPatient.chat_Button}>
                                     <Image
-                                        source={require('../../../assets/icon_emoji.png')}
+                                        source={require('../../../../assets/icon_emoji.png')}
                                         style={styleChatPatient.chatEmoji_Image}
                                     />
                                 </TouchableOpacity>
 
                                 <TouchableOpacity onPress={() => handleSendNewMessage()} style={styleChatPatient.chat_Button}>
                                     <Image
-                                        source={require('../../../assets/icon_envio.png')}
+                                        source={require('../../../../assets/icon_envio.png')}
                                         style={styleChatPatient.chatEnvio_Image}
                                     />
                                 </TouchableOpacity>
@@ -247,7 +247,7 @@ const ChatPatient: React.FC<ChatProps> = ({ user }: ChatProps) => {
 
                         <TouchableOpacity style={styleChatPatient.chatAudio_Button}>
                             <Image
-                                source={require('../../../assets/icon_audio.png')}
+                                source={require('../../../../assets/icon_audio.png')}
                                 style={styleChatPatient.chatAudio_Image}
                             />
                         </TouchableOpacity>

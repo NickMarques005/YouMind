@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AppStackTypes } from '../../../routes/MainRouter';
 import { useNavigation } from '@react-navigation/native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import CountNotifications from '../../notifications/CountNotifications';
 
 //retorna as dimensões do dispositivo 
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
@@ -42,6 +43,7 @@ const Doctor_Home = () => {
                                     source={require('../../../assets/icon_notification.png')}
                                     style={styleHomeDoctor.icon_Notification}
                                 />
+                                <CountNotifications />
                             </TouchableOpacity>
                         </View>
                     </ImageBackground>

@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../../contexts/AuthContext';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import SearchUsers from './SearchUsers';
-import { Treatment, UseTreatment } from '../../../contexts/TreatmentContext';
-import MiniLoading from '../../loading/MiniLoading';
-import TreatmentList from './TreatmentList';
-import LastChatList from './LastChatList';
+import { screenHeight, screenWidth } from '../../../screen_size/Screen_Size';
+import SearchUsers from '../SearchUsers';
+import { Treatment, UseTreatment } from '../../../../contexts/TreatmentContext';
+import MiniLoading from '../../../loading/MiniLoading';
+import TreatmentList from '../TreatmentList';
+import LastChatList from '../LastChatList';
 import { useNavigation } from '@react-navigation/native';
-import { TreatmentStackTypes } from '../../../routes/MainRouter';
-import { UseHandleActiveChat } from '../../../functions/chat/HandleActiveChat';
-import CurrentTreatment from './CurrentTreatment';
-import { UseChat } from '../../../contexts/ChatContext';
+import { TreatmentStackTypes } from '../../../../routes/MainRouter';
+import { UseHandleActiveChat } from '../../../../functions/chat/HandleActiveChat';
+import CurrentTreatment from '../CurrentTreatment';
+import { UseChat } from '../../../../contexts/ChatContext';
 
 function MainTreatmentDoctor() {
     const navigation = useNavigation<TreatmentStackTypes>();
@@ -25,7 +25,7 @@ function MainTreatmentDoctor() {
     const [currentTreatmentVisible, setCurrentTreatmentVisible] = useState(false);
     const { currentChat, redirectChat, handleRedirectChat } = UseChat();
 
-    const userIcon = authData.type === 'patient' ? require("../../../assets/app_patient/chat/user_icon_chat.png") : require("../../../assets/app_doctor/chat/doctor_icon_chat.png");
+    const userIcon = authData.type === 'patient' ? require("../../../../assets/app_patient/chat/user_icon_chat.png") : require("../../../../assets/app_doctor/chat/doctor_icon_chat.png");
     const iconSize = 26;
 
     useEffect(() => {
