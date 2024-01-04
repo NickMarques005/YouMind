@@ -21,36 +21,51 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
     const newNote = useRef<NotepadType | undefined>(note_data);
     const activeIndex = useSharedValue(note_data.content.length);
     const [addPage, setAddPage] = useState<'last' | 'first' | undefined>(undefined);
-    const handleFlingUp = Gesture.Fling().direction(Directions.LEFT).onStart(() => {
-        if (activeIndex.value === note_data.content.length) {
+    const handleFlingLeft = Gesture.Fling().direction(Directions.LEFT).onStart(() => {
+        console.log("DATA LENGTH: ", note_data.content.length);
+        console.log("INDEX: ", activeIndex.value);
+        if (activeIndex.value >= note_data.content.length) {
+
             console.log("END");
-            if(activeIndex.value === 10)
-            {
-                return;
-            }
-            runOnJS(setAddPage)('last');
-            
+            return;
         }
-        else if (addPage) {
-            runOnJS(setAddPage)(undefined);
-        }
-        console.log(activeIndex);
+
         activeIndex.value = withTiming(activeIndex.value + 1, { duration: 400, easing: Easing.ease });
         console.log("CARD LEFT");
+        //console.log(activeIndex);
+
     });
 
-    const handleFlingDown = Gesture.Fling().direction(Directions.RIGHT).onStart(() => {
-        if (activeIndex.value === -1) {
-            console.log("END");
-            runOnJS(setAddPage)('first');
-            
+    const handleFlingRight = Gesture.Fling().direction(Directions.RIGHT).onStart(() => {
+        console.log("DATA LENGTH: ", note_data.content.length);
+        console.log("INDEX: ", activeIndex.value);
+        if (activeIndex.value == 0) {
+            console.log("START");
+            //runOnJS(setAddPage)('first');
+
         }
-        else if (addPage) {
+        else if (addPage !== 'first' && activeIndex.value !== note_data.content.length) {
+            console.log("MOVE PAGE!");
             runOnJS(setAddPage)(undefined);
+            activeIndex.value = withTiming(activeIndex.value - 1, { duration: 400, easing: Easing.ease });
         }
-        console.log(activeIndex);
-        activeIndex.value = withTiming(activeIndex.value - 1, { duration: 400, easing: Easing.ease });
+        //console.log("ACTIVE INDEX: ", activeIndex);
         console.log("CARD RIGHT");
+    });
+
+    const handleFlingUp = Gesture.Fling().direction(Directions.UP).onStart(() => {
+        console.log("FLINGUP!!");
+        console.log("DATA LENGTH: ", note_data.content);
+        console.log("INDEX: ", activeIndex.value);
+        if (activeIndex.value === note_data.content.length) {
+            console.log("ADD PAGE !!");
+            activeIndex.value = withTiming(activeIndex.value + 1, { duration: 400, easing: Easing.ease });
+            runOnJS(setAddPage)('last');
+        }
+    });
+
+    const handleFlingDown = Gesture.Fling().direction(Directions.DOWN).onStart(() => {
+        console.log("FLING DOWN");
     });
 
     console.log("CURRENT NOTE RELOADED");
@@ -75,6 +90,10 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
 
     }
 
+    const handleDeletePage = (currentPage: any) => {
+        console.log(currentPage);
+    }
+
     const handleAddNewPage = (typeAddNote: string) => {
         switch (typeAddNote) {
             case 'last':
@@ -89,7 +108,6 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
             case 'first':
                 console.log("FIRST ADD");
                 if (newNote.current) {
-                    console.log('CADE');
                     const newContent = ['', ...newNote.current.content];
                     console.log("CONTENT LAST: ", newContent);
                     newNote.current = { ...newNote.current, content: newContent };
@@ -115,7 +133,7 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
     useEffect(() => {
         if (addPage === 'last' || addPage === 'first') {
             handleAddNewPage(addPage);
-            setAddPage(undefined); 
+            setAddPage(undefined);
         }
     }, [addPage]);
 
@@ -147,13 +165,13 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
                 {
                     <GestureHandlerRootView style={{}}>
                         <GestureDetector
-                            gesture={Gesture.Exclusive(handleFlingUp, handleFlingDown)}
+                            gesture={Gesture.Exclusive(handleFlingLeft, handleFlingRight, handleFlingUp, handleFlingDown)}
                         >
                             <View style={{ width: '100%', minHeight: '50%' }}>
                                 {
                                     newNote.current?.content ?
                                         <CarouselNotes content_data={newNote.current.content} activeIndex={activeIndex} />
-                                        : <Text>Algo errado</Text>
+                                        : <Text>Algo deu errado</Text>
                                 }
                             </View>
                         </GestureDetector>
