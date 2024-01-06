@@ -22,9 +22,15 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
     const activeIndex = useSharedValue(note_data.content.length);
     const [addPage, setAddPage] = useState<'last' | 'first' | undefined>(undefined);
     const handleFlingLeft = Gesture.Fling().direction(Directions.LEFT).onStart(() => {
-        console.log("DATA LENGTH: ", note_data.content.length);
+        if( newNote.current?.content.length === undefined)
+        {
+            console.log("DONT HAS NEWNOTE");
+            return;
+        }
+        
+        console.log("DATA LENGTH: ", newNote.current?.content);
         console.log("INDEX: ", activeIndex.value);
-        if (activeIndex.value >= note_data.content.length) {
+        if (activeIndex.value > newNote.current?.content.length) {
 
             console.log("END");
             return;
@@ -32,12 +38,12 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
 
         activeIndex.value = withTiming(activeIndex.value + 1, { duration: 400, easing: Easing.ease });
         console.log("CARD LEFT");
-        //console.log(activeIndex);
+        console.log("PAGE: ", addPage);
 
     });
 
     const handleFlingRight = Gesture.Fling().direction(Directions.RIGHT).onStart(() => {
-        console.log("DATA LENGTH: ", note_data.content.length);
+        console.log("DATA LENGTH: ", note_data.content);
         console.log("INDEX: ", activeIndex.value);
         if (activeIndex.value == 0) {
             console.log("START");
@@ -51,21 +57,24 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
         }
         //console.log("ACTIVE INDEX: ", activeIndex);
         console.log("CARD RIGHT");
+        console.log("PAGE: ", addPage);
     });
 
     const handleFlingUp = Gesture.Fling().direction(Directions.UP).onStart(() => {
         console.log("FLINGUP!!");
         console.log("DATA LENGTH: ", note_data.content);
-        console.log("INDEX: ", activeIndex.value);
-        if (activeIndex.value === note_data.content.length) {
+        console.log("INDEX: ", activeIndex.value, " NOTE LENGTH: ", newNote.current?.content.length);
+        if (activeIndex.value === newNote.current?.content.length) {
             console.log("ADD PAGE !!");
             activeIndex.value = withTiming(activeIndex.value + 1, { duration: 400, easing: Easing.ease });
             runOnJS(setAddPage)('last');
         }
+        console.log("PAGE: ", addPage);
     });
 
     const handleFlingDown = Gesture.Fling().direction(Directions.DOWN).onStart(() => {
         console.log("FLING DOWN");
+        console.log("PAGE: ", addPage);
     });
 
     console.log("CURRENT NOTE RELOADED");
@@ -99,7 +108,7 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
             case 'last':
                 console.log("LAST ADD");
                 if (newNote.current) {
-                    const newContent = [...newNote.current.content, ''];
+                    const newContent = [...newNote.current.content, ""];
                     console.log("CONTENT LAST: ", newContent);
                     newNote.current = { ...newNote.current, content: newContent };
                 }
@@ -108,7 +117,7 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
             case 'first':
                 console.log("FIRST ADD");
                 if (newNote.current) {
-                    const newContent = ['', ...newNote.current.content];
+                    const newContent = ["", ...newNote.current.content];
                     console.log("CONTENT LAST: ", newContent);
                     newNote.current = { ...newNote.current, content: newContent };
                 }
@@ -127,7 +136,7 @@ function NoteTemplate({ note_data, handleBackNotePress }: NoteTemplateProps) {
     }, []);
 
     useEffect(() => {
-        console.log(newNote);
+        console.log("NEW NOTE: ", newNote);
     }, [newNote]);
 
     useEffect(() => {
