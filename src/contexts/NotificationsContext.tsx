@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export interface NotificationData {
     title: string;
@@ -15,7 +15,7 @@ export interface NotificationContentData {
         button_accept?: string,
         button_decline?: string
     };
-    sender_params:{
+    sender_params: {
         name?: string;
         email?: string;
         id?: string;
@@ -50,49 +50,23 @@ export const UseNotifications = () => {
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
     const [notifications, setNotifications] = useState<NotificationData[]>([]);
 
-    useEffect(() => {
-        const loadNotifications = async () => {
-            try {
-                console.log("Load Notifications...");
-                const storedNotifications = await AsyncStorage.getItem('notifications');
-                if (storedNotifications) {
-                    setNotifications(JSON.parse(storedNotifications));
-                }
-            }
-            catch (err) {
-                console.error("Erro ao carregar notificações: ", err);
-            }
-        }
-
-        loadNotifications();
-    }, []);
-
     const addNotification = async (new_notification: NotificationData) => {
         try {
-            const storedNotifications = await AsyncStorage.getItem('notifications');
-            const parsedNotifications: NotificationData[] = storedNotifications ? JSON.parse(storedNotifications) : [];
-
-            const updatedNotifications = [...parsedNotifications, new_notification];
-            console.log("UPDATE NOTIFY: ", updatedNotifications);
-
-            setNotifications(updatedNotifications);
-            await AsyncStorage.setItem('notifications', JSON.stringify(updatedNotifications));
-
+            setNotifications((prevNotifications) => [...prevNotifications, new_notification]);
         }
         catch (err) {
             console.error("Erro ao adicionar notificação: ", err);
         }
+        
     }
 
     const removeNotification = async (index: number) => {
-        try{
+        try {
             const updatedNotifications = [...notifications];
             updatedNotifications.splice(index, 1);
             setNotifications(updatedNotifications);
-            await AsyncStorage.setItem('notifications', JSON.stringify(updatedNotifications));
         }
-        catch (err)
-        {
+        catch (err) {
             console.error("Erro ao remover notificação: ", err);
         }
     }

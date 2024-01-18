@@ -47,6 +47,25 @@ function Notifications() {
     }, [notifications]);
 
     useEffect(() => {
+        const loadNotifications = async () => {
+            try {
+                console.log("Load Notifications...");
+                //const storedNotifications = await AsyncStorage.getItem('notifications');
+                //if (storedNotifications) {
+                //    setNotifications(JSON.parse(storedNotifications));
+                //}
+                //getNofitications
+
+            }
+            catch (err) {
+                console.error("Erro ao carregar notificações: ", err);
+            }
+        }
+
+        loadNotifications();
+    }, []);
+
+    useEffect(() => {
         updateNotificationHeights();
     }, [notifications, updateNotificationHeights]);
 

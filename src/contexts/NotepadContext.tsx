@@ -54,6 +54,10 @@ export const NotepadProvider: React.FC<NotepadProviderProps> = ({ children }) =>
         );
     };
 
+    const removeNotepad = () => {
+        
+    }
+
     const contextValue: NotepadContextType = {
         notepadData,
         addNotepad,
