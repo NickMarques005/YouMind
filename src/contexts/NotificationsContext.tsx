@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
+import { UseAuth } from './AuthContext';
+import { FetchData } from '../services/fetchUtils/APIUtils';
+import USE_ENV from '../services/server_url/ServerUrl';
 
 export interface NotificationData {
     title: string;
@@ -31,6 +33,7 @@ interface NotificationContextType {
     notifications: NotificationData[];
     addNotification: (notification: NotificationData) => void;
     removeNotification: (index: number) => void;
+    loadNotifications: () => void;
 }
 
 interface NotificationProviderProps {
@@ -49,6 +52,30 @@ export const UseNotifications = () => {
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
     const [notifications, setNotifications] = useState<NotificationData[]>([]);
+    const { authData } = UseAuth();
+    const { fullApiServerUrl } = USE_ENV();
+
+    const getNotifications = async (authToken: string) => {
+        const requestData = {
+            url: 'getNotifications',
+            method: 'GET',
+        }
+
+        const response = await FetchData(requestData, authToken, fullApiServerUrl);
+        console.log("FETCH NOTIFICATIONS RESPONSE: ", response);
+        return response;
+    }
+
+    const loadNotifications = async () => {
+        const response = await getNotifications(authData.token)
+        if (response.success)
+        {
+            setNotifications(response.data);
+        }
+        else{
+            console.log("Houve algum erro ao buscar as notificações: ", response);
+        }
+    }
 
     const addNotification = async (new_notification: NotificationData) => {
         try {
@@ -72,7 +99,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     }
 
     return (
-        <NotificationContext.Provider value={{ notifications, addNotification, removeNotification }}>
+        <NotificationContext.Provider value={{ notifications, addNotification, removeNotification, loadNotifications }}>
             {children}
         </NotificationContext.Provider>
     )
