@@ -26,7 +26,7 @@ export interface RequestInitializeTreatmentData {
 function Notifications() {
     const { authData } = UseAuth();
     const { formData } = UseForm();
-    const { notifications, removeNotification, loadNotifications } = UseNotifications();
+    const { notifications, setNotifications, removeNotification, loadNotifications } = UseNotifications();
     const [filteredNotifications, setFilteredNotifications] = useState(notifications);
     const [notificationModal, setNotificationModal] = useState(false);
     const [selectedNotification, setSelectedNotification] = useState<any | null>(null);
@@ -54,25 +54,33 @@ function Notifications() {
         updateNotificationHeights();
     }, [notifications, updateNotificationHeights]);
 
-    const removeNotificationItemAnimation = (index: number) => {
+    const removeNotificationItemAnimation = async (index: number) => {
+        const response = await removeNotification(index);
 
-        console.log(notificationHeights);
-        Animated.sequence([
-            Animated.timing(notificationHeights[index].opacity, {
-                toValue: 0,
-                duration: 250,
-                useNativeDriver: false,
-                easing: Easing.bezier(0.4, 0.6, 0.1, 0.9),
-            }),
-            Animated.timing(notificationHeights[index].height, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: false,
-                easing: Easing.bezier(0.4, 0.6, 0.1, 0.9),
-            })
-        ]).start(() => {
-            handleRemoveNotification(notifications[index]);
-        });
+        if (response) {
+            console.log(notificationHeights);
+            Animated.sequence([
+                Animated.timing(notificationHeights[index].opacity, {
+                    toValue: 0,
+                    duration: 250,
+                    useNativeDriver: false,
+                    easing: Easing.bezier(0.4, 0.6, 0.1, 0.9),
+                }),
+                Animated.timing(notificationHeights[index].height, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: false,
+                    easing: Easing.bezier(0.4, 0.6, 0.1, 0.9),
+                })
+            ]).start(() => {
+                setNotifications(response);
+            });
+        }
+        else {
+            console.log("Houve algum erro na remoção da notificação");
+        }
+
+
     };
 
     // TYPE NOTIFICATIONS
@@ -84,7 +92,7 @@ function Notifications() {
             switch (type_function) {
                 case 'decline':
                     console.log("decline function...");
-                    handleRemoveNotification(notification);
+                    //removeNotification();
                     handleCloseSpecificNotification();
                     break;
                 case 'accept':
@@ -101,7 +109,7 @@ function Notifications() {
 
                         console.log(requestData);
                         if (requestData) {
-                            handleRemoveNotification(notification);
+                            //removeNotification();
                             handleCloseSpecificNotification();
                             setRequestData(requestData);
                             setNotificationLoading(true);
@@ -191,11 +199,6 @@ function Notifications() {
     // Filtragem dos tipos de notificação
     const filterNotification = (index: any) => {
         handleFilterButton(index);
-    }
-
-    // Função para remover notificação
-    const handleRemoveNotification = (notification: any) => {
-        removeNotification(notification);
     }
 
     // Função para loading da resposta

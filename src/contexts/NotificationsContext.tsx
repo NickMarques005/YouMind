@@ -4,6 +4,7 @@ import { FetchData } from '../services/fetchUtils/APIUtils';
 import USE_ENV from '../services/server_url/ServerUrl';
 
 export interface NotificationData {
+    _id: string;
     title: string;
     body: string;
     data?: NotificationContentData | undefined;
@@ -32,8 +33,9 @@ export interface NotificationContentData {
 interface NotificationContextType {
     notifications: NotificationData[];
     addNotification: (notification: NotificationData) => void;
-    removeNotification: (index: number) => void;
+    removeNotification: (index: number) => Promise<NotificationData[] | undefined>;
     loadNotifications: () => void;
+    setNotifications: (value: React.SetStateAction<NotificationData[]>) => void
 }
 
 interface NotificationProviderProps {
@@ -55,7 +57,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     const { authData } = UseAuth();
     const { fullApiServerUrl } = USE_ENV();
 
-    const getNotifications = async (authToken: string) => {
+    const getNotificationsInDB = async (authToken: string) => {
         const requestData = {
             url: 'getNotifications',
             method: 'GET',
@@ -66,13 +68,26 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         return response;
     }
 
+    const deleteNotificationInDB = async (authToken: string, notification: NotificationData) => {
+        const requestData = {
+            url: 'deleteNotification',
+            method: 'DELETE',
+            data: {
+                notificationId: notification._id
+            }
+        }
+
+        const response = await FetchData(requestData, authToken, fullApiServerUrl);
+        console.log("FETCH NOTIFICATION DELETED: ", response);
+        return response;
+    }
+
     const loadNotifications = async () => {
-        const response = await getNotifications(authData.token)
-        if (response.success)
-        {
+        const response = await getNotificationsInDB(authData.token)
+        if (response.success) {
             setNotifications(response.data);
         }
-        else{
+        else {
             console.log("Houve algum erro ao buscar as notificações: ", response);
         }
     }
@@ -84,22 +99,31 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         catch (err) {
             console.error("Erro ao adicionar notificação: ", err);
         }
-        
+
     }
 
     const removeNotification = async (index: number) => {
-        try {
-            const updatedNotifications = [...notifications];
-            updatedNotifications.splice(index, 1);
-            setNotifications(updatedNotifications);
+        const notificationToDelete = notifications[index];
+        const response = await deleteNotificationInDB(authData.token, notificationToDelete);
+        if (response.success) {
+            try {
+                const updatedNotifications = [...notifications];
+                updatedNotifications.splice(index, 1);
+                return updatedNotifications;
+            }
+            catch (err) {
+                console.error("Erro ao remover notificação: ", err);
+                return undefined;
+            }
         }
-        catch (err) {
-            console.error("Erro ao remover notificação: ", err);
+        else {
+            console.error("Houve um erro ao deletar notificação no banco de dados: ", response);
+            return undefined;
         }
     }
 
     return (
-        <NotificationContext.Provider value={{ notifications, addNotification, removeNotification, loadNotifications }}>
+        <NotificationContext.Provider value={{ notifications, addNotification, removeNotification, loadNotifications, setNotifications }}>
             {children}
         </NotificationContext.Provider>
     )
