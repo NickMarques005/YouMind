@@ -294,7 +294,7 @@ function Notifications() {
                                                                 <Text numberOfLines={1} ellipsizeMode='tail' style={[notificationsStyle.notificationMessage_bodyText, { color: `${authData.type === "patient" ? '#9a72ab' : "#72a8ab"}` }]}>{item.body}</Text>
                                                             </View>
                                                             <View style={{}}>
-                                                                <Text style={{ fontSize: 13, color: authData.type === 'patient' ? `#a192ad` : "#929dad" }}>{ConvertISODate(item.date)}</Text>
+                                                                <Text style={{ fontSize: 13, color: authData.type === 'patient' ? `#a192ad` : "#929dad" }}>{ConvertISODate(item.updatedAt)}</Text>
                                                             </View>
                                                         </>
                                                         : ""

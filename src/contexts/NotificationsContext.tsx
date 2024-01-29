@@ -8,7 +8,7 @@ export interface NotificationData {
     title: string;
     body: string;
     data?: NotificationContentData | undefined;
-    date: string;
+    updatedAt: string;
 }
 
 export interface NotificationContentData {
@@ -107,9 +107,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         const response = await deleteNotificationInDB(authData.token, notificationToDelete);
         if (response.success) {
             try {
-                const updatedNotifications = [...notifications];
-                updatedNotifications.splice(index, 1);
-                return updatedNotifications;
+                setNotifications(currentNotifications => currentNotifications.filter(notification => notification._id !== notificationToDelete._id));
             }
             catch (err) {
                 console.error("Erro ao remover notificação: ", err);

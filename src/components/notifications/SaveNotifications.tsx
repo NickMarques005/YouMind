@@ -20,10 +20,11 @@ export const saveNotifications = () => {
                 : notification.request.content.data;
 
             const newMsg: NotificationData = {
+                _id: parsedData._id ?? "",
                 title: notification.request.content.title ?? "",
                 body: notification.request.content.body ?? "",
                 data: parsedData ?? undefined,
-                date: isoDateNotify,
+                updatedAt: isoDateNotify,
             }
             await addNotification(newMsg);
         });
