@@ -12,20 +12,26 @@ export const saveNotifications = () => {
         const subscription = Notifications.addNotificationReceivedListener(async (notification) => {
             console.log("Notificação Recebida: ", notification);
 
-            const date_notification = new Date(notification.date);
-            const isoDateNotify = date_notification.toISOString();
-
-            const parsedData = typeof notification.request.content.data === 'string'
-                ? JSON.parse(notification.request.content.data)
-                : notification.request.content.data;
+            const isoDateNotify = new Date(notification.date).toISOString();
+            
+            const data = notification.request.content.data;
+            const parsedData = typeof data === 'string'
+                ? JSON.parse(data)
+                : data;
+            
+            console.log(parsedData);
+            const { _id, ...restOfData} = parsedData;
 
             const newMsg: NotificationData = {
-                _id: parsedData._id ?? "",
+                _id: _id ?? "",
                 title: notification.request.content.title ?? "",
                 body: notification.request.content.body ?? "",
-                data: parsedData ?? undefined,
+                data: restOfData ?? undefined,
                 updatedAt: isoDateNotify,
             }
+
+            console.log("newMsg to add: ", newMsg);
+
             await addNotification(newMsg);
         });
 
