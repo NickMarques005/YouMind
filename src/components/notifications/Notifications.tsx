@@ -26,7 +26,7 @@ export interface RequestInitializeTreatmentData {
 function Notifications() {
     const { authData } = UseAuth();
     const { formData } = UseForm();
-    const { notifications, setNotifications, removeNotification, loadNotifications } = UseNotifications();
+    const { notifications, setNotifications, removeNotification } = UseNotifications();
     const [filteredNotifications, setFilteredNotifications] = useState(notifications);
     const [notificationModal, setNotificationModal] = useState(false);
     const [selectedNotification, setSelectedNotification] = useState<any | null>(null);
@@ -45,10 +45,6 @@ function Notifications() {
     const updateNotificationHeights = useCallback(() => {
         setNotificationHeights(notifications.map(() => ({ height: new Animated.Value(100), opacity: new Animated.Value(1) })));
     }, [notifications]);
-
-    useEffect(() => {
-        loadNotifications();
-    }, []);
 
     useEffect(() => {
         updateNotificationHeights();

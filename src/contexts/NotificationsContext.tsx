@@ -120,6 +120,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         }
     }
 
+    useEffect(() => {
+        loadNotifications();
+    }, []);
+
     return (
         <NotificationContext.Provider value={{ notifications, addNotification, removeNotification, loadNotifications, setNotifications }}>
             {children}

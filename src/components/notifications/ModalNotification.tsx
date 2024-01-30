@@ -92,7 +92,7 @@ const ModalNotification: React.FC<ModalNotificationProps> = ({ visible, onClose,
                                     <View style={{ display: 'flex', gap: 5, }}>
                                         <Text style={styleNotificationModal.notificationModal_Body}>{notificationData.body}</Text>
                                         <View style={styleNotificationModal.notificationModal_DateView}>
-                                            <Text style={styleNotificationModal.notificationModal_Date}>{ConvertISODate(notificationData.date)}</Text>
+                                            <Text style={styleNotificationModal.notificationModal_Date}>{ConvertISODate(notificationData.updatedAt)}</Text>
                                         </View>
                                     </View>
                                     <View style={{ width: '100%', paddingVertical: 15, }}>
