@@ -1,10 +1,15 @@
 
+export interface SignOutData {
+    type: string;
+}
+
 interface ProfilePatientFunctionsProps {
-    signOut: () => Promise<void>;
+    signOut: (type: string) => Promise<void>;
+    
 }
 
 interface ProfileDoctorFunctionsProps {
-    signOut: () => Promise<void>;
+    signOut: (type: string) => Promise<void>;
 }
 
 export class ProfilePatientFunctions {
@@ -47,9 +52,9 @@ export class ProfilePatientFunctions {
         console.log("About");
     }
 
-    handleLogout = () => {
+    handleLogout = (data: SignOutData) => {
         console.log("Logout");
-        this.ProfilePatientData.signOut();
+        this.ProfilePatientData.signOut( data.type );
     }
 }
 
@@ -93,9 +98,9 @@ export class ProfileDoctorFunctions {
         console.log("About");
     }
 
-    handleLogout = () => {
+    handleLogout = ( data: SignOutData ) => {
         console.log("Logout");
-        this.ProfileDoctorData.signOut();
+        this.ProfileDoctorData.signOut(data.type);
     }
 }
 

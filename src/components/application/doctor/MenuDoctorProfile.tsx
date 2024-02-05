@@ -3,7 +3,6 @@ import { View, Dimensions, Text, ScrollView, Image, StyleSheet, TouchableOpacity
 import { LinearGradient } from 'expo-linear-gradient';
 import { ProfileDoctorFunctions } from '../options/ProfileOptionFuntions';
 
-//retorna as dimensões do dispositivo 
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { UseForm } from '../../../contexts/FormContext';
@@ -11,12 +10,13 @@ import { UseForm } from '../../../contexts/FormContext';
 interface ProfileDoctorProps {
     name: string;
     icon: any;
-    profile_function: () => void;
+    profile_function: (data: any) => void;
+    profile_params: object | undefined;
 }
 
-const ProfileOption = ({ name, icon, profile_function }: ProfileDoctorProps) => (
+const ProfileOption = ({ name, icon, profile_function, profile_params }: ProfileDoctorProps) => (
     <View style={styleprofile.profileOptions_View}>
-        <TouchableOpacity style={styleprofile.profileOption_Button} onPress={() => profile_function()}>
+        <TouchableOpacity style={styleprofile.profileOption_Button} onPress={() => profile_function(profile_params)}>
             <View style={styleprofile.profileOption_View}>
                 <Image
                     source={icon}
@@ -41,15 +41,15 @@ const Patient_Profile = () => {
     const profileFunctions = new ProfileDoctorFunctions({ signOut });
 
     const profileOptions = [
-        { name: 'Notificações', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_notifications.png'), function: profileFunctions.handleNotifications },
-        { name: 'Senha e Segurança', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_safety.png'), function: profileFunctions.handleSecurity },
-        { name: 'Acessibilidade', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_accessibility.png'), function: profileFunctions.handleAccebility },
-        { name: 'Permissões do App', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_permissions.png'), function: profileFunctions.handlePermissions },
-        { name: 'Política de Privacidade', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_privacy.png'), function: profileFunctions.handlePolicyPrivacy },
-        { name: 'Contrato do Usuário', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_contract.png'), function: profileFunctions.handleContractUser },
-        { name: 'Suporte', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_support.png'), function: profileFunctions.handleSupport },
-        { name: 'Sobre', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_about.png'), function: profileFunctions.handleAbout },
-        { name: 'Sair', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_logout.png'), function: profileFunctions.handleLogout },
+        { name: 'Notificações', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_notifications.png'), function: profileFunctions.handleNotifications, params: undefined },
+        { name: 'Senha e Segurança', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_safety.png'), function: profileFunctions.handleSecurity, params: undefined },
+        { name: 'Acessibilidade', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_accessibility.png'), function: profileFunctions.handleAccebility, params: undefined },
+        { name: 'Permissões do App', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_permissions.png'), function: profileFunctions.handlePermissions, params: undefined },
+        { name: 'Política de Privacidade', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_privacy.png'), function: profileFunctions.handlePolicyPrivacy, params: undefined },
+        { name: 'Contrato do Usuário', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_contract.png'), function: profileFunctions.handleContractUser, params: undefined },
+        { name: 'Suporte', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_support.png'), function: profileFunctions.handleSupport, params: undefined },
+        { name: 'Sobre', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_about.png'), function: profileFunctions.handleAbout, params: undefined },
+        { name: 'Sair', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_logout.png'), function: profileFunctions.handleLogout, params: {type: authData.type} },
     ];
 
     return (
@@ -82,7 +82,7 @@ const Patient_Profile = () => {
                 <View style={styleprofile.menuProfile_View}>
 
                     {profileOptions.map((option, index) => (
-                        <ProfileOption key={index} name={option.name} icon={option.icon} profile_function={option.function} />
+                        <ProfileOption key={index} name={option.name} icon={option.icon} profile_function={option.function} profile_params={option.params} />
                     ))}
 
                 </View>

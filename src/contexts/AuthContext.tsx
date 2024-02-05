@@ -1,8 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiRequest } from '../services/APIService';
-
-
+import { FetchData } from '../services/fetchUtils/APIUtils';
+import USE_ENV from '../services/server_url/ServerUrl';
 export interface AuthData {
     token: string;
     type: "patient" | "doctor" | undefined;
@@ -12,7 +11,7 @@ export interface AuthContextData {
     authData: AuthData;
     userType: 'patient' | 'doctor' | '';
     signIn: (token: string) => void;
-    signOut: () => Promise<void>;
+    signOut: (type: string) => Promise<void>;
     handleUserType: (type: 'patient' | 'doctor' | undefined) => void;
     loading: boolean;
     isLogin: boolean;
@@ -92,12 +91,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         AsyncStorage.setItem("@AuthData", JSON.stringify(token));
     }
 
-    const signOut = async (): Promise<void> => {
-        setAuth({
-            token: '',
-            type: undefined,
-        });
-        AsyncStorage.removeItem("@AuthData");
+    const signOut = async (type: string): Promise<void> => {
+        const { fullApiServerUrl } = USE_ENV();
+        const requestData = {
+            method: 'POST',
+            url: 'logoutUser',
+            data: {
+                type: type
+            }
+        }
+
+        const logoutResponse = await FetchData(requestData, authData.token, fullApiServerUrl);
+
+        if (logoutResponse.success) {
+            AsyncStorage.removeItem("@AuthData");
+            setAuth({
+                token: '',
+                type: undefined,
+            });
+
+            console.log(`Usuário deslogado com sucesso!`);
+        }
+        else{
+            console.error('Houve um erro ao deslogar usuário: ', logoutResponse.errors);
+        }
         return;
     }
 
