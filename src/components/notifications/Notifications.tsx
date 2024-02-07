@@ -35,88 +35,127 @@ function Notifications() {
     const { handleMenuOptionPress } = UseMenu();
     const { setCurrentChat, handleRedirectChat } = UseChat();
 
-    const [notificationHeights, setNotificationHeights] = useState(
-        notifications ? notifications.map(() => ({
-            height: new Animated.Value(100),
-            opacity: new Animated.Value(1)
-        })) : []
+    const [notificationHeights, setNotificationHeights] = useState<{ [key: string]: { height: Animated.Value, opacity: Animated.Value } }>(
+        notifications.reduce((accumulator, notification) => ({
+            ...accumulator,
+            [notification._id]: {
+                height: new Animated.Value(100),
+                opacity: new Animated.Value(1),
+            }
+        }), {})
     );
 
     const updateNotificationHeights = useCallback(() => {
-        setNotificationHeights(notifications.map(() => ({ height: new Animated.Value(100), opacity: new Animated.Value(1) })));
+        setNotificationHeights(
+            notifications.reduce((accumulator, notification) => ({
+                ...accumulator,
+                [notification._id]: {
+                    height: new Animated.Value(100),
+                    opacity: new Animated.Value(1)
+                }
+            }), {})
+        );
     }, [notifications]);
 
     useEffect(() => {
+        console.log("UPDATE NOTIFICATION HEIGHTS!!");
         updateNotificationHeights();
     }, [notifications, updateNotificationHeights]);
 
-    const removeNotificationItemAnimation = async (index: number) => {
-        const response = await removeNotification(index);
+    const removeNotificationItemAnimation = async (_id: string) => {
+
+        const index = notifications.findIndex(notification => notification._id === _id);
+        if (index === -1) return;
+
+        console.log("ID TO REMOVE: ", _id);
+
+        const response = await removeNotification(_id);
+
+        console.log("FULL NOTIFICATION HEIGHTS: ", notificationHeights);
 
         if (response) {
             console.log(notificationHeights);
+            console.log("RESPOSTA DA REMOÇÃO DA NOTIFICAÇÃO: ", response);
             Animated.sequence([
-                Animated.timing(notificationHeights[index].opacity, {
+                Animated.timing(notificationHeights[_id].opacity, {
                     toValue: 0,
-                    duration: 250,
+                    duration: 200,
                     useNativeDriver: false,
                     easing: Easing.bezier(0.4, 0.6, 0.1, 0.9),
                 }),
-                Animated.timing(notificationHeights[index].height, {
+                Animated.timing(notificationHeights[_id].height, {
                     toValue: 0,
-                    duration: 500,
+                    duration: 450,
                     useNativeDriver: false,
                     easing: Easing.bezier(0.4, 0.6, 0.1, 0.9),
                 })
             ]).start(() => {
+                console.log("SET UPDATED NOTIFICATIONS....");
                 setNotifications(response);
             });
         }
         else {
             console.log("Houve algum erro na remoção da notificação");
         }
-
-
     };
 
     // TYPE NOTIFICATIONS
     const [requestData, setRequestData] = useState<RequestInitializeTreatmentData | undefined>(undefined);
 
     const typeNotificationFunction = (notification: NotificationData, type_function: string) => {
-        if (notification.data?.notify_function === "solicitation") {
+        const notificationData = notification.data ? notification.data : undefined;
 
-            switch (type_function) {
-                case 'decline':
-                    console.log("decline function...");
-                    //removeNotification();
-                    handleCloseSpecificNotification();
-                    break;
-                case 'accept':
-                    const url_treatment = 'initializeTreatment';
-                    if (notification.data?.sender_params.email) {
-                        const requestData: RequestInitializeTreatmentData = {
-                            url: url_treatment,
-                            method: 'POST',
-                            data: {
-                                email_1: formData.email,
-                                email_2: notification.data?.sender_params.email
-                            },
-                        }
-
-                        console.log(requestData);
-                        if (requestData) {
-                            //removeNotification();
-                            handleCloseSpecificNotification();
-                            setRequestData(requestData);
-                            setNotificationLoading(true);
-                        }
-                    }
-
-                    break;
-                default:
-                    break;
-            }
+        if(notificationData == undefined)
+        {
+            return;
         }
+
+        switch (notificationData.notify_function) {
+            case "solicitation":
+                switch (type_function) {
+                    case 'decline':
+                        console.log("decline function...");
+                        removeNotification(notification._id);
+                        handleCloseSpecificNotification();
+                        break;
+                    case 'accept':
+                        const url_treatment = 'initializeTreatment';
+                        console.log("NOTIFICATION DATA FOR DEBUGGING: ", notification);
+                        if (notificationData.sender_params.email) {
+
+
+                            const requestData: RequestInitializeTreatmentData = {
+                                url: url_treatment,
+                                method: 'POST',
+                                data: {
+                                    email_1: formData.email,
+                                    email_2: notificationData.sender_params.email
+                                },
+                            }
+
+                            console.log(requestData);
+                            if (requestData) {
+                                removeNotification(notification._id);
+                                handleCloseSpecificNotification();
+                                setRequestData(requestData);
+                                setNotificationLoading(true);
+                            }
+                        }
+
+                        break;
+                    default:
+                        console.log("Houve algum erro na seleção de type_function da notificação");
+                        break;
+                }
+                break;
+            case "message_alert":
+                console.log("Type Function Message Alert");
+                break;
+            default:
+                console.log("Houve algum erro na seleção de notify_function da notificação");
+                break;
+        }
+        
     }
 
     const [typeNotifications, setTypeNotifications] = useState([
@@ -153,9 +192,6 @@ function Notifications() {
                                 handleMenuOptionPress('treatmentScreen');
                             }
                         }
-
-
-
                         break;
                     default:
                         console.log("Default -> No Screen Change");
@@ -271,7 +307,7 @@ function Notifications() {
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({ item, index }) => (
                                 <Animated.View style={[notificationsStyle.notificationMessage_view, {
-                                    height: notificationHeights[index] ? notificationHeights[index].height : 100, opacity: notificationHeights[index] ? notificationHeights[index].opacity : 1
+                                    height: notificationHeights[item._id] ? notificationHeights[item._id].height : 100, opacity: notificationHeights[item._id] ? notificationHeights[item._id].opacity : 1
                                 }]}>
                                     <TouchableOpacity onPress={() => handleNotificationPress(item)} style={{}}>
                                         <View style={notificationsStyle.notificationMessageContainer_view}>
@@ -299,7 +335,7 @@ function Notifications() {
                                             <View style={notificationsStyle.notificationRemoveIcon_view}>
                                                 <TouchableOpacity style={notificationsStyle.notificationRemoveIcon_button} onPress={() => {
                                                     if (index >= 0 && index < notifications.length) {
-                                                        removeNotificationItemAnimation(index);
+                                                        removeNotificationItemAnimation(item._id);
                                                     }
                                                 }}>
                                                     <Image

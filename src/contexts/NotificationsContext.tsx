@@ -33,7 +33,7 @@ export interface NotificationContentData {
 interface NotificationContextType {
     notifications: NotificationData[];
     addNotification: (notification: NotificationData) => void;
-    removeNotification: (index: number) => Promise<NotificationData[] | undefined>;
+    removeNotification: (_id: string) => Promise<NotificationData[] | undefined>;
     loadNotifications: () => void;
     setNotifications: (value: React.SetStateAction<NotificationData[]>) => void
 }
@@ -102,12 +102,22 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
     }
 
-    const removeNotification = async (index: number) => {
-        const notificationToDelete = notifications[index];
+    const removeNotification = async (_id: string) => {
+        const notificationToDelete = notifications.find(notification => notification._id === _id);
+
+        if(!notificationToDelete)
+        {
+            console.error("Notificação não encontrada");
+            return;
+        }
+
+        console.log("NOTIFICATION TO DELETE: ", notificationToDelete);
+
         const response = await deleteNotificationInDB(authData.token, notificationToDelete);
         if (response.success) {
             try {
-                setNotifications(currentNotifications => currentNotifications.filter(notification => notification._id !== notificationToDelete._id));
+                const updatedNotifications = notifications.filter(notification => notification._id !== _id);
+                return updatedNotifications;
             }
             catch (err) {
                 console.error("Erro ao remover notificação: ", err);

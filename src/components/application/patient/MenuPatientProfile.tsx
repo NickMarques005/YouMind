@@ -8,9 +8,16 @@ import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { UseForm } from '../../../contexts/FormContext';
 
-const ProfileOption = ({ name, icon, profile_function }) => (
+interface ProfilePatientProps {
+  name: string;
+  icon: any;
+  profile_function: (data: any) => void;
+  profile_params: object | undefined;
+}
+
+const ProfileOption = ({ name, icon, profile_function, profile_params }: ProfilePatientProps) => (
   <View style={styleprofile.profileOptions_View}>
-    <TouchableOpacity style={styleprofile.profileOption_Button} onPress={() => profile_function()}>
+    <TouchableOpacity style={styleprofile.profileOption_Button} onPress={() => profile_function(profile_params)}>
       <View style={styleprofile.profileOption_View}>
         <Image
           source={icon}
@@ -29,21 +36,21 @@ const ProfileOption = ({ name, icon, profile_function }) => (
 
 const Patient_Profile = () => {
 
-  const { signOut } = UseAuth();
+  const { signOut, authData } = UseAuth();
   const { formData } = UseForm();
 
   const profileFunctions = new ProfilePatientFunctions({signOut});
 
   const profileOptions = [
-    { name: 'Notificações', icon: require('../../../assets/app_patient/profile/profileIcon_notifications.png'), function: profileFunctions.handleNotifications },
-    { name: 'Senha e Segurança', icon: require('../../../assets/app_patient/profile/profileIcon_safety.png'), function: profileFunctions.handleSecurity },
-    { name: 'Acessibilidade', icon: require('../../../assets/app_patient/profile/profileIcon_accessibility.png'), function: profileFunctions.handleAccebility },
-    { name: 'Permissões do App', icon: require('../../../assets/app_patient/profile/profileIcon_permissions.png'), function: profileFunctions.handlePermissions },
-    { name: 'Política de Privacidade', icon: require('../../../assets/app_patient/profile/profileIcon_privacy.png'), function: profileFunctions.handlePolicyPrivacy },
-    { name: 'Contrato do Usuário', icon: require('../../../assets/app_patient/profile/profileIcon_contract.png'), function: profileFunctions.handleContractUser },
-    { name: 'Suporte', icon: require('../../../assets/app_patient/profile/profileIcon_support.png'), function: profileFunctions.handleSupport },
-    { name: 'Sobre', icon: require('../../../assets/app_patient/profile/profileIcon_about.png'), function: profileFunctions.handleAbout },
-    { name: 'Sair', icon: require('../../../assets/app_patient/profile/profileIcon_logout.png'), function: profileFunctions.handleLogout },
+    { name: 'Notificações', icon: require('../../../assets/app_patient/profile/profileIcon_notifications.png'), function: profileFunctions.handleNotifications, params: undefined},
+    { name: 'Senha e Segurança', icon: require('../../../assets/app_patient/profile/profileIcon_safety.png'), function: profileFunctions.handleSecurity, params: undefined},
+    { name: 'Acessibilidade', icon: require('../../../assets/app_patient/profile/profileIcon_accessibility.png'), function: profileFunctions.handleAccebility, params: undefined},
+    { name: 'Permissões do App', icon: require('../../../assets/app_patient/profile/profileIcon_permissions.png'), function: profileFunctions.handlePermissions, params: undefined},
+    { name: 'Política de Privacidade', icon: require('../../../assets/app_patient/profile/profileIcon_privacy.png'), function: profileFunctions.handlePolicyPrivacy, params: undefined},
+    { name: 'Contrato do Usuário', icon: require('../../../assets/app_patient/profile/profileIcon_contract.png'), function: profileFunctions.handleContractUser, params: undefined},
+    { name: 'Suporte', icon: require('../../../assets/app_patient/profile/profileIcon_support.png'), function: profileFunctions.handleSupport, params: undefined},
+    { name: 'Sobre', icon: require('../../../assets/app_patient/profile/profileIcon_about.png'), function: profileFunctions.handleAbout, params: undefined},
+    { name: 'Sair', icon: require('../../../assets/app_patient/profile/profileIcon_logout.png'), function: profileFunctions.handleLogout, params: {type: authData.type }},
   ];
 
   return (
@@ -76,7 +83,7 @@ const Patient_Profile = () => {
         <View style={styleprofile.menuProfile_View}>
 
           {profileOptions.map((option, index) => (
-            <ProfileOption key={index} name={option.name} icon={option.icon} profile_function={option.function} />
+            <ProfileOption key={index} name={option.name} icon={option.icon} profile_function={option.function}  profile_params={option.params}/>
           ))}
 
         </View>
