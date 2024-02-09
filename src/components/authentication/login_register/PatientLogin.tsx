@@ -5,7 +5,7 @@ import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ForgotPassword from '../forgot_pass/ForgotPassword';
+import ForgotPassword from '../forgot_pass/ForgotPasswordModal';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AuthStackTypes } from '../../../routes/MainRouter';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';

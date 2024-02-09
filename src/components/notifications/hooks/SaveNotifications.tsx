@@ -1,6 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import React, { useEffect } from 'react';
-import { NotificationData, UseNotifications } from '../../contexts/NotificationsContext';
+import { NotificationData, UseNotifications } from '../../../contexts/NotificationsContext';
 
 
 

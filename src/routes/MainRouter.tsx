@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { WelcomeStack } from './WelcomeStack';
+import { NotificationProvider } from '../contexts/NotificationsContext';
 import AuthStack from './AuthStack';
 import { UseWelcome } from '../contexts/WelcomeContext';
 import { UseAuth } from '../contexts/AuthContext';
@@ -65,17 +66,19 @@ export default function MainRouter() {
                         <LoadingMainScreen />
                         :
                         authData.token ?
-                            <MenuProvider>
-                                <TreatmentProvider>
-                                    <FormProvider>
-                                        <ChatProvider>
-                                            {
-                                                <MainApp />
-                                            }
-                                        </ChatProvider>
-                                    </FormProvider>
-                                </TreatmentProvider>
-                            </MenuProvider>
+                            <NotificationProvider>
+                                <MenuProvider>
+                                    <TreatmentProvider>
+                                        <FormProvider>
+                                            <ChatProvider>
+                                                {
+                                                    <MainApp />
+                                                }
+                                            </ChatProvider>
+                                        </FormProvider>
+                                    </TreatmentProvider>
+                                </MenuProvider>
+                            </NotificationProvider>
                             : <AuthStack />
             }
             <LeaveModal

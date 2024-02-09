@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AppStackTypes } from '../../../routes/MainRouter';
 import { useNavigation } from '@react-navigation/native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import CountNotifications from '../../notifications/CountNotifications';
+import CountNotifications from '../../notifications/components/CountNotifications';
 
 //retorna as dimensões do dispositivo 
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';

@@ -2,17 +2,17 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { NotificationData, UseNotifications } from '../../contexts/NotificationsContext';
-import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
-import { AppStackTypes, TreatmentStackTypes } from '../../routes/MainRouter';
-import { UseAuth } from '../../contexts/AuthContext';
-import { ConvertISODate } from '../../functions/dates/ConvertDate';
+import { NotificationData, UseNotifications } from '../../../contexts/NotificationsContext';
+import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { AppStackTypes, TreatmentStackTypes } from '../../../routes/MainRouter';
+import { UseAuth } from '../../../contexts/AuthContext';
+import { ConvertISODate } from '../../../functions/dates/ConvertDate';
 import ModalNotification from './ModalNotification';
-import { UseForm } from '../../contexts/FormContext';
+import { UseForm } from '../../../contexts/FormContext';
 import HandleNotification from './HandleNotification';
-import { UseMenu } from '../../contexts/MenuContext';
-import { CurrentChat, UseChat } from '../../contexts/ChatContext';
-import { Treatment } from '../../contexts/TreatmentContext';
+import { UseMenu } from '../../../contexts/MenuContext';
+import { CurrentChat, UseChat } from '../../../contexts/ChatContext';
+import { Treatment } from '../../../contexts/TreatmentContext';
 
 export interface RequestInitializeTreatmentData {
     url: string;
@@ -239,7 +239,7 @@ function Notifications() {
         setNotificationLoading(false);
     }
 
-    const back_icon = authData.type == 'patient' ? require('../../assets/init/back/default_back_patient_type.png') : require('../../assets/init/back/default_back_doctor_type.png');
+    const back_icon = authData.type == 'patient' ? require('../../../assets/init/back/default_back_patient_type.png') : require('../../../assets/init/back/default_back_doctor_type.png');
 
 
     useEffect(() => {
@@ -269,7 +269,7 @@ function Notifications() {
                     <TouchableOpacity style={notificationsStyle.notificationsClose_button} onPress={() => handleCloseNotifications()}>
                         <Image
                             style={notificationsStyle.notificationsClose_img}
-                            source={require('../../assets/init/back/default_back_type1.png')}
+                            source={require('../../../assets/init/back/default_back_type1.png')}
                         />
                     </TouchableOpacity>
                     <View style={notificationsStyle.notificationsTitle_view}>
@@ -314,7 +314,7 @@ function Notifications() {
                                             <View style={notificationsStyle.notificationMessageIcon_view}>
                                                 <Image
                                                     style={notificationsStyle.notificationMessageIcon_image}
-                                                    source={require('../../assets/init/notifications/youMind_notification.png')}
+                                                    source={require('../../../assets/init/notifications/youMind_notification.png')}
                                                 />
                                             </View>
                                             <View style={notificationsStyle.notificationMessageContent_view}>
@@ -356,7 +356,7 @@ function Notifications() {
                                 <View style={notificationsStyle.noNotificationsIcon_view}>
                                     <Image
                                         style={notificationsStyle.noNotificationsIcon_img}
-                                        source={require('../../assets/init/notifications/youMind_noNotifications.png')}
+                                        source={require('../../../assets/init/notifications/youMind_noNotifications.png')}
                                     />
                                 </View>
                                 <View style={notificationsStyle.noNotificationsInfo_view}>

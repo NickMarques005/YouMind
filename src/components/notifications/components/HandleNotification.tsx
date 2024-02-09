@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import WithLoader from '../hoc/withLoader';
+import WithLoader from '../../hoc/withLoader';
 import { RequestInitializeTreatmentData } from './Notifications';
-import HandleResponse from '../errors/HandleResponse';
-import { FetchData } from '../../services/fetchUtils/APIUtils';
-import { UseAuth } from '../../contexts/AuthContext';
-import LoadingAuthScreen from '../loading/LoadingAuthScreen';
-import USE_ENV from '../../services/server_url/ServerUrl';
+import HandleResponse from '../../errors/HandleResponse';
+import { FetchData } from '../../../services/fetchUtils/APIUtils';
+import { UseAuth } from '../../../contexts/AuthContext';
+import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
+import USE_ENV from '../../../services/server_url/ServerUrl';
 
 export interface HandleNotificationResponse {
     handleLoading: () => void;

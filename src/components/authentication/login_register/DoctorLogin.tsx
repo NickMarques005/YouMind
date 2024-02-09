@@ -6,7 +6,7 @@ import { UseAuth } from '../../../contexts/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import ForgotPassword from '../forgot_pass/ForgotPassword';
+import ForgotPassword from '../forgot_pass/ForgotPasswordModal';
 import { AuthStackTypes } from '../../../routes/MainRouter';
 import { ApiRequest } from '../../../services/APIService';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';

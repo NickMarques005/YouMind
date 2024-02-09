@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, 
 import { screenWidth, screenHeight } from '../screen_size/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
-import { HandleNotificationResponse } from '../notifications/HandleNotification';
+import { HandleNotificationResponse } from '../notifications/components/HandleNotification';
 
 
 interface HandleResponseProps {

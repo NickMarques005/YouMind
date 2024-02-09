@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react';
 import { Modal, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { ConvertISODate } from '../../functions/dates/ConvertDate';
-import { NotificationData } from '../../contexts/NotificationsContext';
+import { ConvertISODate } from '../../../functions/dates/ConvertDate';
+import { NotificationData } from '../../../contexts/NotificationsContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import { UpdateTreatment } from '../../services/UpdateTreatment';
-import { UseAuth } from '../../contexts/AuthContext';
-import { UseTreatment } from '../../contexts/TreatmentContext';
-import { FetchData } from '../../services/fetchUtils/APIUtils';
-import USE_ENV from '../../services/server_url/ServerUrl';
+import { UpdateTreatment } from '../../../services/UpdateTreatment';
+import { UseAuth } from '../../../contexts/AuthContext';
+import { UseTreatment } from '../../../contexts/TreatmentContext';
+import { FetchData } from '../../../services/fetchUtils/APIUtils';
+import USE_ENV from '../../../services/server_url/ServerUrl';
 
 interface ModalNotificationProps {
     visible: boolean;
@@ -79,7 +79,7 @@ const ModalNotification: React.FC<ModalNotificationProps> = ({ visible, onClose,
                             <TouchableOpacity style={styleNotificationModal.closeButton} onPress={onClose}>
                                 <Image
                                     style={styleNotificationModal.closeButtonImage}
-                                    source={require('../../assets/init/back/default_back_type1.png')}
+                                    source={require('../../../assets/init/back/default_back_type1.png')}
                                 />
                             </TouchableOpacity>
                         </View>

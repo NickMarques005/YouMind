@@ -67,6 +67,7 @@ export const usePushNotifications = (): PushNotificationState => {
 
     useEffect(() => {
         registerForPushNotificationsAsync().then((token) => {
+            console.log("Registro de token para PushNotifications...");
             setPushToken(token);
         });
 
@@ -77,7 +78,9 @@ export const usePushNotifications = (): PushNotificationState => {
         });
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+            console.log("ABERTO COM PUSH NOTIFICATION");
             console.log(response);
+
         })
 
         return () => {
@@ -95,4 +98,8 @@ export const usePushNotifications = (): PushNotificationState => {
         pushToken,
         notification
     }
+};
+
+export const OnPushNotificationOpenedApp = () => {
+
 }

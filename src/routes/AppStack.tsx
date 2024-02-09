@@ -10,12 +10,9 @@ import { MedicineProvider } from '../contexts/MedicineContext';
 import { QuestionaireProvider } from '../contexts/QuestionaireContext';
 import { UseForm } from '../contexts/FormContext';
 import ErrorApp from '../components/errors/ErrorApp';
-import { NotificationProvider } from '../contexts/NotificationsContext';
 import { NotepadProvider } from '../contexts/NotepadContext';
 import { AnalysisProvider } from '../contexts/AnalysisContext';
 import { HealthPageProvider } from '../contexts/HealthPageContext';
-import UseSocketService from '../services/socket/SocketService';
-
 
 interface UserData {
     id: string;
@@ -72,28 +69,25 @@ function AppStack({ data, errors, message, reloadData }: { data?: UserData, erro
             {
                 !errors && !message ?
                     authData.type === 'patient' ?
-
-                        <BluetoothProvider>
-                            <HealthPageProvider>
-                                <CurrentDateProvider>
-                                    <MedicineProvider>
-                                        <QuestionaireProvider>
-                                            <NotificationProvider>
+                            <BluetoothProvider>
+                                <HealthPageProvider>
+                                    <CurrentDateProvider>
+                                        <MedicineProvider>
+                                            <QuestionaireProvider>
                                                 <PatientApp />
-                                            </NotificationProvider>
-                                        </QuestionaireProvider>
-                                    </MedicineProvider>
-                                </CurrentDateProvider>
-                            </HealthPageProvider>
-                        </BluetoothProvider>
+                                            </QuestionaireProvider>
+                                        </MedicineProvider>
+                                    </CurrentDateProvider>
+                                </HealthPageProvider>
+                            </BluetoothProvider>
                         : authData.type === 'doctor' ?
-                            <NotificationProvider>
+                            
                                 <NotepadProvider>
                                     <AnalysisProvider>
                                         <DoctorApp />
                                     </AnalysisProvider>
                                 </NotepadProvider>
-                            </NotificationProvider>
+                            
                             :
                             ""
                     :

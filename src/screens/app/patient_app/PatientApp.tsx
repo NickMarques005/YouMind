@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import MenuPatient from '../../../components/application/patient/MenuPatient';
 import { Stack } from '../../../components/stack/Stack';
-import Notifications from '../../../components/notifications/Notifications';
-import { usePushNotifications } from '../../../components/notifications/ConfigureNotification';
+import Notifications from '../../../components/notifications/components/Notifications';
+import { usePushNotifications } from '../../../components/notifications/hooks/ConfigureNotification';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { ApiRequest } from '../../../services/APIService';
-import { saveNotifications } from '../../../components/notifications/SaveNotifications';
+import { saveNotifications } from '../../../components/notifications/hooks/SaveNotifications';
 import { UpdateTreatment } from '../../../services/UpdateTreatment';
 import USE_ENV from '../../../services/server_url/ServerUrl';
 import UseRegisterPushToken from '../../../services/PushNotificationService';
@@ -13,8 +13,6 @@ import UseSocketService from '../../../services/socket/SocketService';
 import { UseForm } from '../../../contexts/FormContext';
 import { UseTreatment } from '../../../contexts/TreatmentContext';
 import { FetchData } from '../../../services/fetchUtils/APIUtils';
-import LoadingAuthScreen from '../../../components/loading/LoadingAuthScreen';
-import LoadingMainScreen from '../../../components/loading/LoadingMainScreen';
 
 
 function PatientApp() {

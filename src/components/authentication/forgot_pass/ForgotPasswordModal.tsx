@@ -13,14 +13,11 @@ interface ForgotPasswordProps {
     onClose: () => void;
 }
 
-const ForgotPassword = ({ isVisible, onClose }) => {
+const ForgotPassword = ({ isVisible, onClose }: ForgotPasswordProps) => {
     const { userType } = UseAuth();
 
-    //Navegation do app
-    const navigation = useNavigation();
-
-    //Função para enviar o email para resetar password
-    const EnviarEmail = () => {
+    
+    const handleSendEmail = () => {
         //Executará o comando de envio de reset password para o e-mail correspondente
     }
 
@@ -57,7 +54,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
                         <LinearGradient colors={[`${userType === 'doctor' ? '#57afb5' : userType === 'patient' ? '#823d94' : ""}`, `${userType === 'doctor' ? '#326660' : userType === 'patient' ? '#4d2448' : ""}`]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0.2 }} style={styleforgot.buttonGradientEnviar}>
-                            <TouchableOpacity style={styleforgot.buttonEnviar} onPress={EnviarEmail}>
+                            <TouchableOpacity style={styleforgot.buttonEnviar} onPress={handleSendEmail}>
                                 <Text style={styleforgot.textEnviar}>ENVIAR</Text>
                             </TouchableOpacity>
                         </LinearGradient>
