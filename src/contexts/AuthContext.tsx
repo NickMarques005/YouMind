@@ -18,6 +18,7 @@ export interface AuthContextData {
     handleLogin: () => void;
     loadToken: () => void;
     updateAuthData: (data: any) => void;
+    saveTokenInAsyncStorage: (token: string) => void;
 }
 
 type AuthProviderProps = {
@@ -31,13 +32,14 @@ export const AuthContext = createContext<AuthContextData>({
     },
     userType: '',
     signIn: async () => { },
+    saveTokenInAsyncStorage: async () => { },
     signOut: async () => { },
     handleUserType: () => { },
     loading: true,
     isLogin: true,
     handleLogin: () => { },
     loadToken: () => { },
-    updateAuthData: () => { }
+    updateAuthData: () => { },
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -88,7 +90,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log(authData);
 
         setAuth(authData);
-        AsyncStorage.setItem("@AuthData", JSON.stringify(token));
+    }
+
+    const saveTokenInAsyncStorage = async (token: string) => {
+        const saveToken = await AsyncStorage.setItem("@AuthData", JSON.stringify(token));
+        try {
+            console.log("Token salvo em async storage!");
+        }
+        catch (err)
+        {
+            console.error("Houve um erro ao salvar token: ", err);
+        }
     }
 
     const signOut = async (type: string): Promise<void> => {
@@ -136,7 +148,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={({ authData, updateAuthData, userType, handleUserType, signIn, signOut, loading, isLogin, handleLogin, loadToken })}>
+        <AuthContext.Provider value={({ authData, updateAuthData, userType, handleUserType, signIn, signOut, saveTokenInAsyncStorage, loading, isLogin, handleLogin, loadToken })}>
             {children}
         </AuthContext.Provider>
     )

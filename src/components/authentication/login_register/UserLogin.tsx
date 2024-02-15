@@ -16,7 +16,7 @@ import { AuthStackTypes } from '../../../routes/MainRouter';
 function UserLogin({ }) {
 
     const navigation = useNavigation<AuthStackTypes>();
-    const { signIn, handleLogin, userType } = UseAuth();
+    const { signIn, handleLogin, userType, saveTokenInAsyncStorage } = UseAuth();
 
     const { loading, LoginUser } = UseAuthentication();
     const [modalForgotPassVisible, setModalForgotPassVisible] = useState(false);
@@ -26,6 +26,7 @@ function UserLogin({ }) {
     });
 
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
 
     const loginStyles = UserLoginStyles(userType);
 
@@ -68,6 +69,9 @@ function UserLogin({ }) {
                 if (response?.token) {
                     const authToken = response?.token;
                     signIn(authToken);
+                    if (rememberMe) {
+                        saveTokenInAsyncStorage(authToken);
+                    }
                 }
                 else {
                     console.log(response?.errors);
@@ -82,6 +86,11 @@ function UserLogin({ }) {
             Alert.alert("Erro ao logar!", "Preencha todos os campos corretamente");
         }
 
+    }
+
+    const handleRememberMe = () => {
+        console.log("SAVE TOKEN!! * Remember me");
+        setRememberMe(!rememberMe);
     }
 
     const backgroundHeader = userType === 'doctor' ? require('../../../assets/init/auth/doctor/doctor_background_auth.jpg') : require('../../../assets/init/auth/patient/patient_background_auth.jpg');
@@ -147,14 +156,22 @@ function UserLogin({ }) {
                                         <MaterialCommunityIcons
                                             name={showPassword ? 'eye' : 'eye-off'}
                                             size={27}
-                                            color= {userType === 'doctor' ? "#58878c" : "#7c5a8f"}
+                                            color={userType === 'doctor' ? "#58878c" : "#7c5a8f"}
                                         />
                                     </TouchableOpacity>
                                 </View>
                                 <View style={loginStyles.userOptionsView}>
                                     <View style={loginStyles.userRememberMeView}>
-                                        <TouchableOpacity style={loginStyles.userRememberMeButton}>
-
+                                        <TouchableOpacity style={[loginStyles.userRememberMeButton, rememberMe ? loginStyles.RememberMeActive : null]} onPress={() => handleRememberMe()}>
+                                            {
+                                                rememberMe ?
+                                                    <MaterialCommunityIcons
+                                                        name="check"
+                                                        size={20}
+                                                        color={userType === 'doctor' ? "#58878c" : "#7c5a8f"}
+                                                    />
+                                                    : ""
+                                            }
                                         </TouchableOpacity>
                                         <Text style={loginStyles.userRememberMeText}>
                                             Lembre de mim
@@ -332,6 +349,10 @@ const UserLoginStyles = (userType: "doctor" | "patient" | "") => {
         userRememberMeText: {
             fontSize: 14,
             color: userType === 'doctor' ? 'rgba(59, 105, 110, 0.6)' : 'rgba(102, 59, 110, 0.6)'
+        },
+        RememberMeActive: {
+            justifyContent: 'center', 
+            alignItems: 'center', 
         },
         userForgotPassView: {
 
