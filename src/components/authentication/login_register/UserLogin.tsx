@@ -8,10 +8,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ForgotPassword from '../forgot_pass/ForgotPasswordModal';
 import { LinearGradient } from 'expo-linear-gradient';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
-import { UseAuth, AuthContextData } from '../../../contexts/AuthContext';
+import { UseAuth, AuthContextData, Tokens } from '../../../contexts/AuthContext';
 import { UseAuthentication } from '../../../services/AuthenticationService';
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { AuthStackTypes } from '../../../routes/MainRouter';
+
+
 
 function UserLogin({ }) {
 
@@ -55,7 +57,7 @@ function UserLogin({ }) {
     }
 
     const LoginService = async () => {
-        console.log("ENTER LOGIN PATIENT: ", loginData);
+        console.log("(UserLogin) ENTER LOGIN PATIENT: ", loginData);
         if (loginData.email && loginData.password) {
             const patientData = {
                 email: loginData.email,
@@ -66,19 +68,24 @@ function UserLogin({ }) {
             const response = await LoginUser(patientData, userType);
 
             try {
-                if (response?.token) {
-                    const authToken = response?.token;
-                    signIn(authToken);
-                    if (rememberMe) {
-                        saveTokenInAsyncStorage(authToken);
+                console.log(response);
+                if (response?.tokens) {
+                    const tokens = response.tokens as Tokens;
+                    if (tokens.accessToken && tokens.refreshToken) {
+                        signIn(tokens.accessToken, tokens.refreshToken);
+                        if (rememberMe) {
+                            saveTokenInAsyncStorage(tokens.refreshToken);
+                        }
+                        return;
                     }
+                    console.log("(UserLogin) Houve algum erro ao fazer SignIn...");
                 }
                 else {
                     console.log(response?.errors);
                 }
             }
             catch (err) {
-                console.log("Houve um erro no login!!!");
+                console.log("(UserLogin) Houve um erro no login!!!");
             }
         }
         else {
@@ -89,7 +96,7 @@ function UserLogin({ }) {
     }
 
     const handleRememberMe = () => {
-        console.log("SAVE TOKEN!! * Remember me");
+        console.log("(UserLogin) SAVE TOKEN!! * Remember me");
         setRememberMe(!rememberMe);
     }
 
@@ -351,8 +358,8 @@ const UserLoginStyles = (userType: "doctor" | "patient" | "") => {
             color: userType === 'doctor' ? 'rgba(59, 105, 110, 0.6)' : 'rgba(102, 59, 110, 0.6)'
         },
         RememberMeActive: {
-            justifyContent: 'center', 
-            alignItems: 'center', 
+            justifyContent: 'center',
+            alignItems: 'center',
         },
         userForgotPassView: {
 

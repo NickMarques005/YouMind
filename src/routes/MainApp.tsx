@@ -23,7 +23,7 @@ function MainApp() {
         const fetchDataWrapper = async () => {
             console.log(startDataRequest);
             console.log("SERVER URL: ", fullApiServerUrl);
-            const result = await FetchData(startDataRequest, authData.token, `${fullApiServerUrl}`);
+            const result = await FetchData(startDataRequest, authData.accessToken?.token, `${fullApiServerUrl}`);
             if (result.success) {
                 setData(result.data);
                 setMessage(result.message);
@@ -45,7 +45,7 @@ function MainApp() {
         setData(undefined);
         setMainLoading(true);
         const fetchDataAgain = async () => {
-            const result = await FetchData(startDataRequest, authData.token);
+            const result = await FetchData(startDataRequest, authData.accessToken?.token);
             if (result.success) {
                 setData(result.data);
                 setMessage(result.message);

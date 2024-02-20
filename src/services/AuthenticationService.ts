@@ -74,10 +74,10 @@ export const UseAuthentication = () => {
 
             if (login_response?.success) {
                 console.log("Usuário encontrado!");
-                const authToken = login_response.data as string;
-                console.log("TOKEN: ", authToken);
+                const tokens = login_response.data;
+                console.log("TOKENS: ", tokens);
                 return {
-                    token: authToken,
+                    tokens
                 };
             }
 

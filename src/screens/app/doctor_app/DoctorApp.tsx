@@ -28,8 +28,8 @@ function DoctorApp() {
     const fetchDataAndUpdateTreatment = async () => {
         console.log("\nFETCH TREATMENT DATA TEST!!\n");
         try {
-            if (!authData || !authData.token || !authData.type) {
-                console.error('Token ou tipo de autenticação ausentes.');
+            if (!authData || !authData.accessToken || !authData.type) {
+                console.error('Token ou tipo de autenticação ausentes. AccessToken: ', authData.accessToken);
                 return;
             }
 
@@ -41,7 +41,7 @@ function DoctorApp() {
                 }
             };
 
-            const result = await FetchData(apiRequestData, authData.token, fullApiServerUrl);
+            const result = await FetchData(apiRequestData, authData.accessToken?.token, fullApiServerUrl);
 
             if (result.success) {
                 console.log('Dados do tratamento requisitado:', result.data);

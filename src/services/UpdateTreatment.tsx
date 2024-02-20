@@ -11,7 +11,7 @@ export const UpdateTreatment = (authData: AuthData) => {
     useEffect(() => {
         const fetchDataAndUpdateTreatment = async () => {
             try {
-                if (!authData || !authData.token || !authData.type) {
+                if (!authData || !authData.accessToken || !authData.type) {
                     console.error('Token ou tipo de autenticação ausentes.');
                     return;
                 }
@@ -26,7 +26,7 @@ export const UpdateTreatment = (authData: AuthData) => {
 
                 console.log("API REQUEST TREATMENT UPDATE: ", apiRequestData);
 
-                const result = await FetchData(apiRequestData, authData.token, fullApiServerUrl);
+                const result = await FetchData(apiRequestData, authData.accessToken?.token, fullApiServerUrl);
 
                 if (result.success) {
                     console.log('Dados do tratamento:', result.data);

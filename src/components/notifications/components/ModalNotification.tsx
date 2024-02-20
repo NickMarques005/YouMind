@@ -25,7 +25,7 @@ const ModalNotification: React.FC<ModalNotificationProps> = ({ visible, onClose,
         const fetchDataAndUpdateTreatment = async () => {
             console.log("FETCH DATA");
             try {
-                if (!authData || !authData.token || !authData.type) {
+                if (!authData || !authData.accessToken || !authData.type) {
                     console.error('Token ou tipo de autenticação ausentes.');
                     return;
                 }
@@ -38,7 +38,7 @@ const ModalNotification: React.FC<ModalNotificationProps> = ({ visible, onClose,
                     }
                 };
 
-                const result = await FetchData(apiRequestData, authData.token, fullApiServerUrl);
+                const result = await FetchData(apiRequestData, authData.accessToken?.token, fullApiServerUrl);
 
                 if (result.success) {
                     console.log('Dados do tratamento:', result.data);

@@ -47,13 +47,20 @@ export default function MainRouter() {
     const { welcome, setWelcome } = UseWelcome();
     const { notRoot, setNotRoot } = UseRoot();
     const [showLeaveModal, setShowLeaveModal] = useState(false);
-    const { authData, loading } = UseAuth();
+    const { authData, loading, refreshAccessToken } = UseAuth();
 
     useEffect(() => {
         if (!notRoot) {
             setShowLeaveModal(true);
         }
     }, [notRoot]);
+
+    useEffect(() => {
+        if(authData?.refreshToken && !authData?.accessToken)
+        {
+            refreshAccessToken();
+        }
+    }, [authData]);
 
 
     return (
@@ -65,7 +72,7 @@ export default function MainRouter() {
                     loading ?
                         <LoadingMainScreen />
                         :
-                        authData.token ?
+                        authData.accessToken ?
                             <NotificationProvider>
                                 <MenuProvider>
                                     <TreatmentProvider>
