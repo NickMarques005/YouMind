@@ -17,7 +17,7 @@ export const UpdateTreatment = (authData: AuthData) => {
                 }
 
                 const apiRequestData = {
-                    url: 'getTreatment',
+                    route: 'getTreatment',
                     method: 'POST',
                     data: {
                         type: authData.type

@@ -54,12 +54,12 @@ export const UseNotifications = () => {
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
     const [notifications, setNotifications] = useState<NotificationData[]>([]);
-    const { authData } = UseAuth();
+    const { authData, handleAuthError } = UseAuth();
     const { fullApiServerUrl } = USE_ENV();
 
     const getNotificationsInDB = async (authToken: string) => {
         const requestData = {
-            url: 'getNotifications',
+            route: 'getNotifications',
             method: 'GET',
         }
 
@@ -70,7 +70,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
     const deleteNotificationInDB = async (authToken: string, notification: NotificationData) => {
         const requestData = {
-            url: 'deleteNotification',
+            route: 'deleteNotification',
             method: 'DELETE',
             data: {
                 notificationId: notification._id
@@ -83,12 +83,18 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     }
 
     const loadNotifications = async () => {
-        const response = await getNotificationsInDB(authData.token)
+        if(!authData.accessToken?.token)
+        {
+            console.error("Houve um erro. Não há access Token definido");
+            return;
+        }
+        const response = await getNotificationsInDB(authData.accessToken?.token)
         if (response.success) {
             setNotifications(response.data);
         }
         else {
             console.log("Houve algum erro ao buscar as notificações: ", response);
+            
         }
     }
 
@@ -113,7 +119,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
         console.log("NOTIFICATION TO DELETE: ", notificationToDelete);
 
-        const response = await deleteNotificationInDB(authData.token, notificationToDelete);
+        if(!authData.accessToken?.token)
+        {
+            console.error("Houve um erro. Não há access Token definido");
+            return;
+        }
+
+        const response = await deleteNotificationInDB(authData.accessToken?.token, notificationToDelete);
         if (response.success) {
             try {
                 const updatedNotifications = notifications.filter(notification => notification._id !== _id);

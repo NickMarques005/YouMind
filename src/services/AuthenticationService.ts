@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
-import { ApiRequest } from '../services/APIService';
+import { FetchData } from './fetchUtils/APIUtils';
 import USE_ENV from './server_url/ServerUrl';
+import { Token } from '../contexts/AuthContext';
+import { UseAuth } from '../contexts/AuthContext';
+
+
 
 export const UseAuthentication = () => {
     const { fullApiServerUrl } = USE_ENV();
+    const { signOut } = UseAuth();
     const [loading, setLoading] = useState(false);
 
     const HandleAuthentication = async (
-        url: string,
+        route: string,
         method: string,
         data: Record<string, any>,
         errorMessage: string
@@ -16,7 +21,13 @@ export const UseAuthentication = () => {
         try {
             setLoading(true);
 
-            const response = await ApiRequest(url, method, data);
+            const requestData = {
+                route,
+                method, 
+                data
+            }
+
+            const response = await FetchData(requestData, undefined, fullApiServerUrl);
 
             if (response.success) {
                 console.log(response.message);
@@ -57,10 +68,9 @@ export const UseAuthentication = () => {
     };
 
     const LoginUser = async (userData: Record<string, any>, userType: string) => {
-        const url_user = `${fullApiServerUrl}loginUser`;
-        console.log("URL! ", url_user);
+        const route_login = `loginUser`;
         const login_response = await HandleAuthentication(
-            url_user,
+            route_login,
             'POST',
             { ...userData, type: userType },
             "Erro ao entrar com seu usuário"
@@ -90,7 +100,7 @@ export const UseAuthentication = () => {
                     errors: login_response.errors
                 }
             }
-            
+
         }
         catch (err) {
             console.error('Erro ao entrar com o usuário: ', err);
@@ -99,10 +109,9 @@ export const UseAuthentication = () => {
     }
 
     const RegisterUser = async (userData: Record<string, any>, userType: string, turnToLogin: () => void) => {
-        const url_user = `${fullApiServerUrl}createUser`;
-        console.log(url_user);
+        const route_register = `createUser`;
         const register_response = await HandleAuthentication(
-            url_user,
+            route_register,
             'POST',
             { ...userData, type: userType },
             "Erro ao registrar usuário"
@@ -133,7 +142,7 @@ export const UseAuthentication = () => {
                 }
                 Alert.alert("Houve um erro ao cadastrar usuário!", errors);
             }
-            
+
         }
         catch (err) {
             console.error('Erro ao registrar usuário: ', err);
@@ -141,7 +150,69 @@ export const UseAuthentication = () => {
         }
     }
 
-    return { loading, LoginUser, RegisterUser }
+    const UpdateAccessToken = async (refreshToken: Token) => {
+        if (!refreshToken) {
+            console.log("Não há RefreshToken salvo");
+            return;
+        }
+
+        const requestData = {
+            method: 'POST',
+            route: 'refreshToken',
+            data: {
+                refreshToken
+            }
+        };
+
+        try {
+            const response = await FetchData(requestData, refreshToken.token, fullApiServerUrl);
+            if (response.success && response.data.accessToken) {
+                
+            }
+            else {
+                signOut();
+            }
+        }
+        catch (err) {
+            console.error("Erro ao atualizar o token: ", err);
+            signOut();
+        }
+    }
+
+    const LogoutUser = async (accessToken: Token | undefined, type: string | undefined) => {
+        if (!type) {
+            console.log("Houve algum erro! Tipo de usuário não especificado para deslogar");
+            return;
+        }
+        else if (!accessToken)
+        {
+            console.log("Houve algum erro! AccessToken não especificado para deslogar");
+            return;
+        }
+
+        const url_user = `${fullApiServerUrl}loginUser`;
+        console.log("URL! ", url_user);
+
+        const requestData = {
+            method: 'POST',
+            route: 'logoutUser',
+            data: {
+                type: type
+            }
+        }
+
+        const logoutResponse = await FetchData(requestData, accessToken.token, fullApiServerUrl);
+
+        if (logoutResponse.success) {
+            signOut();
+            console.log(`Usuário deslogado com sucesso!`);
+        }
+        else {
+            console.error('Houve um erro ao deslogar usuário: ', logoutResponse.errors);
+        }
+    }
+
+    return { loading, LoginUser, RegisterUser, LogoutUser, UpdateAccessToken }
 }
 
 

@@ -5,10 +5,10 @@ import { UseAuth } from '../../contexts/AuthContext';
 import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
 
 function LoadingMainScreen() {
-    const { loadToken } = UseAuth();
+    const { loadRefreshToken } = UseAuth();
 
     useEffect(() => {
-        loadToken();
+        loadRefreshToken();
     }, []);
 
     return (

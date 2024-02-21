@@ -15,7 +15,7 @@ import { CurrentChat, UseChat } from '../../../contexts/ChatContext';
 import { Treatment } from '../../../contexts/TreatmentContext';
 
 export interface RequestInitializeTreatmentData {
-    url: string;
+    route: string;
     method: string;
     data: {
         email_1: string;
@@ -125,7 +125,7 @@ function Notifications() {
 
 
                             const requestData: RequestInitializeTreatmentData = {
-                                url: url_treatment,
+                                route: url_treatment,
                                 method: 'POST',
                                 data: {
                                     email_1: formData.email,

@@ -13,6 +13,7 @@ import ErrorApp from '../components/errors/ErrorApp';
 import { NotepadProvider } from '../contexts/NotepadContext';
 import { AnalysisProvider } from '../contexts/AnalysisContext';
 import { HealthPageProvider } from '../contexts/HealthPageContext';
+import { EventProvider } from '../contexts/EventContext';
 
 interface UserData {
     id: string;
@@ -69,25 +70,29 @@ function AppStack({ data, errors, message, reloadData }: { data?: UserData, erro
             {
                 !errors && !message ?
                     authData.type === 'patient' ?
-                            <BluetoothProvider>
-                                <HealthPageProvider>
-                                    <CurrentDateProvider>
-                                        <MedicineProvider>
-                                            <QuestionaireProvider>
+                        <BluetoothProvider>
+                            <HealthPageProvider>
+                                <CurrentDateProvider>
+                                    <MedicineProvider>
+                                        <QuestionaireProvider>
+                                            <EventProvider>
                                                 <PatientApp />
-                                            </QuestionaireProvider>
-                                        </MedicineProvider>
-                                    </CurrentDateProvider>
-                                </HealthPageProvider>
-                            </BluetoothProvider>
+                                            </EventProvider>
+                                        </QuestionaireProvider>
+                                    </MedicineProvider>
+                                </CurrentDateProvider>
+                            </HealthPageProvider>
+                        </BluetoothProvider>
                         : authData.type === 'doctor' ?
-                            
-                                <NotepadProvider>
-                                    <AnalysisProvider>
+
+                            <NotepadProvider>
+                                <AnalysisProvider>
+                                    <EventProvider>
                                         <DoctorApp />
-                                    </AnalysisProvider>
-                                </NotepadProvider>
-                            
+                                    </EventProvider>
+                                </AnalysisProvider>
+                            </NotepadProvider>
+
                             :
                             ""
                     :

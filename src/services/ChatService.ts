@@ -47,7 +47,7 @@ export const ChatService = {
 
             console.log(getTreatmentData);
             const apiRequestData = {
-                url: 'getConversationTreatment',
+                route: 'getConversationTreatment',
                 method: 'POST',
                 data: getTreatmentData
             }
@@ -71,7 +71,7 @@ export const ChatService = {
     saveNewMessage: async (newMessageData: SaveNewMessageArgs, authDataToken: string | undefined): Promise<SaveNewMessageResponse> => {
         try {
             const apiRequestData = {
-                url: 'saveNewMessage',
+                route: 'saveNewMessage',
                 method: 'POST',
                 data: newMessageData
             }
@@ -95,7 +95,7 @@ export const ChatService = {
     getMessages: async (conversationId: string): Promise<GetMessagesResponse> => {
         try {
             const apiRequestData = {
-                url: 'getMessages',
+                route: 'getMessages',
                 method: 'POST',
                 data: { conversationId }
             }

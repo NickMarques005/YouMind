@@ -1,39 +1,41 @@
 import { ApiRequest } from '../APIService';
-
+import { HandleErrors } from '../../components/errors/hooks/UseHandleErrors';
 
 interface ApiRequestData {
-    url: string;
+    route: string;
     method: string;
     data?: object;
 }
 
 export const FetchData = async (apiRequestData: ApiRequestData, authDataToken?: string | undefined, serverUrl?: string | undefined) => {
     
-    const url_Data = `${serverUrl}${apiRequestData.url}`;
-    console.log("URL: ", url_Data);
+    const url_Data = `${serverUrl}${apiRequestData.route}`;
+    console.log("(APIUtils) URL: ", url_Data);
 
     const response = await ApiRequest(url_Data, `${apiRequestData.method}`, apiRequestData.data, authDataToken);
 
     try {
         if (response.success) {
             const current_data = response.data as any;
-            console.log("CURRENT_DATA: ", current_data);
+            console.log("(APIUtils) CURRENT_DATA: ", current_data);
             if (response.message) {
                 return { data: current_data, message: response.message, success: true };
             }
             return { data: current_data, success: true };
         } else {
-            console.log("Houve um erro ao buscar os dados");
+            console.log("(APIUtils) Houve um erro ao buscar os dados");
             if (response.errors) {
-                console.log("ERRORS: ", response.errors);
+                const errors = response.errors;
+                console.log("(APIUtils) ERRORS: ", errors);
+                HandleErrors(errors);
                 return { errors: response.errors, success: false };
             }
 
             return { success: false };
         }
     } catch (err) {
-        console.log("Houve um erro: ", err);
-        console.log("Não foi possível buscar os dados");
+        console.log("(APIUtils) Houve um erro: ", err);
+        console.log("(APIUtils) Não foi possível buscar os dados");
         return { success: false, error: err };
     }
 };

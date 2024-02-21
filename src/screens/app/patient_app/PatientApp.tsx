@@ -27,15 +27,15 @@ function PatientApp() {
     const { formData } = UseForm();
 
     const fetchDataAndUpdateTreatment = async () => {
-        console.log("\nFETCH TREATMENT DATA TEST!!\n");
+        console.log("\n(PatientApp) FETCH TREATMENT DATA TEST!!\n");
         try {
             if (!authData || !authData.accessToken || !authData.type) {
-                console.error('Token ou tipo de autenticação ausentes.');
+                console.error('(PatientApp) Token ou tipo de autenticação ausentes.');
                 return;
             }
 
             const apiRequestData = {
-                url: 'getTreatment',
+                route: 'getTreatment',
                 method: 'POST',
                 data: {
                     type: authData.type
@@ -45,7 +45,7 @@ function PatientApp() {
             const result = await FetchData(apiRequestData, authData.accessToken?.token, fullApiServerUrl);
 
             if (result.success) {
-                console.log('Dados do tratamento:', result.data);
+                console.log('(PatientApp) Dados do tratamento:', result.data);
                 const data = result.data;
                 data.forEach((item: any) => {
                     if (!treatment_state.treatments.some(treatment => treatment.email === item.email)) {
@@ -57,10 +57,10 @@ function PatientApp() {
                     }
                 });
             } else {
-                console.log('Erro ao buscar dados do tratamento:', result.errors || result.error);
+                console.log('(PatientApp) Erro ao buscar dados do tratamento:', result.errors || result.error);
             }
         } catch (err) {
-            console.log('Erro inesperado:', err);
+            console.log('(PatientApp) Erro inesperado:', err);
         }
     };
 
@@ -70,8 +70,8 @@ function PatientApp() {
             socket.emit('joinRoom', formData.id);
 
             socket.on(formData.id, (data) => {
-                console.log("\nTREATMENT UPDATE!!\n");
-                console.log("DATA TREATMENT: ", data);
+                console.log("\n(PatientApp) TREATMENT UPDATE!!\n");
+                console.log("(PatientApp) DATA TREATMENT: ", data);
 
                 setShouldUpdateTreatment(true);
 
@@ -93,7 +93,7 @@ function PatientApp() {
         }
     }, [shouldUpdateTreatment]);
 
-    console.log("SHOULD UPDATE: ", shouldUpdateTreatment);
+    console.log("(PatientApp) SHOULD UPDATE: ", shouldUpdateTreatment);
 
     //Busca pelo Treatment
     UpdateTreatment(authData);

@@ -26,15 +26,15 @@ function DoctorApp() {
     const { formData } = UseForm();
 
     const fetchDataAndUpdateTreatment = async () => {
-        console.log("\nFETCH TREATMENT DATA TEST!!\n");
+        console.log("\n(DoctorApp) FETCH TREATMENT DATA TEST!!\n");
         try {
             if (!authData || !authData.accessToken || !authData.type) {
-                console.error('Token ou tipo de autenticação ausentes. AccessToken: ', authData.accessToken);
+                console.error('(DoctorApp) Token ou tipo de autenticação ausentes. AccessToken: ', authData.accessToken);
                 return;
             }
 
             const apiRequestData = {
-                url: 'getTreatment',
+                route: 'getTreatment',
                 method: 'POST',
                 data: {
                     type: authData.type
@@ -44,7 +44,7 @@ function DoctorApp() {
             const result = await FetchData(apiRequestData, authData.accessToken?.token, fullApiServerUrl);
 
             if (result.success) {
-                console.log('Dados do tratamento requisitado:', result.data);
+                console.log('(DoctorApp) Dados do tratamento requisitado:', result.data);
                 const data = result.data;
 
                 data.forEach((item: any) => {
@@ -57,10 +57,10 @@ function DoctorApp() {
                     }
                 });
             } else {
-                console.log('Erro ao buscar dados do tratamento:', result.errors || result.error);
+                console.log('(DoctorApp) Erro ao buscar dados do tratamento:', result.errors || result.error);
             }
         } catch (err) {
-            console.log('Erro inesperado:', err);
+            console.log('(DoctorApp) Erro inesperado:', err);
         }
     };
 
@@ -90,7 +90,7 @@ function DoctorApp() {
         }
     }, [shouldUpdateTreatment]);
 
-    console.log("SHOULD UPDATE: ", shouldUpdateTreatment);
+    console.log("(DoctorApp) SHOULD UPDATE: ", shouldUpdateTreatment);
 
     //Busca pelo Treatment
     UpdateTreatment(authData);

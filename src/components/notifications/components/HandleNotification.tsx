@@ -19,7 +19,7 @@ interface HandleNotificationProps {
 function HandleNotification({ requestData, handleLoading }: HandleNotificationProps) {
 
     const [treatmentLoading, setTreatmentLoading] = useState(true);
-    const handle_data = requestData ?? { url: '', method: '', data: { email1: '', email2: '' } };
+    const handle_data = requestData ?? { route: '', method: '', data: { email1: '', email2: '' } };
     const notification_functions = {
         handleLoading: handleLoading,
     }
@@ -35,7 +35,7 @@ function HandleNotification({ requestData, handleLoading }: HandleNotificationPr
     useEffect(() => {
         console.log("FETCH DATA!!", handle_data);
         const fetchDataWrapper = async () => {
-            const result = await FetchData(handle_data, authData.token, fullApiServerUrl);
+            const result = await FetchData(handle_data, authData.accessToken?.token, fullApiServerUrl);
             if (result.success) {
                 setData(result.data);
                 setMessage(result.message);

@@ -6,7 +6,7 @@ import { UseAuth } from '../contexts/AuthContext';
 import USE_ENV from '../services/server_url/ServerUrl';
 
 const startDataRequest = {
-    url: "userData",
+    route: "userData",
     method: 'GET',
 }
 

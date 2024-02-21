@@ -31,7 +31,7 @@ const ModalNotification: React.FC<ModalNotificationProps> = ({ visible, onClose,
                 }
 
                 const apiRequestData = {
-                    url: 'getTreatment',
+                    route: 'getTreatment',
                     method: 'POST',
                     data: {
                         type: authData.type

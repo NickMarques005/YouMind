@@ -8,13 +8,13 @@ import { UseAuth } from '../contexts/AuthContext';
 import { BackHandler } from 'react-native';
 import LeaveModal from '../components/leave/LeaveModal';
 import { RootProvider, UseRoot } from '../contexts/RootContext';
-import WithLoader from '../components/hoc/withLoader';
 import LoadingMainScreen from '../components/loading/LoadingMainScreen';
 import { FormProvider } from '../contexts/FormContext';
 import { TreatmentProvider } from '../contexts/TreatmentContext';
 import MainApp from './MainApp';
 import { ChatProvider } from '../contexts/ChatContext';
 import { MenuProvider } from '../contexts/MenuContext';
+import { UseAuthentication } from '../services/AuthenticationService';
 
 type WelcomeStackNavigation = {
     explanation: undefined;
@@ -47,18 +47,21 @@ export default function MainRouter() {
     const { welcome, setWelcome } = UseWelcome();
     const { notRoot, setNotRoot } = UseRoot();
     const [showLeaveModal, setShowLeaveModal] = useState(false);
-    const { authData, loading, refreshAccessToken } = UseAuth();
+    const { authData, loading, loadAccessToken } = UseAuth();
 
     useEffect(() => {
+        //Sair do aplicativo
         if (!notRoot) {
             setShowLeaveModal(true);
         }
     }, [notRoot]);
 
     useEffect(() => {
+        //Atualização do Access Token
         if(authData?.refreshToken && !authData?.accessToken)
         {
-            refreshAccessToken();
+            const { UpdateAccessToken } = UseAuthentication();
+            UpdateAccessToken(authData.refreshToken);
         }
     }, [authData]);
 
