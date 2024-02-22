@@ -1,5 +1,5 @@
 import { EventManagerTemplate } from "../../../hooks/EventManager";
-
+import { EventTypes } from "../../../types/events/EventTypes";
 
 export const HandleErrors = (errorResponse: string[] | undefined) => {
     if (!errorResponse) {
@@ -16,11 +16,11 @@ export const HandleErrors = (errorResponse: string[] | undefined) => {
         switch (err) {
             case 'Token inválido':
                 console.log('(HandleErrors) Sessão expirada. Por favor, faça login novamente.');
-                EmitEvent('invalidToken', err);
+                EmitEvent(EventTypes.ErrorTypes.InvalidToken, err);
                 break;
             case 'Usuário não autorizado':
                 console.log('(HandleErrors) Sessão expirada. Por favor, faça login novamente.');
-                EmitEvent('invalidToken', err);
+                EmitEvent(EventTypes.ErrorTypes.UnauthorizedUser, err);
                 break;
 
             default:

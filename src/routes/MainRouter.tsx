@@ -15,6 +15,9 @@ import MainApp from './MainApp';
 import { ChatProvider } from '../contexts/ChatContext';
 import { MenuProvider } from '../contexts/MenuContext';
 import { UseAuthentication } from '../services/AuthenticationService';
+import { EventSubscriptionType, UseEvents } from '../contexts/EventContext';
+import { UseEventHandlers } from '../hooks/EventHandlers';
+import { EventTypes } from '../types/events/EventTypes';
 
 type WelcomeStackNavigation = {
     explanation: undefined;
@@ -48,6 +51,21 @@ export default function MainRouter() {
     const { notRoot, setNotRoot } = UseRoot();
     const [showLeaveModal, setShowLeaveModal] = useState(false);
     const { authData, loading, loadAccessToken } = UseAuth();
+
+    const { UseEventSubscription, UseEventUnsubscription } = UseEvents();
+    const { ErrorEvents } = UseEventHandlers();
+
+    useEffect(() => {
+
+        const errors: EventSubscriptionType[] = [
+            {event: EventTypes.ErrorTypes.InvalidToken, handler: ErrorEvents.HandlerInvalidToken},
+            {event: EventTypes.ErrorTypes.UnauthorizedUser, handler: ErrorEvents.HandlerUnauthorizedUser}
+        ]
+
+        console.log(errors);
+        UseEventSubscription(errors);
+        
+    }, []);
 
     useEffect(() => {
         //Sair do aplicativo

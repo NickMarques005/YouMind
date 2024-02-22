@@ -13,7 +13,6 @@ import ErrorApp from '../components/errors/ErrorApp';
 import { NotepadProvider } from '../contexts/NotepadContext';
 import { AnalysisProvider } from '../contexts/AnalysisContext';
 import { HealthPageProvider } from '../contexts/HealthPageContext';
-import { EventProvider } from '../contexts/EventContext';
 
 interface UserData {
     id: string;
@@ -75,9 +74,9 @@ function AppStack({ data, errors, message, reloadData }: { data?: UserData, erro
                                 <CurrentDateProvider>
                                     <MedicineProvider>
                                         <QuestionaireProvider>
-                                            <EventProvider>
-                                                <PatientApp />
-                                            </EventProvider>
+
+                                            <PatientApp />
+
                                         </QuestionaireProvider>
                                     </MedicineProvider>
                                 </CurrentDateProvider>
@@ -87,9 +86,9 @@ function AppStack({ data, errors, message, reloadData }: { data?: UserData, erro
 
                             <NotepadProvider>
                                 <AnalysisProvider>
-                                    <EventProvider>
+                                    
                                         <DoctorApp />
-                                    </EventProvider>
+                                    
                                 </AnalysisProvider>
                             </NotepadProvider>
 

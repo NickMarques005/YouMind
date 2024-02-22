@@ -42,7 +42,7 @@ const { fullApiServerUrl } = USE_ENV();
 
 export const ChatService = {
 
-    getConversationTreatment: async (getTreatmentData: ConversationArgs): Promise<ConversationTreatmentResponse> => {
+    getConversationTreatment: async (getTreatmentData: ConversationArgs, authDataToken: string | undefined): Promise<ConversationTreatmentResponse> => {
         try {
 
             console.log(getTreatmentData);
@@ -52,7 +52,7 @@ export const ChatService = {
                 data: getTreatmentData
             }
 
-            const result = await FetchData(apiRequestData, undefined, fullApiServerUrl);
+            const result = await FetchData(apiRequestData, authDataToken, fullApiServerUrl);
 
             if (result.success) {
                 console.log("Conversation: ", result.data);

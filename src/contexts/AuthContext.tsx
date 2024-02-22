@@ -46,7 +46,7 @@ export const AuthContext = createContext<AuthContextData>({
     userType: '',
     signIn: async () => { },
     saveTokenInAsyncStorage: async () => { },
-    signOut: () => { },
+    signOut: async () => { },
     handleUserType: () => { },
     loading: true,
     isLogin: true,
@@ -139,9 +139,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     }
 
-    const signOut = () => {
+    const signOut = async () => {
 
-        AsyncStorage.removeItem("@AuthData");
+        await AsyncStorage.removeItem("@AuthData");
         setAuth({
             refreshToken: undefined,
             accessToken: undefined,
@@ -160,7 +160,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const handleLogin = () => {
         setLogin(!isLogin);
-        console.log("(AuthContext) LOGIN!");
+        console.log("(AuthContext) LOGIN! ", isLogin);
     };
 
     const updateAuthData = (data: any) => {
