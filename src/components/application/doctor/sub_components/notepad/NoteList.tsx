@@ -13,7 +13,7 @@ function NoteList({ handleSelectedNote }: NoteListProps) {
     const { notepadData } = UseNotepad();
 
     const notesRequest = {
-        url: "readNotes",
+        route: "readNotes",
         method: 'POST',
     }
     const NoteLoader = WithLoader(NoteHandle, notesRequest, 'mini_loading', {handleSelectedNote: handleSelectedNote})

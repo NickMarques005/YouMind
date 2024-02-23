@@ -35,7 +35,7 @@ function HandleNotification({ requestData, handleLoading }: HandleNotificationPr
     useEffect(() => {
         console.log("FETCH DATA!!", handle_data);
         const fetchDataWrapper = async () => {
-            const result = await FetchData(handle_data, authData.accessToken?.token, fullApiServerUrl);
+            const result = await FetchData(handle_data, {accessToken: authData.accessToken, refreshToken: authData.refreshToken}, fullApiServerUrl);
             if (result.success) {
                 setData(result.data);
                 setMessage(result.message);

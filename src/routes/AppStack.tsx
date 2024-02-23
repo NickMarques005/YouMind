@@ -13,6 +13,7 @@ import ErrorApp from '../components/errors/ErrorApp';
 import { NotepadProvider } from '../contexts/NotepadContext';
 import { AnalysisProvider } from '../contexts/AnalysisContext';
 import { HealthPageProvider } from '../contexts/HealthPageContext';
+import { UseNotifications } from '../contexts/NotificationsContext';
 
 interface UserData {
     id: string;
@@ -27,6 +28,7 @@ function AppStack({ data, errors, message, reloadData }: { data?: UserData, erro
 
     const { authData, updateAuthData } = UseAuth();
     const { formData, updateFormData } = UseForm();
+    const { loadNotifications, notifications } = UseNotifications();
 
     useEffect(() => {
         const handleUserData = (data: UserData) => {
@@ -62,6 +64,10 @@ function AppStack({ data, errors, message, reloadData }: { data?: UserData, erro
             handleUserData(data);
         }
 
+    }, []);
+
+    useEffect(() => {
+        loadNotifications({accessToken: authData.accessToken, refreshToken: authData.refreshToken})
     }, []);
 
     return (

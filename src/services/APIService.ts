@@ -1,29 +1,56 @@
 //-----APIService.ts-----//
 
-interface ApiResponse<T> {
+import { Token } from "../contexts/AuthContext";
+import { UpdateAccessToken } from "./TokenService";
+
+export interface ApiResponse<T> {
     success: boolean;
     data?: T;
     errors?: string[];
     message?: string;
 }
 
+const isTokenExpiring = (token: Token) => {
+    const tokenExp = Date.parse(token.exp) / 1000;
+    console.log("(isTokenExpiring) Exp: ", tokenExp);
+    const now = Date.now() / 1000;
+    const threshold = 5;
+    return tokenExp - now < threshold;
+}
+
 export const ApiRequest = async <T>(
     url: string,
     method: string = 'POST',
     data?: object,
-    token?: string | undefined,
+    accessToken?: Token | undefined,
+    refreshToken?: Token | undefined
 ): Promise<ApiResponse<T>> => {
+    
     try {
+
+        let serviceToken = accessToken;
+
+        if(serviceToken && refreshToken && isTokenExpiring(serviceToken))
+        {
+            console.log("AccessToken está para expirar!!");
+            const newToken = await UpdateAccessToken(refreshToken);
+            if(newToken)
+            {
+                serviceToken = newToken;
+                console.log("(APIService) Novo token a ser utilizado: ", serviceToken);
+            }
+        }
+
         const headers: any = {
             'Content-Type': 'application/json',
         }
 
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+        if (serviceToken) {
+            headers['Authorization'] = `Bearer ${serviceToken.token}`;
         }
 
         console.log("(APIService) HEADERS: ", headers);
-
+        
         const requestOptions: RequestInit = {
             method,
             headers,

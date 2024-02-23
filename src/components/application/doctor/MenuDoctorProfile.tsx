@@ -6,6 +6,7 @@ import { ProfileDoctorFunctions } from '../options/ProfileOptionFuntions';
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { UseForm } from '../../../contexts/FormContext';
+import { UseAuthentication } from '../../../services/AuthenticationService';
 
 interface ProfileDoctorProps {
     name: string;
@@ -35,11 +36,12 @@ const ProfileOption = ({ name, icon, profile_function, profile_params }: Profile
 
 const Patient_Profile = () => {
 
-    const { signOut, authData } = UseAuth();
+    const { authData } = UseAuth();
     const { formData } = UseForm();
+    const { LogoutUser } = UseAuthentication();
 
-    const profileFunctions = new ProfileDoctorFunctions({ signOut });
-
+    const profileFunctions = new ProfileDoctorFunctions({ LogoutUser });
+    const tokens = { accessToken: authData.accessToken, refreshToken: authData.refreshToken }
     const profileOptions = [
         { name: 'Notificações', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_notifications.png'), function: profileFunctions.handleNotifications, params: undefined },
         { name: 'Senha e Segurança', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_safety.png'), function: profileFunctions.handleSecurity, params: undefined },
@@ -49,47 +51,47 @@ const Patient_Profile = () => {
         { name: 'Contrato do Usuário', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_contract.png'), function: profileFunctions.handleContractUser, params: undefined },
         { name: 'Suporte', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_support.png'), function: profileFunctions.handleSupport, params: undefined },
         { name: 'Sobre', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_about.png'), function: profileFunctions.handleAbout, params: undefined },
-        { name: 'Sair', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_logout.png'), function: profileFunctions.handleLogout, params: {type: authData.type} },
+        { name: 'Sair', icon: require('../../../assets/app_doctor/profile/profileIconDoctor_logout.png'), function: profileFunctions.handleLogout, params: { tokens , type: authData.type } },
     ];
 
-    return (
-        <ScrollView style={{ flex: 1 }}>
-            <View style={styleprofile.screen_Profile}>
-                <LinearGradient colors={['#0b5959', '#4d8999', 'rgba(191, 172, 143, 0.1)']} style={styleprofile.header_Profile}>
-                    <View style={styleprofile.account_View}>
-                        <TouchableOpacity style={styleprofile.account_Button}>
-                            <Image
-                                source={require('../../../assets/app_doctor/profile/doctor_profile_icon.png')}
-                                style={styleprofile.account_Image}
-                            />
-                        </TouchableOpacity>
+return (
+    <ScrollView style={{ flex: 1 }}>
+        <View style={styleprofile.screen_Profile}>
+            <LinearGradient colors={['#0b5959', '#4d8999', 'rgba(191, 172, 143, 0.1)']} style={styleprofile.header_Profile}>
+                <View style={styleprofile.account_View}>
+                    <TouchableOpacity style={styleprofile.account_Button}>
+                        <Image
+                            source={require('../../../assets/app_doctor/profile/doctor_profile_icon.png')}
+                            style={styleprofile.account_Image}
+                        />
+                    </TouchableOpacity>
 
-                        <View style={styleprofile.accountUser_View}>
-                            <LinearGradient colors={['#95bfa5', '#269bad', '#115882']} style={styleprofile.accountUser_TextBackground}>
-                                <TouchableOpacity style={styleprofile.accountUser_Button}>
-                                    <Text style={styleprofile.accountUser_Text}>{formData ? `Dr. ${formData.name.split(' ')[0]}` : "Usuário"}</Text>
-                                    <Image
-                                        source={require('../../../assets/app_doctor/profile/divisa_userDoctor.png')}
-                                        style={styleprofile.accountDivisa_Icon}
-                                    />
-                                </TouchableOpacity>
-                            </LinearGradient>
-                        </View>
-
+                    <View style={styleprofile.accountUser_View}>
+                        <LinearGradient colors={['#95bfa5', '#269bad', '#115882']} style={styleprofile.accountUser_TextBackground}>
+                            <TouchableOpacity style={styleprofile.accountUser_Button}>
+                                <Text style={styleprofile.accountUser_Text}>{formData ? `Dr. ${formData.name.split(' ')[0]}` : "Usuário"}</Text>
+                                <Image
+                                    source={require('../../../assets/app_doctor/profile/divisa_userDoctor.png')}
+                                    style={styleprofile.accountDivisa_Icon}
+                                />
+                            </TouchableOpacity>
+                        </LinearGradient>
                     </View>
-                </LinearGradient>
-
-                <View style={styleprofile.menuProfile_View}>
-
-                    {profileOptions.map((option, index) => (
-                        <ProfileOption key={index} name={option.name} icon={option.icon} profile_function={option.function} profile_params={option.params} />
-                    ))}
 
                 </View>
+            </LinearGradient>
+
+            <View style={styleprofile.menuProfile_View}>
+
+                {profileOptions.map((option, index) => (
+                    <ProfileOption key={index} name={option.name} icon={option.icon} profile_function={option.function} profile_params={option.params} />
+                ))}
 
             </View>
-        </ScrollView>
-    );
+
+        </View>
+    </ScrollView>
+);
 };
 
 const styleprofile = StyleSheet.create({

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UseAuth } from './AuthContext';
+import { Tokens, UseAuth } from './AuthContext';
 import { FetchData } from '../services/fetchUtils/APIUtils';
 import USE_ENV from '../services/server_url/ServerUrl';
 
@@ -33,8 +33,8 @@ export interface NotificationContentData {
 interface NotificationContextType {
     notifications: NotificationData[];
     addNotification: (notification: NotificationData) => void;
-    removeNotification: (_id: string) => Promise<NotificationData[] | undefined>;
-    loadNotifications: () => void;
+    removeNotification: (tokens: Tokens, _id: string) => Promise<NotificationData[] | undefined>;
+    loadNotifications: (tokens: Tokens) => void;
     setNotifications: (value: React.SetStateAction<NotificationData[]>) => void
 }
 
@@ -57,18 +57,18 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     const { authData, handleAuthError } = UseAuth();
     const { fullApiServerUrl } = USE_ENV();
 
-    const getNotificationsInDB = async (authToken: string) => {
+    const getNotificationsInDB = async (tokens: Tokens) => {
         const requestData = {
             route: 'getNotifications',
             method: 'GET',
         }
 
-        const response = await FetchData(requestData, authToken, fullApiServerUrl);
+        const response = await FetchData(requestData, tokens, fullApiServerUrl);
         console.log("FETCH NOTIFICATIONS RESPONSE: ", response);
         return response;
     }
 
-    const deleteNotificationInDB = async (authToken: string, notification: NotificationData) => {
+    const deleteNotificationInDB = async (tokens: Tokens, notification: NotificationData) => {
         const requestData = {
             route: 'deleteNotification',
             method: 'DELETE',
@@ -77,18 +77,18 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
             }
         }
 
-        const response = await FetchData(requestData, authToken, fullApiServerUrl);
+        const response = await FetchData(requestData, tokens, fullApiServerUrl);
         console.log("FETCH NOTIFICATION DELETED: ", response);
         return response;
     }
 
-    const loadNotifications = async () => {
+    const loadNotifications = async (tokens: Tokens) => {
         if(!authData.accessToken?.token)
         {
             console.error("Houve um erro. Não há access Token definido");
             return;
         }
-        const response = await getNotificationsInDB(authData.accessToken?.token)
+        const response = await getNotificationsInDB(tokens)
         if (response.success) {
             setNotifications(response.data);
         }
@@ -108,7 +108,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
     }
 
-    const removeNotification = async (_id: string) => {
+    const removeNotification = async (tokens: Tokens, _id: string) => {
         const notificationToDelete = notifications.find(notification => notification._id === _id);
 
         if(!notificationToDelete)
@@ -119,13 +119,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
         console.log("NOTIFICATION TO DELETE: ", notificationToDelete);
 
-        if(!authData.accessToken?.token)
+        if(!tokens.accessToken?.token)
         {
             console.error("Houve um erro. Não há access Token definido");
             return;
         }
 
-        const response = await deleteNotificationInDB(authData.accessToken?.token, notificationToDelete);
+        const response = await deleteNotificationInDB(tokens, notificationToDelete);
         if (response.success) {
             try {
                 const updatedNotifications = notifications.filter(notification => notification._id !== _id);
@@ -142,9 +142,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         }
     }
 
-    useEffect(() => {
-        loadNotifications();
-    }, []);
 
     return (
         <NotificationContext.Provider value={{ notifications, addNotification, removeNotification, loadNotifications, setNotifications }}>

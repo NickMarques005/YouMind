@@ -55,12 +55,12 @@ const SearchUsers = ({ visible, onClose, authData }: SearchUsersProps) => {
 
         try {
             const requestSearch = {
-                url: `filterUsers`,
+                route: `filterUsers`,
                 method: "POST",
                 data: data_user_search
             };
 
-            const response = await FetchData(requestSearch, authData.token, fullApiServerUrl);
+            const response = await FetchData(requestSearch, {accessToken: authData.accessToken, refreshToken: authData.refreshToken}, fullApiServerUrl);
 
             if (response.success) {
                 console.log(response.data);

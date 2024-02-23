@@ -14,7 +14,7 @@ import { TreatmentProvider } from '../contexts/TreatmentContext';
 import MainApp from './MainApp';
 import { ChatProvider } from '../contexts/ChatContext';
 import { MenuProvider } from '../contexts/MenuContext';
-import { UseAuthentication } from '../services/AuthenticationService';
+import { UpdateAccessToken } from '../services/TokenService';
 import { EventSubscriptionType, UseEvents } from '../contexts/EventContext';
 import { UseEventHandlers } from '../hooks/EventHandlers';
 import { EventTypes } from '../types/events/EventTypes';
@@ -50,7 +50,7 @@ export default function MainRouter() {
     const { welcome, setWelcome } = UseWelcome();
     const { notRoot, setNotRoot } = UseRoot();
     const [showLeaveModal, setShowLeaveModal] = useState(false);
-    const { authData, loading, loadAccessToken } = UseAuth();
+    const { authData, loading, loadAccessToken, handleLoading } = UseAuth();
 
     const { UseEventSubscription, UseEventUnsubscription } = UseEvents();
     const { ErrorEvents } = UseEventHandlers();
@@ -58,13 +58,17 @@ export default function MainRouter() {
     useEffect(() => {
 
         const errors: EventSubscriptionType[] = [
-            {event: EventTypes.ErrorTypes.InvalidToken, handler: ErrorEvents.HandlerInvalidToken},
-            {event: EventTypes.ErrorTypes.UnauthorizedUser, handler: ErrorEvents.HandlerUnauthorizedUser}
+            { event: EventTypes.ErrorTypes.InvalidToken, handler: ErrorEvents.HandlerInvalidToken },
+            { event: EventTypes.ErrorTypes.UnauthorizedUser, handler: ErrorEvents.HandlerUnauthorizedUser }
         ]
 
         console.log(errors);
         UseEventSubscription(errors);
-        
+
+        return () => {
+            UseEventUnsubscription(errors);
+        }
+
     }, []);
 
     useEffect(() => {
@@ -76,11 +80,20 @@ export default function MainRouter() {
 
     useEffect(() => {
         //Atualização do Access Token
-        if(authData?.refreshToken && !authData?.accessToken)
-        {
-            const { UpdateAccessToken } = UseAuthentication();
-            UpdateAccessToken(authData.refreshToken);
+        const TokenVerification = async () => {
+            
+            if (authData?.refreshToken && !authData?.accessToken) {
+                console.log("(Main Router) UPDATE ACCESS TOKEN!!!");
+                const newAccessToken = await UpdateAccessToken(authData.refreshToken);
+
+                if (newAccessToken) {
+                    loadAccessToken(newAccessToken);
+                }
+            }
         }
+
+        TokenVerification();
+
     }, [authData]);
 
 

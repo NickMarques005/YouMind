@@ -41,7 +41,7 @@ function DoctorApp() {
                 }
             };
 
-            const result = await FetchData(apiRequestData, authData.accessToken?.token, fullApiServerUrl);
+            const result = await FetchData(apiRequestData, {accessToken: authData.accessToken, refreshToken: authData.refreshToken}, fullApiServerUrl);
 
             if (result.success) {
                 console.log('(DoctorApp) Dados do tratamento requisitado:', result.data);

@@ -1,8 +1,7 @@
 import { UseAuth } from "../contexts/AuthContext";
 
 export function UseEventHandlers () {
-    const { signOut }= UseAuth();
-
+    const { signOut, authData }= UseAuth();
     class ErrorEvents {
         static HandlerInvalidToken () {
             console.log("(EventHandlers) Token inválido, deslogando...");
@@ -14,6 +13,7 @@ export function UseEventHandlers () {
             signOut();
         }
     }
+
 
 
     return {

@@ -26,7 +26,7 @@ export const UpdateTreatment = (authData: AuthData) => {
 
                 console.log("API REQUEST TREATMENT UPDATE: ", apiRequestData);
 
-                const result = await FetchData(apiRequestData, authData.accessToken?.token, fullApiServerUrl);
+                const result = await FetchData(apiRequestData, {accessToken: authData.accessToken, refreshToken: authData.refreshToken}, fullApiServerUrl);
 
                 if (result.success) {
                     console.log('Dados do tratamento:', result.data);

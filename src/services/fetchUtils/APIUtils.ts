@@ -1,5 +1,6 @@
 import { ApiRequest } from '../APIService';
 import { HandleErrors } from '../../components/errors/hooks/UseHandleErrors';
+import { Tokens } from '../../contexts/AuthContext';
 
 interface ApiRequestData {
     route: string;
@@ -7,12 +8,12 @@ interface ApiRequestData {
     data?: object;
 }
 
-export const FetchData = async (apiRequestData: ApiRequestData, authDataToken?: string | undefined, serverUrl?: string | undefined) => {
+export const FetchData = async (apiRequestData: ApiRequestData, tokens?: Tokens | undefined, serverUrl?: string | undefined) => {
     
     const url_Data = `${serverUrl}${apiRequestData.route}`;
     console.log("(APIUtils) URL: ", url_Data);
 
-    const response = await ApiRequest(url_Data, `${apiRequestData.method}`, apiRequestData.data, authDataToken);
+    const response = await ApiRequest(url_Data, `${apiRequestData.method}`, apiRequestData.data, tokens?.accessToken, tokens?.refreshToken);
 
     try {
         if (response.success) {

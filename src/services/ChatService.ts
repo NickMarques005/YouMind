@@ -1,3 +1,4 @@
+import { Tokens } from "../contexts/AuthContext";
 import { FetchData } from "./fetchUtils/APIUtils";
 import USE_ENV from "./server_url/ServerUrl";
 
@@ -42,7 +43,7 @@ const { fullApiServerUrl } = USE_ENV();
 
 export const ChatService = {
 
-    getConversationTreatment: async (getTreatmentData: ConversationArgs, authDataToken: string | undefined): Promise<ConversationTreatmentResponse> => {
+    getConversationTreatment: async (getTreatmentData: ConversationArgs, tokens: Tokens | undefined): Promise<ConversationTreatmentResponse> => {
         try {
 
             console.log(getTreatmentData);
@@ -52,7 +53,7 @@ export const ChatService = {
                 data: getTreatmentData
             }
 
-            const result = await FetchData(apiRequestData, authDataToken, fullApiServerUrl);
+            const result = await FetchData(apiRequestData, {accessToken: tokens?.accessToken, refreshToken: tokens?.refreshToken}, fullApiServerUrl);
 
             if (result.success) {
                 console.log("Conversation: ", result.data);
@@ -68,7 +69,7 @@ export const ChatService = {
         }
     },
 
-    saveNewMessage: async (newMessageData: SaveNewMessageArgs, authDataToken: string | undefined): Promise<SaveNewMessageResponse> => {
+    saveNewMessage: async (newMessageData: SaveNewMessageArgs, tokens: Tokens | undefined): Promise<SaveNewMessageResponse> => {
         try {
             const apiRequestData = {
                 route: 'saveNewMessage',
@@ -76,7 +77,7 @@ export const ChatService = {
                 data: newMessageData
             }
 
-            const result = await FetchData(apiRequestData, authDataToken, fullApiServerUrl);
+            const result = await FetchData(apiRequestData, {accessToken: tokens?.accessToken, refreshToken: tokens?.refreshToken}, fullApiServerUrl);
 
             if (result.success) {
                 console.log("Nova Mensagem: ", result.data);
@@ -92,7 +93,7 @@ export const ChatService = {
         }
     },
 
-    getMessages: async (conversationId: string): Promise<GetMessagesResponse> => {
+    getMessages: async (conversationId: string, tokens: Tokens | undefined): Promise<GetMessagesResponse> => {
         try {
             const apiRequestData = {
                 route: 'getMessages',
@@ -100,7 +101,7 @@ export const ChatService = {
                 data: { conversationId }
             }
 
-            const result = await FetchData(apiRequestData, undefined, fullApiServerUrl);
+            const result = await FetchData(apiRequestData, tokens, fullApiServerUrl);
 
             if (result.success) {
                 console.log("Mensagens: ", result.data);

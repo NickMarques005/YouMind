@@ -69,7 +69,7 @@ const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
                 content: newMessage
             }
 
-            const saveMessageData = await ChatService.saveNewMessage(newMessageData, authData.accessToken?.token);
+            const saveMessageData = await ChatService.saveNewMessage(newMessageData, {accessToken: authData.accessToken, refreshToken: authData.refreshToken});
 
             if (saveMessageData.success) {
                 const newMessage = saveMessageData.data as MessageType;
@@ -106,7 +106,7 @@ const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
                 const ConversationTreatmentData = await ChatService.getConversationTreatment({
                     email_1: formData.email,
                     email_2: user?.email || ''
-                }, authData.accessToken?.token);
+                }, {accessToken: authData.accessToken, refreshToken: authData.refreshToken});
 
                 if (ConversationTreatmentData.success) {
                     console.log("ID Conversation: ", ConversationTreatmentData.data);
@@ -114,7 +114,7 @@ const ChatDoctor: React.FC<ChatProps> = ({ user }: ChatProps) => {
                     handleSocket(conversationId);
                     console.log(conversationId);
                     setConversation(conversationId);
-                    const MessagesData = await ChatService.getMessages(conversationId);
+                    const MessagesData = await ChatService.getMessages(conversationId, {accessToken: authData.accessToken, refreshToken: authData.refreshToken});
 
                     if (MessagesData.success) {
                         const fetchedMessages = MessagesData.data?.reverse();

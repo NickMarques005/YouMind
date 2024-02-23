@@ -31,6 +31,7 @@ export interface AuthContextData {
     saveTokenInAsyncStorage: (refreshToken: Token) => void;
     loadAccessToken: (accessToken: Token) => void;
     handleAuthError: (error: string[]) => void;
+    handleLoading: (value: boolean) => void;
 }
 
 type AuthProviderProps = {
@@ -55,6 +56,7 @@ export const AuthContext = createContext<AuthContextData>({
     updateAuthData: () => { },
     loadAccessToken: () => { },
     handleAuthError: () => { },
+    handleLoading: () => { }
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -118,6 +120,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     }
 
+    const handleLoading = (value: boolean) => {
+        console.log("LOADING: ", value);
+        setLoading(value);
+    }
+
     const signIn = (accessToken: Token, refreshToken: Token) => {
 
         console.log("(AuthContext) TOKENS SIGNIN: \nAccess: ", accessToken, "\nRefresh: ", refreshToken);
@@ -175,7 +182,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={({ authData, updateAuthData, userType, handleUserType, signIn, signOut, saveTokenInAsyncStorage, loading, isLogin, handleLogin, loadRefreshToken, loadAccessToken, handleAuthError })}>
+        <AuthContext.Provider value={({ authData, updateAuthData, userType, handleUserType, signIn, signOut, saveTokenInAsyncStorage, loading, isLogin, handleLogin, loadRefreshToken, loadAccessToken, handleAuthError, handleLoading })}>
             {children}
         </AuthContext.Provider>
     )

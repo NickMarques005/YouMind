@@ -7,7 +7,7 @@ import { FetchData } from '../../services/fetchUtils/APIUtils';
 import USE_ENV from '../../services/server_url/ServerUrl';
 
 interface ApiRequestData {
-    url: string;
+    route: string;
     method: string;
     data?: object;
 }
@@ -36,7 +36,7 @@ const WithLoader = (WrappedComponent: React.FC, apiRequestData: ApiRequestData, 
         useEffect(() => {
             console.log("FETCH DATA!!");
             const fetchDataWrapper = async () => {
-                const result = await FetchData(apiRequestData, authData.token, fullApiServerUrl);
+                const result = await FetchData(apiRequestData, {accessToken: authData.accessToken, refreshToken: authData.refreshToken}, fullApiServerUrl);
                 if (result.success) {
                     setData(result.data);
                     setMessage(result.message);
@@ -58,7 +58,8 @@ const WithLoader = (WrappedComponent: React.FC, apiRequestData: ApiRequestData, 
             setData(undefined);
             setLoading(true);
             const fetchDataAgain = async () => {
-                const result = await FetchData(apiRequestData, authData.token);
+                console.log("(WithLoader) Fetching Again...");
+                const result = await FetchData(apiRequestData, {accessToken: authData.accessToken, refreshToken: authData.refreshToken});
                 if (result.success) {
                     setData(result.data);
                     setMessage(result.message);

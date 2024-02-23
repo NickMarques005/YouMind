@@ -18,7 +18,7 @@ function HandleSolicitationTreatment({handleLoading, requestData}: HandleSolicit
     const [solicitationLoading, setSolicitationLoading] = useState(true);
     const { fullApiServerUrl } = USE_ENV();
     
-    const handle_data = requestData ?? { url: '', method: '', data: {} };
+    const handle_data = requestData ?? { route: '', method: '', data: {} };
     const treatment_functions = {
         handleLoading: handleLoading,
     }
@@ -32,10 +32,10 @@ function HandleSolicitationTreatment({handleLoading, requestData}: HandleSolicit
     useEffect(() => {
         console.log("FETCH DATA!!");
         const fetchDataWrapper = async () => {
-            const result = await FetchData(handle_data, authData.token, fullApiServerUrl);
+            const result = await FetchData(handle_data, {accessToken: authData.accessToken, refreshToken: authData.refreshToken}, fullApiServerUrl);
 
             console.log("DATA: ", handle_data);
-            console.log("USER: ", authData.token);
+            console.log("USER: ", authData.accessToken);
             if (result.success) {
                 setData(result.data);
                 setMessage(result.message);

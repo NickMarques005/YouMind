@@ -1,6 +1,5 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AuthContext } from "../contexts/AuthContext";
 import USE_ENV from "./server_url/ServerUrl";
 
 const { fullApiServerUrl } = USE_ENV();

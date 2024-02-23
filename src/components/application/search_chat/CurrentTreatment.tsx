@@ -28,7 +28,7 @@ interface CurrentTreatmentProps {
 }
 
 export interface RequestSolicitation {
-    url: string;
+    route: string;
     method: string;
     data: object | undefined;
 }
@@ -77,9 +77,9 @@ const CurrentTreatment: React.FC<CurrentTreatmentProps> = ({ isVisible, treatmen
 
 
     const handleTreatmentSolicitation = (treatment: Treatment) => {
-        const url_solicitation = 'deleteTreatment';
+        const route_solicitation = 'deleteTreatment';
         const requestData: RequestSolicitation = {
-            url: url_solicitation,
+            route: route_solicitation,
             method: 'POST',
             data: {
                 treatmentId: treatment._id,

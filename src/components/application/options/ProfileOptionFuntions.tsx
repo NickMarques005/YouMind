@@ -1,15 +1,16 @@
+import { Token, Tokens } from "../../../contexts/AuthContext";
 
 export interface SignOutData {
+    tokens: Tokens | undefined;
     type: string;
 }
 
 interface ProfilePatientFunctionsProps {
-    signOut: (type: string) => Promise<void>;
-    
+    LogoutUser: (tokens: Tokens | undefined, type: string) => Promise<void>;
 }
 
 interface ProfileDoctorFunctionsProps {
-    signOut: (type: string) => Promise<void>;
+    LogoutUser: (tokens: Tokens | undefined, type: string) => Promise<void>;
 }
 
 export class ProfilePatientFunctions {
@@ -54,7 +55,12 @@ export class ProfilePatientFunctions {
 
     handleLogout = (data: SignOutData) => {
         console.log("Logout");
-        this.ProfilePatientData.signOut( data.type );
+        if(!data.tokens)
+        {
+            console.log("Houve um erro. AccessToken não existe ou foi expirado");
+            return;
+        }
+        this.ProfilePatientData.LogoutUser(data.tokens, data.type);
     }
 }
 
@@ -99,8 +105,13 @@ export class ProfileDoctorFunctions {
     }
 
     handleLogout = ( data: SignOutData ) => {
-        console.log("Logout");
-        this.ProfileDoctorData.signOut(data.type);
+        console.log("(ProfileOptionFunctions) Logout");
+        if(!data.tokens)
+        {
+            console.log("Houve um erro. AccessToken não existe ou foi expirado");
+            return;
+        }
+        this.ProfileDoctorData.LogoutUser(data.tokens, data.type);
     }
 }
 

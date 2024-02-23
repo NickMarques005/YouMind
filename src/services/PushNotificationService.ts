@@ -14,7 +14,7 @@ const registerPushToken = async (authData: AuthData, pushToken: ExpoPushToken | 
             push_token: pushToken.data
         };
 
-        const response = await ApiRequest(url_Data, 'POST', notify_data, authData.accessToken?.token);
+        const response = await ApiRequest(url_Data, 'POST', notify_data, authData.accessToken, authData.refreshToken);
 
         try {
             console.log(pushToken);

@@ -69,7 +69,7 @@ function Notifications() {
 
         console.log("ID TO REMOVE: ", _id);
 
-        const response = await removeNotification(_id);
+        const response = await removeNotification({accessToken: authData.accessToken, refreshToken: authData.refreshToken}, _id);
 
         console.log("FULL NOTIFICATION HEIGHTS: ", notificationHeights);
 
@@ -115,7 +115,7 @@ function Notifications() {
                 switch (type_function) {
                     case 'decline':
                         console.log("decline function...");
-                        removeNotification(notification._id);
+                        removeNotification({accessToken: authData.accessToken, refreshToken: authData.refreshToken}, notification._id);
                         handleCloseSpecificNotification();
                         break;
                     case 'accept':
@@ -135,7 +135,7 @@ function Notifications() {
 
                             console.log(requestData);
                             if (requestData) {
-                                removeNotification(notification._id);
+                                removeNotification({accessToken: authData.accessToken, refreshToken: authData.refreshToken}, notification._id);
                                 handleCloseSpecificNotification();
                                 setRequestData(requestData);
                                 setNotificationLoading(true);

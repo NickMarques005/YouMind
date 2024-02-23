@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { Alert } from 'react-native';
 import { FetchData } from './fetchUtils/APIUtils';
 import USE_ENV from './server_url/ServerUrl';
-import { Token } from '../contexts/AuthContext';
+import { Token, Tokens } from '../contexts/AuthContext';
 import { UseAuth } from '../contexts/AuthContext';
+import { ApiResponse } from './APIService';
 
-
+interface AccessTokenResponse {
+    accessToken: Token | undefined;
+}
 
 export const UseAuthentication = () => {
     const { fullApiServerUrl } = USE_ENV();
-    const { signOut } = UseAuth();
+    const { signOut, loadAccessToken } = UseAuth();
     const [loading, setLoading] = useState(false);
 
     const HandleAuthentication = async (
@@ -23,7 +26,7 @@ export const UseAuthentication = () => {
 
             const requestData = {
                 route,
-                method, 
+                method,
                 data
             }
 
@@ -118,6 +121,7 @@ export const UseAuthentication = () => {
         )
 
         try {
+            
 
             if (!register_response) {
                 console.log("Houve um erro na requisição do login");
@@ -150,48 +154,17 @@ export const UseAuthentication = () => {
         }
     }
 
-    const UpdateAccessToken = async (refreshToken: Token) => {
-        if (!refreshToken) {
-            console.log("Não há RefreshToken salvo");
-            return;
-        }
-
-        const requestData = {
-            method: 'POST',
-            route: 'refreshToken',
-            data: {
-                refreshToken
-            }
-        };
-
-        try {
-            const response = await FetchData(requestData, refreshToken.token, fullApiServerUrl);
-            if (response.success && response.data.accessToken) {
-                
-            }
-            else {
-                signOut();
-            }
-        }
-        catch (err) {
-            console.error("Erro ao atualizar o token: ", err);
-            signOut();
-        }
-    }
-
-    const LogoutUser = async (accessToken: Token | undefined, type: string | undefined) => {
+    const LogoutUser = async (tokens: Tokens | undefined, type: string | undefined) => {
         if (!type) {
             console.log("Houve algum erro! Tipo de usuário não especificado para deslogar");
             return;
         }
-        else if (!accessToken)
-        {
+        else if (!tokens || !tokens.accessToken) {
             console.log("Houve algum erro! AccessToken não especificado para deslogar");
             return;
         }
 
-        const url_user = `${fullApiServerUrl}loginUser`;
-        console.log("URL! ", url_user);
+        console.log("AccessToken para deslogar: ", tokens.accessToken);
 
         const requestData = {
             method: 'POST',
@@ -201,7 +174,7 @@ export const UseAuthentication = () => {
             }
         }
 
-        const logoutResponse = await FetchData(requestData, accessToken.token, fullApiServerUrl);
+        const logoutResponse = await FetchData(requestData, tokens, fullApiServerUrl);
 
         if (logoutResponse.success) {
             signOut();
@@ -212,7 +185,7 @@ export const UseAuthentication = () => {
         }
     }
 
-    return { loading, LoginUser, RegisterUser, LogoutUser, UpdateAccessToken }
+    return { loading, LoginUser, RegisterUser, LogoutUser}
 }
 
 
