@@ -30,7 +30,7 @@ const HandleNoteResponse: React.FC<HandleNoteResponseProps> = ({additional_data,
     useEffect(() => {
         console.log("FETCH DATA!!");
         const fetchDataNote = async () => {
-            const result = await FetchData(apiRequestData, authData.token, fullApiServerUrl);
+            const result = await FetchData(apiRequestData, authData.accessToken?.token, fullApiServerUrl);
             if (result.success) {
                 setData(result.data);
                 setMessage(result.message);

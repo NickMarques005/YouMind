@@ -10,7 +10,7 @@ function ErrorApp({errors, message, reloadData}: {errors?: string[], message?: s
     return (
         <View style={{ height: screenHeight, width: screenWidth, alignItems: 'center', justifyContent: 'center', display: 'flex', gap: 30, paddingHorizontal: 30, }}>
             <View style={{position: 'absolute', top: 20,right: 20}}>
-                <TouchableOpacity style={{width: '100%'}} onPress={() => authData.type ? signOut(authData.type) : console.error("Houve um erro: usuário não possui tipo definido!")}>
+                <TouchableOpacity style={{width: '100%'}} onPress={() => authData.type ? signOut() : console.error("Houve um erro: usuário não possui tipo definido!")}>
                     <Image style={{width: 55, height: 55}} source={require('../../assets/init/back/default_back_type1.png')}/>
                 </TouchableOpacity>
             </View>

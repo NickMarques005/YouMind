@@ -15,10 +15,15 @@ interface ForgotPasswordProps {
 
 const ForgotPassword = ({ isVisible, onClose }: ForgotPasswordProps) => {
     const { userType } = UseAuth();
+    const [email, setEmail] = useState('');
 
     
     const handleSendEmail = () => {
         //Executará o comando de envio de reset password para o e-mail correspondente
+        if(email)
+        {
+            console.log("Email a ser verificado: ", email);
+        }
     }
 
     //O que irá retornar no modal ForgotPassword:
@@ -50,6 +55,8 @@ const ForgotPassword = ({ isVisible, onClose }: ForgotPasswordProps) => {
                         <TextInput style={[styleforgot.input, { borderColor: `${userType === 'doctor' ? '#4193b0' : '#a541b0'}`, color: `${userType === 'doctor' ? '#1a586e' : '#5b1869'}` }]}
                             placeholder="Seu endereço de e-mail"
                             placeholderTextColor={`${userType === 'doctor' ? 'rgba(76, 108, 120, 0.5)' : 'rgba(110, 76, 120, 0.5)'}`}
+                            value={email}
+                            onChangeText={setEmail}
                         />
                         <LinearGradient colors={[`${userType === 'doctor' ? '#57afb5' : userType === 'patient' ? '#823d94' : ""}`, `${userType === 'doctor' ? '#326660' : userType === 'patient' ? '#4d2448' : ""}`]}
                             start={{ x: 0, y: 0 }}

@@ -7,6 +7,7 @@ import { ProfilePatientFunctions } from '../options/ProfileOptionFuntions';
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { UseForm } from '../../../contexts/FormContext';
+import { UseAuthentication } from '../../../services/AuthenticationService';
 
 interface ProfilePatientProps {
   name: string;
@@ -38,8 +39,9 @@ const Patient_Profile = () => {
 
   const { signOut, authData } = UseAuth();
   const { formData } = UseForm();
+  const { LogoutUser } = UseAuthentication();
 
-  const profileFunctions = new ProfilePatientFunctions({signOut});
+  const profileFunctions = new ProfilePatientFunctions({LogoutUser});
 
   const profileOptions = [
     { name: 'Notificações', icon: require('../../../assets/app_patient/profile/profileIcon_notifications.png'), function: profileFunctions.handleNotifications, params: undefined},
@@ -50,7 +52,7 @@ const Patient_Profile = () => {
     { name: 'Contrato do Usuário', icon: require('../../../assets/app_patient/profile/profileIcon_contract.png'), function: profileFunctions.handleContractUser, params: undefined},
     { name: 'Suporte', icon: require('../../../assets/app_patient/profile/profileIcon_support.png'), function: profileFunctions.handleSupport, params: undefined},
     { name: 'Sobre', icon: require('../../../assets/app_patient/profile/profileIcon_about.png'), function: profileFunctions.handleAbout, params: undefined},
-    { name: 'Sair', icon: require('../../../assets/app_patient/profile/profileIcon_logout.png'), function: profileFunctions.handleLogout, params: {type: authData.type }},
+    { name: 'Sair', icon: require('../../../assets/app_patient/profile/profileIcon_logout.png'), function: profileFunctions.handleLogout, params: {tokens: {accessToken: authData.accessToken, refreshToken: authData.refreshToken} ,type: authData.type }},
   ];
 
   return (
