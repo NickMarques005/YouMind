@@ -7,7 +7,7 @@ import OTPScreen from '../screens/auth/login_register/otp/OTPScreen';
 
 function AuthStack() {
     return (
-        <Stack.Navigator initialRouteName='otp' screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName='choose_type' screenOptions={{ headerShown: false }}>
             <Stack.Screen name="choose_type" component={ChooseUserTypeScreen}/>
             <Stack.Screen name="login_register" component={Authentication_Types}/> 
             <Stack.Screen name="otp" component={OTPScreen}/>

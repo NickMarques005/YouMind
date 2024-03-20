@@ -142,7 +142,7 @@ function UserLogin({ }) {
                                 <Image style={{ width: 25, height: 25 }} source={emailIcon} />
                                 <TextInput
                                     style={[loginStyles.input, { color: `${userType === 'doctor' ? '#1a586e' : '#5b1869'}` }]}
-                                    placeholder="E-mail"
+                                    placeholder={userType == 'patient' ? 'patienttest@gmail.com' : 'doctortest@gmail.com'}
                                     placeholderTextColor={`${userType === 'doctor' ? 'rgba(76, 108, 120, 0.5)' : 'rgba(110, 76, 120, 0.5)'}`}
                                     value={loginData.email}
                                     onChangeText={value => handleInputChange('email', value)}
@@ -153,7 +153,7 @@ function UserLogin({ }) {
                                     <Image style={{ width: 25, height: 25 }} source={passIcon} />
                                     <TextInput
                                         style={[loginStyles.inputPassword, { color: `${userType === 'doctor' ? '#1a586e' : '#5b1869'}` }]}
-                                        placeholder="Senha"
+                                        placeholder={userType == 'patient' ? 'PatientTest123' : 'DoctorTest123'}
                                         placeholderTextColor={`${userType === 'doctor' ? 'rgba(76, 108, 120, 0.5)' : 'rgba(110, 76, 120, 0.5)'}`}
                                         secureTextEntry={!showPassword}
                                         value={loginData.password}

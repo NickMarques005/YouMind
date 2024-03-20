@@ -27,6 +27,7 @@ type WelcomeStackNavigation = {
 type AuthStackNavigation = {
     login_register: undefined;
     choose_type: undefined;
+    otp: undefined;
 }
 
 type AppStackNavigation = {

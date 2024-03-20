@@ -111,7 +111,7 @@ export const UseAuthentication = () => {
         }
     }
 
-    const RegisterUser = async (userData: Record<string, any>, userType: string, turnToLogin: () => void) => {
+    const RegisterUser = async (userData: Record<string, any>, userType: string, verifyAccount: (data: any) => void) => {
         const route_register = `createUser`;
         const register_response = await HandleAuthentication(
             route_register,
@@ -130,7 +130,8 @@ export const UseAuthentication = () => {
 
             if (register_response.success) {
                 console.log("USUÁRIO REGISTRADO!");
-                turnToLogin();
+                const registerData = register_response.data;
+                verifyAccount(registerData);
             }
             else {
                 console.log("Erro no cadastro: ", register_response);
@@ -185,7 +186,48 @@ export const UseAuthentication = () => {
         }
     }
 
-    return { loading, LoginUser, RegisterUser, LogoutUser}
+    const ValidateOTP = async (otp: string, userId: string | undefined, type: string | undefined) => {
+        if (!userId || !type) {
+            Alert.alert("Erro", "Dados insuficientes para validação.");
+            return;
+        }
+
+        console.log("DADOS: ", otp, userId, type);
+        
+        const route_verifyEmail = `verifyEmail`;
+        const otpValidationResponse = await HandleAuthentication(
+            route_verifyEmail,
+            'POST',
+            { userId, otp, type },
+            "Erro ao validar OTP"
+        );
+
+        try{
+            if(!otpValidationResponse)
+            {
+                console.log("Houve um erro na validação do OTP");
+                Alert.alert("Falha na requisição. Problema de conexão..");
+                return;
+            }
+
+            if(!otpValidationResponse.success)
+            {
+                console.log("Erro na validação do OTP: ", otpValidationResponse.errors);
+                Alert.alert("Erro na validação", otpValidationResponse.errors);
+                return;
+            }
+
+            console.log("OTP validado com sucesso!");
+            Alert.alert("Sucesso", "Sua conta foi verificada com sucesso!");
+        }
+        catch (err)
+        {
+            console.error('Erro ao validar OTP: ', err);
+            Alert.alert("Erro", "Houve um erro na validação. Tente novamente.");
+        }
+    }
+
+    return { loading, LoginUser, RegisterUser, LogoutUser, ValidateOTP}
 }
 
 

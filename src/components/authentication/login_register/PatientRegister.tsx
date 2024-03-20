@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, Alert, ScrollView, TouchableOpacity } from 'react-native'
 import { UseAuth } from '../../../contexts/AuthContext';
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, StackActions } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -39,6 +39,13 @@ function PatientRegister() {
         handleLogin();
     }
 
+    const verifyAccount = (data: any) => {
+        console.log("VERIFY OTP!");
+        console.log("DADOS A SEREM ENVIADOS AO OTP ROUTE: ", data);
+        navigation.dispatch(StackActions.replace('otp', { data }));
+        handleLogin();
+    }
+
     const handleBackTypes = () => {
         navigation.navigate('choose_type');
     }
@@ -55,7 +62,9 @@ function PatientRegister() {
                 type: userType
             }
 
-            await RegisterUser(patientData, userType, turnToLogin);
+            await RegisterUser(patientData, userType, verifyAccount);
+            
+        
         }
         else {
             Alert.alert("Houve um erro ao cadastrar usuário!", "Preencha todos os campos corretamente");

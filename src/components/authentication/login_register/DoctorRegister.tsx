@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, Alert, ScrollView, TouchableOpacity } from 'react-native'
 import { UseAuth } from '../../../contexts/AuthContext';
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, StackActions } from '@react-navigation/native';
 import { AuthStackTypes } from '../../../routes/MainRouter';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -40,6 +40,13 @@ function DoctorRegister() {
         handleLogin();
     }
 
+    const verifyAccount = (data: any) => {
+        console.log("VERIFY OTP!");
+        console.log("DADOS A SEREM ENVIADOS AO OTP ROUTE: ", data);
+        navigation.dispatch(StackActions.replace('otp', { data }));
+        handleLogin();
+    }
+
     const handleBackTypes = () => {
         navigation.navigate('choose_type');
     }
@@ -56,7 +63,7 @@ function DoctorRegister() {
                 type: userType
             }
             
-            await RegisterUser(doctorData, userType, turnToLogin);
+            await RegisterUser(doctorData, userType, verifyAccount);
         }
         else{
             Alert.alert("Erro ao registrar usuário!", "Preencha todos os campos corretamente");
