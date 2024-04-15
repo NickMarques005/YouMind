@@ -1,21 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Token, Tokens, AuthData } from '../types/auth/Auth_Types';
 
-export interface Token {
-    token: string;
-    exp: string;
-}
-
-export interface Tokens {
-    accessToken: Token | undefined;
-    refreshToken: Token | undefined;
-}
-
-export interface AuthData {
-    accessToken: Token | undefined;
-    refreshToken: Token | undefined;
-    type: "patient" | "doctor" | undefined;
-}
 
 export interface AuthContextData {
     authData: AuthData;

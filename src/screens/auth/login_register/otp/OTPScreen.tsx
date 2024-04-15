@@ -4,7 +4,7 @@ import { screenHeight, screenWidth } from '../../../../components/screen_size/Sc
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AuthStackTypes } from '../../../../routes/MainRouter';
 import { useNavigation, RouteProp, useRoute } from '@react-navigation/native';
-import { UseAuthentication } from '../../../../services/AuthenticationService';
+import { UseAuthentication } from '../../../../services/auth/AuthenticationServices';
 import LoadingAuthScreen from '../../../../components/loading/LoadingAuthScreen';
 import { UseAuth } from '../../../../contexts/AuthContext';
 

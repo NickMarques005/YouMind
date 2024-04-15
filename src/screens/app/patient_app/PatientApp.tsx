@@ -6,9 +6,9 @@ import { usePushNotifications } from '../../../components/notifications/hooks/Co
 import { UseAuth } from '../../../contexts/AuthContext';
 import { ApiRequest } from '../../../services/APIService';
 import { saveNotifications } from '../../../components/notifications/hooks/SaveNotifications';
-import { UpdateTreatment } from '../../../services/UpdateTreatment';
+import { UpdateTreatment } from '../../../services/treatment/TreatmentServices';
 import USE_ENV from '../../../services/server_url/ServerUrl';
-import UseRegisterPushToken from '../../../services/PushNotificationService';
+import UseRegisterPushToken from '../../../services/notification/PushNotificationService';
 import UseSocketService from '../../../services/socket/SocketService';
 import { UseForm } from '../../../contexts/FormContext';
 import { UseTreatment } from '../../../contexts/TreatmentContext';

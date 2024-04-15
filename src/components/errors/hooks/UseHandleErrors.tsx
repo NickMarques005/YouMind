@@ -1,10 +1,10 @@
 import { EventManagerTemplate } from "../../../hooks/EventManager";
 import { EventTypes } from "../../../types/events/EventTypes";
 
-export const HandleErrors = (errorResponse: string[] | undefined) => {
+export const HandleErrors = (errorResponse: string | undefined) => {
     if (!errorResponse) {
         console.log("(HandleErrors) Não há erro especificado. Houve um erro desconhecido");
-        errorResponse = ["Erro desconhecido"];
+        errorResponse = "Erro desconhecido";
         return errorResponse;
     }
 
@@ -12,7 +12,9 @@ export const HandleErrors = (errorResponse: string[] | undefined) => {
         EventManagerTemplate.emit(event, args);
     }
 
-    errorResponse.forEach((err) => {
+    console.log(errorResponse);
+
+    /*errorResponse.forEach((err) => {
         switch (err) {
             case 'Token inválido':
                 console.log('(HandleErrors) Sessão expirada. Por favor, faça login novamente.');
@@ -27,7 +29,7 @@ export const HandleErrors = (errorResponse: string[] | undefined) => {
                 console.log("(HandleErrors) Erro desconhecido: ", err);
                 break;
         }
-    });
+    });*/
 
     return errorResponse;
 }

@@ -1,6 +1,6 @@
-import { Token, Tokens } from "../contexts/AuthContext";
-import { ApiResponse } from "./APIService";
-import USE_ENV from "./server_url/ServerUrl";
+import { Token } from "../../types/auth/Auth_Types";
+import { Response } from "../../types/service/Request_Types";
+import USE_ENV from "../server_url/ServerUrl";
 
 interface AccessTokenResponse {
     accessToken: Token | undefined;
@@ -24,13 +24,13 @@ export const UpdateAccessToken = async (refreshToken: Token) => {
     };
 
     try {
-        const url_Data = `${fullApiServerUrl}${requestData.route}`;
+        const url = `${fullApiServerUrl}${requestData.route}`;
 
         const headers: any = {
             'Content-Type': 'application/json',
         }
 
-        console.log("(APIService) HEADERS: ", headers);
+        console.log("(UpdateAccessToken) HEADERS: ", headers);
 
         const requestOptions: RequestInit = {
             method: requestData.method,
@@ -38,25 +38,25 @@ export const UpdateAccessToken = async (refreshToken: Token) => {
         };
 
         if (requestData.method !== 'GET' && requestData.data) {
-            console.log("(APIService) DATA A SER ENVIADO: ", requestData.data);
+            console.log("(UpdateAccessToken) DATA A SER ENVIADO: ", requestData.data);
             requestOptions.body = JSON.stringify(requestData.data);
         }
 
-        const response = await fetch(url_Data, requestOptions);
-        const responseData: ApiResponse<AccessTokenResponse> = await response.json();
+        const response = await fetch(url, requestOptions);
+        const responseData: Response<AccessTokenResponse> = await response.json();
 
         if (responseData.success && responseData.data?.accessToken) {
-            console.log("(Authentication Service) AccessToken atualizado! TOKEN: ", responseData.data.accessToken);
+            console.log("AccessToken atualizado! TOKEN: ", responseData.data.accessToken);
             const newAccessToken: Token = responseData.data.accessToken;
             return newAccessToken;
         }
         else {
-            console.log("(AuthenticationService) Não foi possivel atualizar AccessToken. Deslogando...")
+            console.error("Não foi possivel atualizar AccessToken. Deslogando...")
             return undefined;
         }
     }
     catch (err) {
         console.error("Erro ao atualizar o token: ", err);
-        
+        return undefined;
     }
 }

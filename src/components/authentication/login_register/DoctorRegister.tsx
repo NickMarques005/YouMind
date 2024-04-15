@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
-import { UseAuthentication } from '../../../services/AuthenticationService';
+import { UseAuthentication } from '../../../services/auth/AuthenticationServices';
 
 function DoctorRegister() {
     const { handleLogin, userType } = UseAuth();

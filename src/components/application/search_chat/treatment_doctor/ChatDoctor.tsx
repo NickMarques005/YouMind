@@ -7,7 +7,7 @@ import { UseForm } from '../../../../contexts/FormContext';
 import MiniLoading from '../../../loading/MiniLoading';
 import { CurrentChat, UseChat, User } from '../../../../contexts/ChatContext';
 import { UseHandleNavigateChat } from '../../../../functions/chat/HandleActiveChat';
-import { ChatService, ConversationTreatmentResponse } from '../../../../services/ChatService';
+import { ChatService, ConversationTreatmentResponse } from '../../../../services/chat/ChatServices';
 import { UseAuth } from '../../../../contexts/AuthContext';
 import io, { Socket } from 'socket.io-client';
 import UseSocketService from '../../../../services/socket/SocketService';

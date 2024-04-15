@@ -9,7 +9,7 @@ import ForgotPassword from '../forgot_pass/ForgotPasswordModal';
 import { LinearGradient } from 'expo-linear-gradient';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
 import { UseAuth, AuthContextData, Tokens } from '../../../contexts/AuthContext';
-import { UseAuthentication } from '../../../services/AuthenticationService';
+import { UseAuthentication } from '../../../services/auth/AuthenticationServices';
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { AuthStackTypes } from '../../../routes/MainRouter';
 

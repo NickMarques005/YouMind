@@ -16,7 +16,7 @@ import HandleNoteResponse from '../../errors/HandleNoteResponse';
 import MidLoading from '../../loading/MidLoading';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { UpdateTreatment } from '../../../services/UpdateTreatment';
+import { UpdateTreatment } from '../../../services/treatment/TreatmentServices';
 import HandleSolicitationTreatment from './HandleSolicitationTreatment';
 import { FetchData } from '../../../services/fetchUtils/APIUtils';
 import USE_ENV from '../../../services/server_url/ServerUrl';

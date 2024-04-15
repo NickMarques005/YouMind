@@ -3,7 +3,7 @@ import { Modal, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-na
 import { ConvertISODate } from '../../../functions/dates/ConvertDate';
 import { NotificationData } from '../../../contexts/NotificationsContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import { UpdateTreatment } from '../../../services/UpdateTreatment';
+import { UpdateTreatment } from '../../../services/treatment/TreatmentServices';
 import { UseAuth } from '../../../contexts/AuthContext';
 import { UseTreatment } from '../../../contexts/TreatmentContext';
 import { FetchData } from '../../../services/fetchUtils/APIUtils';

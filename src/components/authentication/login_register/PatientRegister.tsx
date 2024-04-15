@@ -8,7 +8,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AuthStackTypes } from '../../../routes/MainRouter';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
-import { UseAuthentication } from '../../../services/AuthenticationService';
+import { UseAuthentication } from '../../../services/auth/AuthenticationServices';
 
 function PatientRegister() {
     const { handleLogin, userType } = UseAuth();

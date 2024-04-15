@@ -14,7 +14,7 @@ import { TreatmentProvider } from '../contexts/TreatmentContext';
 import MainApp from './MainApp';
 import { ChatProvider } from '../contexts/ChatContext';
 import { MenuProvider } from '../contexts/MenuContext';
-import { UpdateAccessToken } from '../services/TokenService';
+import { UpdateAccessToken } from '../services/auth/TokenService';
 import { EventSubscriptionType, UseEvents } from '../contexts/EventContext';
 import { UseEventHandlers } from '../hooks/EventHandlers';
 import { EventTypes } from '../types/events/EventTypes';

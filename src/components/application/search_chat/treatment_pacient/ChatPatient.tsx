@@ -7,7 +7,7 @@ import Message, { MessageType } from '../Message';
 import { UseForm } from '../../../../contexts/FormContext';
 import { CurrentChat, UseChat, User } from '../../../../contexts/ChatContext';
 import { UseHandleNavigateChat } from '../../../../functions/chat/HandleActiveChat';
-import { ChatService, } from '../../../../services/ChatService';
+import { ChatService, } from '../../../../services/chat/ChatServices';
 import { UseAuth } from '../../../../contexts/AuthContext';
 import io, { Socket } from 'socket.io-client';
 import USE_ENV from '../../../../services/server_url/ServerUrl';
