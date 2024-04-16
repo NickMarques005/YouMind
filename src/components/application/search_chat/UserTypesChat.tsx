@@ -3,7 +3,7 @@ import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, Flat
 import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { SearchUserData } from './SearchUsers';
 import { AuthData } from '../../../contexts/AuthContext';
-import { UseForm } from '../../../contexts/FormContext';
+import { UseForm } from '../../../contexts/UserContext';
 
 
 interface UserTypesProps {

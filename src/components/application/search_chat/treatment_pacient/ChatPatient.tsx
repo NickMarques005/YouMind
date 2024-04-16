@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { screenHeight, screenWidth } from '../../../screen_size/Screen_Size';
 import MiniLoading from '../../../loading/MiniLoading';
 import Message, { MessageType } from '../Message';
-import { UseForm } from '../../../../contexts/FormContext';
+import { UseForm } from '../../../../contexts/UserContext';
 import { CurrentChat, UseChat, User } from '../../../../contexts/ChatContext';
 import { UseHandleNavigateChat } from '../../../../functions/chat/HandleActiveChat';
 import { ChatService, } from '../../../../services/chat/ChatServices';

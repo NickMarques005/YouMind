@@ -5,13 +5,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { RootProvider } from './src/contexts/RootContext';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { EventProvider } from './src/contexts/EventContext';
-import { LoadingProvider } from './src/contexts/LoadingContext';
-
 
 export default function App() {
   return (
     <EventProvider>
-      <LoadingProvider>
         <WelcomeProvider>
           <AuthProvider>
             <NavigationContainer>
@@ -21,7 +18,6 @@ export default function App() {
             </NavigationContainer>
           </AuthProvider>
         </WelcomeProvider>
-      </LoadingProvider>
     </EventProvider>
   );
 }

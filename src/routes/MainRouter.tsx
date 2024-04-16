@@ -9,14 +9,14 @@ import { BackHandler } from 'react-native';
 import LeaveModal from '../components/leave/LeaveModal';
 import { RootProvider, UseRoot } from '../contexts/RootContext';
 import LoadingMainScreen from '../components/loading/LoadingMainScreen';
-import { FormProvider } from '../contexts/FormContext';
+import { UserProvider } from '../contexts/UserContext';
 import { TreatmentProvider } from '../contexts/TreatmentContext';
 import MainApp from './MainApp';
 import { ChatProvider } from '../contexts/ChatContext';
 import { MenuProvider } from '../contexts/MenuContext';
 import { UpdateAccessToken } from '../services/auth/TokenService';
 import { EventSubscriptionType, UseEvents } from '../contexts/EventContext';
-import { UseEventHandlers } from '../hooks/EventHandlers';
+import { UseEventHandlers } from '../hooks/events/EventHandlers';
 import { EventTypes } from '../types/events/EventTypes';
 
 type WelcomeStackNavigation = {
@@ -111,13 +111,13 @@ export default function MainRouter() {
                             <NotificationProvider>
                                 <MenuProvider>
                                     <TreatmentProvider>
-                                        <FormProvider>
+                                        <UserProvider>
                                             <ChatProvider>
                                                 {
                                                     <MainApp />
                                                 }
                                             </ChatProvider>
-                                        </FormProvider>
+                                        </UserProvider>
                                     </TreatmentProvider>
                                 </MenuProvider>
                             </NotificationProvider>

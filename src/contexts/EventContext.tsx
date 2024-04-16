@@ -1,5 +1,5 @@
 import React, { FunctionComponent, ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { EventManagerTemplate } from '../hooks/EventManager';
+import { EventManagerTemplate } from '../hooks/events/EventManager';
 
 type EventCallback = (args: any) => void;
 

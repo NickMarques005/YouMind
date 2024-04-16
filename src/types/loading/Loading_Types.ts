@@ -1,8 +1,5 @@
-export interface LoadingState {
-    login: boolean;
-    register: boolean;
-    logout: boolean;
-    otpValidation: boolean;
-}
+import { Dispatch, SetStateAction } from 'react';
 
-export type LoadingAction = keyof LoadingState;
+export type LoadingState = boolean;
+
+export type SetLoading = Dispatch<SetStateAction<LoadingState>>;

@@ -8,7 +8,7 @@ import { BluetoothProvider } from '../contexts/BluetoothConnection';
 import { CurrentDateProvider } from '../contexts/CurrentDateContext';
 import { MedicineProvider } from '../contexts/MedicineContext';
 import { QuestionaireProvider } from '../contexts/QuestionaireContext';
-import { UseForm } from '../contexts/FormContext';
+import { UseForm } from '../contexts/UserContext';
 import ErrorApp from '../components/errors/ErrorApp';
 import { NotepadProvider } from '../contexts/NotepadContext';
 import { AnalysisProvider } from '../contexts/AnalysisContext';
@@ -27,7 +27,7 @@ interface UserData {
 function AppStack({ data, errors, message, reloadData }: { data?: UserData, errors?: string[], message?: string, reloadData?: () => void }) {
 
     const { authData, updateAuthData } = UseAuth();
-    const { formData, updateFormData } = UseForm();
+    const { userData, UpdateUserData } = UseForm();
     const { loadNotifications, notifications } = UseNotifications();
 
     useEffect(() => {
@@ -49,12 +49,13 @@ function AppStack({ data, errors, message, reloadData }: { data?: UserData, erro
                 });
 
                 //Atualização dos dados básicos do usuário:
-                updateFormData({
-                    ...formData,
+                UpdateUserData({
+                    ...userData,
                     id: auth_data.id,
                     name: auth_data.name,
                     email: auth_data.email,
-                    phone: auth_data.phone
+                    phone: auth_data.phone,
+                    
                 })
             }
         }

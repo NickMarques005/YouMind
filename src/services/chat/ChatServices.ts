@@ -11,14 +11,14 @@ import { Response } from "../../types/service/Request_Types";
 
 export const ChatService = {
 
-    GetConversationTreatment: async (getTreatmentData: Request_GetConversationTreatmentArgs, tokens: Tokens | undefined): Promise<Response<string>> => {
+    GetConversationTreatment: async (getConversationData: Request_GetConversationTreatmentArgs, tokens: Tokens | undefined): Promise<Response<string>> => {
         return MakeRequest<string>(
             'chat/get-conversation',
             'GET',
             undefined,
             tokens?.accessToken,
             tokens?.refreshToken,
-            { ...getTreatmentData}
+            { ...getConversationData}
         );
     },
 

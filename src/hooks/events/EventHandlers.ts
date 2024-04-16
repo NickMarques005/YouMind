@@ -1,4 +1,4 @@
-import { UseAuth } from "../contexts/AuthContext";
+import { UseAuth } from "../../contexts/AuthContext";
 
 export function UseEventHandlers () {
     const { signOut, authData }= UseAuth();

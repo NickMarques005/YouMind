@@ -1,10 +1,6 @@
-import { Token } from "../../types/auth/Auth_Types";
+import { AccessTokenResponse, Token } from "../../types/auth/Auth_Types";
 import { Response } from "../../types/service/Request_Types";
 import USE_ENV from "../server_url/ServerUrl";
-
-interface AccessTokenResponse {
-    accessToken: Token | undefined;
-}
 
 export const UpdateAccessToken = async (refreshToken: Token) => {
     

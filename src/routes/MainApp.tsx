@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import AppStack from './AppStack';
 import LoadingAuthScreen from '../components/loading/LoadingAuthScreen';
-import { FetchData } from '../services/fetchUtils/APIUtils';
 import { UseAuth } from '../contexts/AuthContext';
 import USE_ENV from '../services/server_url/ServerUrl';
+import { UserData } from '../types/user/User_Types';
 
 const startDataRequest = {
     route: "userData",
@@ -12,7 +12,7 @@ const startDataRequest = {
 
 function MainApp() {
     const { authData } = UseAuth();
-    const [data, setData] = useState<any>();
+    const [data, setData] = useState<UserData | undefined>();
     const [errors, setErrors] = useState<string[] | undefined>(undefined);
     const [message, setMessage] = useState<string | undefined>(undefined);
     const [mainLoading, setMainLoading] = useState(true);

@@ -3,6 +3,10 @@ export interface Token {
     exp: string;
 }
 
+export interface AccessTokenResponse {
+    accessToken: Token | undefined;
+}
+
 export interface Tokens {
     accessToken: Token | undefined;
     refreshToken: Token | undefined;
@@ -32,13 +36,13 @@ export interface Request_ValidateOTPArgs {
     userId: string;
 }
 
-export type LoginData = Tokens;
+export type LoginDataResponse = Tokens;
 
-export interface RegisterData {
+export interface RegisterDataResponse {
     _id: string;
     type: string;
 }
 
-export type LogoutData = null;
-export type ValidateOTPData = null;
+export type LogoutDataResponse = undefined;
+export type ValidateOTPDataResponse = undefined;
 

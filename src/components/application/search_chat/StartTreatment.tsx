@@ -4,7 +4,7 @@ import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SearchUserData } from './SearchUsers';
 import { AuthData } from '../../../contexts/AuthContext';
-import { UseForm } from '../../../contexts/FormContext';
+import { UseForm } from '../../../contexts/UserContext';
 import HandleSolicitationTreatment from './HandleSolicitationTreatment';
 
 export interface RequestSolicitationTreatmentData {
