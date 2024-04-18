@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { PatientAnalysis } from '../../../../../contexts/AnalysisContext';
-import { UseAuth } from '../../../../../contexts/AuthContext';
-import { screenWidth, screenHeight } from '../../../../screen_size/Screen_Size';
+import { PatientAnalysis } from '../../../../../providers/AnalysisProvider';
+import { UseAuth } from '../../../../../providers/AuthenticationProvider';
+import { screenWidth, screenHeight } from '../../../../../utils/layout/Screen_Size';
 
 interface CardPatientAnalysisProps {
     patient_analysis: PatientAnalysis;

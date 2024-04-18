@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { UseAuth } from '../../../../contexts/AuthContext';
+import { UseAuth } from '../../../../providers/AuthenticationProvider';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { screenHeight } from '../../../screen_size/Screen_Size';
+import { screenHeight } from '../../../../utils/layout/Screen_Size';
 import SearchUsers from '../SearchUsers';
-import { UseTreatment } from '../../../../contexts/TreatmentContext';
+import { UseTreatment } from '../../../../providers/TreatmentProvider';
 import PatientTreatmentRunning from './PatientTreatmentRunning';
 import { useNavigation } from '@react-navigation/native';
-import { TreatmentStackTypes } from '../../../../routes/MainRouter';
-import { UseChat, User } from '../../../../contexts/ChatContext';
-import { UseHandleActiveChat } from '../../../../functions/chat/HandleActiveChat';
+import { TreatmentStackTypes } from '../../../../navigation/stacks/MainStack';
+import { UseChat, User } from '../../../../providers/ChatProvider';
+import { UseHandleActiveChat } from '../../../../hooks/chat/UseHandleActiveChat';
 
 
 function MainTreatmentPatient() {

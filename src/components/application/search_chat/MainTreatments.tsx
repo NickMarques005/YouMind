@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { InnerStack } from '../../stack/Stack';
+import { InnerStack } from '../../../navigation/Stack';
 import MainTreatmentDoctor from './treatment_doctor/MainTreatmentDoctor';
 import MainTreatmentPatient from './treatment_pacient/MainTreatmentPatient';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import ChatEnvironment from './ChatEnvironment';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { UseChat } from '../../../contexts/ChatContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { UseChat } from '../../../providers/ChatProvider';
 
 
 function MainTreatments() {

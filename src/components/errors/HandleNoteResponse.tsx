@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { screenHeight } from '../screen_size/Screen_Size';
+import { screenHeight } from '../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
 import MidLoading from '../loading/MidLoading';
 import { FetchData } from '../../services/fetchUtils/APIUtils';
-import { UseAuth } from '../../contexts/AuthContext';
-import { UseNotepad } from '../../contexts/NotepadContext';
+import { UseAuth } from '../../providers/AuthenticationProvider';
+import { UseNotepad } from '../../providers/NotepadProvider';
 import USE_ENV from '../../services/server_url/ServerUrl';
 
 interface ApiRequestNoteData {

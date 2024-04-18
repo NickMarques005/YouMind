@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import MenuPatient from '../../../components/application/patient/MenuPatient';
-import { Stack } from '../../../components/stack/Stack';
+import { Stack } from '../../../navigation/Stack';
 import Notifications from '../../../components/notifications/components/Notifications';
 import { usePushNotifications } from '../../../components/notifications/hooks/ConfigureNotification';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import { ApiRequest } from '../../../services/APIService';
 import { saveNotifications } from '../../../components/notifications/hooks/SaveNotifications';
 import { UpdateTreatment } from '../../../services/treatment/TreatmentServices';
 import USE_ENV from '../../../services/server_url/ServerUrl';
 import UseRegisterPushToken from '../../../services/notification/PushNotificationService';
 import UseSocketService from '../../../services/socket/SocketService';
-import { UseForm } from '../../../contexts/UserContext';
-import { UseTreatment } from '../../../contexts/TreatmentContext';
+import { UseForm } from '../../../providers/UserProvider';
+import { UseTreatment } from '../../../providers/TreatmentProvider';
 import { FetchData } from '../../../services/fetchUtils/APIUtils';
 
 
-function PatientApp() {
+function PatientStack() {
     const { pushToken } = usePushNotifications();
     const { authData } = UseAuth();
     const { addTreatment, treatment_state } = UseTreatment();
@@ -27,10 +27,10 @@ function PatientApp() {
     const { formData } = UseForm();
 
     const fetchDataAndUpdateTreatment = async () => {
-        console.log("\n(PatientApp) FETCH TREATMENT DATA TEST!!\n");
+        console.log("\n(PatientStack) FETCH TREATMENT DATA TEST!!\n");
         try {
             if (!authData || !authData.accessToken || !authData.type) {
-                console.error('(PatientApp) Token ou tipo de autenticação ausentes.');
+                console.error('(PatientStack) Token ou tipo de autenticação ausentes.');
                 return;
             }
 
@@ -45,7 +45,7 @@ function PatientApp() {
             const result = await FetchData(apiRequestData, {accessToken: authData.accessToken, refreshToken: authData.refreshToken}, fullApiServerUrl);
 
             if (result.success) {
-                console.log('(PatientApp) Dados do tratamento:', result.data);
+                console.log('(PatientStack) Dados do tratamento:', result.data);
                 const data = result.data;
                 data.forEach((item: any) => {
                     if (!treatment_state.treatments.some(treatment => treatment.email === item.email)) {
@@ -57,10 +57,10 @@ function PatientApp() {
                     }
                 });
             } else {
-                console.log('(PatientApp) Erro ao buscar dados do tratamento:', result.errors || result.error);
+                console.log('(PatientStack) Erro ao buscar dados do tratamento:', result.errors || result.error);
             }
         } catch (err) {
-            console.log('(PatientApp) Erro inesperado:', err);
+            console.log('(PatientStack) Erro inesperado:', err);
         }
     };
 
@@ -70,8 +70,8 @@ function PatientApp() {
             socket.emit('joinRoom', formData.id);
 
             socket.on(formData.id, (data) => {
-                console.log("\n(PatientApp) TREATMENT UPDATE!!\n");
-                console.log("(PatientApp) DATA TREATMENT: ", data);
+                console.log("\n(PatientStack) TREATMENT UPDATE!!\n");
+                console.log("(PatientStack) DATA TREATMENT: ", data);
 
                 setShouldUpdateTreatment(true);
 
@@ -93,7 +93,7 @@ function PatientApp() {
         }
     }, [shouldUpdateTreatment]);
 
-    console.log("(PatientApp) SHOULD UPDATE: ", shouldUpdateTreatment);
+    console.log("(PatientStack) SHOULD UPDATE: ", shouldUpdateTreatment);
 
     //Busca pelo Treatment
     UpdateTreatment(authData);
@@ -116,4 +116,4 @@ function PatientApp() {
     )
 }
 
-export default PatientApp;
+export default PatientStack;

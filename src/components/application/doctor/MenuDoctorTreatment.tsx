@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, Platform, Image, TouchableOpacity, K
 import { LinearGradient } from 'expo-linear-gradient';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
 import MainTreatments from '../search_chat/MainTreatments';
 
 const Doctor_Treatment = () => {

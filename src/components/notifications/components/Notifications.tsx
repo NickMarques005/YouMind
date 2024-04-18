@@ -2,17 +2,17 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { NotificationData, UseNotifications } from '../../../contexts/NotificationsContext';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { AppStackTypes, TreatmentStackTypes } from '../../../routes/MainRouter';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { NotificationData, UseNotifications } from '../../../providers/NotificationProvider';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { AppStackTypes, TreatmentStackTypes } from '../../../navigation/stacks/MainStack';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import { ConvertISODate } from '../../../functions/dates/ConvertDate';
 import ModalNotification from './ModalNotification';
-import { UseForm } from '../../../contexts/UserContext';
+import { UseForm } from '../../../providers/UserProvider';
 import HandleNotification from './HandleNotification';
-import { UseMenu } from '../../../contexts/MenuContext';
-import { CurrentChat, UseChat } from '../../../contexts/ChatContext';
-import { Treatment } from '../../../contexts/TreatmentContext';
+import { UseMenu } from '../../../providers/MenuProvider';
+import { CurrentChat, UseChat } from '../../../providers/ChatProvider';
+import { Treatment } from '../../../providers/TreatmentProvider';
 
 export interface RequestInitializeTreatmentData {
     route: string;

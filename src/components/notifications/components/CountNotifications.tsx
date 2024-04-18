@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Animated, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { UseAuth } from '../../../contexts/AuthContext';
-import { UseNotifications } from '../../../contexts/NotificationsContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
+import { UseNotifications } from '../../../providers/NotificationProvider';
 
 function CountNotifications() {
 

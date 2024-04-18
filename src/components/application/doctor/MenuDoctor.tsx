@@ -8,11 +8,11 @@ import Profile from './MenuDoctorProfile';
 import Analysis from './MenuDoctorAnalysis';
 import Notepad from './MenuDoctorNotepad';
 
-import { AppStackTypes } from '../../../routes/MainRouter';
+import { AppStackTypes } from '../../../navigation/stacks/MainStack';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { MenuTypes, UseMenu } from '../../../contexts/MenuContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { MenuTypes, UseMenu } from '../../../providers/MenuProvider';
 
 const MenuDoctor = () => {
     //Utilização do navigation: widget para o funcionamento da navegação entre telas através de Pilhas.

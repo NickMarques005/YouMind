@@ -5,8 +5,8 @@ import { Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 
 interface ForgotPasswordProps {
     isVisible: boolean;

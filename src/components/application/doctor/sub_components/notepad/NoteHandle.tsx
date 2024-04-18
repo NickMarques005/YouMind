@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, FlatList } from 'react-native';
 import AddNote from './AddNote';
 import { LinearGradient } from 'expo-linear-gradient';
-import { UseNotepad } from '../../../../../contexts/NotepadContext';
-import { screenHeight, screenWidth } from '../../../../screen_size/Screen_Size';
-import { NotepadType } from '../../../../../contexts/NotepadContext';
+import { UseNotepad } from '../../../../../providers/NotepadProvider';
+import { screenHeight, screenWidth } from '../../../../../utils/layout/Screen_Size';
+import { NotepadType } from '../../../../../providers/NotepadProvider';
 
 interface NoteHandleProps {
     data?: NotepadType[];

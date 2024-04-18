@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
 import { SearchUserData } from './SearchUsers';
-import { AuthData } from '../../../contexts/AuthContext';
-import { UseForm } from '../../../contexts/UserContext';
+import { AuthData } from '../../../providers/AuthenticationProvider';
+import { UseForm } from '../../../providers/UserProvider';
 
 
 interface UserTypesProps {

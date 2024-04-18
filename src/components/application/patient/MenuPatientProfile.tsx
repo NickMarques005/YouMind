@@ -4,9 +4,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ProfilePatientFunctions } from '../options/ProfileOptionFuntions';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { UseAuth } from '../../../contexts/AuthContext';
-import { UseForm } from '../../../contexts/UserContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
+import { UseForm } from '../../../providers/UserProvider';
 import { UseAuthentication } from '../../../services/auth/AuthenticationServices';
 
 interface ProfilePatientProps {

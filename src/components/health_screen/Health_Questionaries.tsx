@@ -5,12 +5,12 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import QuestionaireList from './questionaires/QuestionaireList';
-import { UseQuestionaire } from '../../contexts/QuestionaireContext';
+import { UseQuestionaire } from '../../providers/QuestionariesProvider';
 import { useSharedValue, withTiming, Easing } from 'react-native-reanimated';
 import { Directions, Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../utils/layout/Screen_Size';
 
 
 function Health_Questionaries() {

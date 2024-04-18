@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Treatment, UseTreatment } from '../../../contexts/TreatmentContext';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { Treatment, UseTreatment } from '../../../providers/TreatmentProvider';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import ChatTemplateUser from './ChatTemplateUser';
 
 interface LastChatProps {

@@ -1,11 +1,11 @@
 import React from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { AuthData } from '../../../contexts/AuthContext';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { AuthData } from '../../../providers/AuthenticationProvider';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
 import { useNavigation } from '@react-navigation/native';
-import { Treatment } from '../../../contexts/TreatmentContext';
-import { User } from '../../../contexts/ChatContext';
+import { Treatment } from '../../../providers/TreatmentProvider';
+import { User } from '../../../providers/ChatProvider';
 
 interface UserChat {
     last_text?: string;

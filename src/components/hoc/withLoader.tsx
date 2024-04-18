@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import LoadingAuthScreen from '../loading/LoadingAuthScreen';
 import { ApiRequest } from '../../services/APIService';
-import { UseAuth } from '../../contexts/AuthContext';
+import { UseAuth } from '../../providers/AuthenticationProvider';
 import MiniLoading from '../loading/MiniLoading';
 import { FetchData } from '../../services/fetchUtils/APIUtils';
 import USE_ENV from '../../services/server_url/ServerUrl';

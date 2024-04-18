@@ -9,7 +9,7 @@ import Animated, {
     Easing,
 
 } from 'react-native-reanimated';
-import { screenHeight, screenWidth } from '../../../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
 import HandleNoteResponse from '../../../../errors/HandleNoteResponse';
 

@@ -4,7 +4,7 @@ import {
     ToastAndroid, Image, FlatList, Dimensions, ImageBackground, TextInput, TouchableOpacity, Text, StyleSheet, SafeAreaView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../utils/layout/Screen_Size';
 import WaveCallAnimation from './call/WaveCallAnimation';
 
 function Health_Call() {

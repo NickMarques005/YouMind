@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image } from 'react-native';
 import { format } from 'timeago.js';
-import { screenWidth, screenHeight } from '../../screen_size/Screen_Size';
+import { screenWidth, screenHeight } from '../../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import { FormatTimeHours } from '../../../functions/dates/ConvertDate';
 
 export interface MessageType {

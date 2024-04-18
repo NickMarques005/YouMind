@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Image, TextInput, KeyboardAvoidingView, TouchableOpacity, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import ChatPatient from './treatment_pacient/ChatPatient';
 import ChatDoctor from './treatment_doctor/ChatDoctor';
-import { UseChat, User } from '../../../contexts/ChatContext';
+import { UseChat, User } from '../../../providers/ChatProvider';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
-import { UseHandleActiveChat } from '../../../functions/chat/HandleActiveChat';
+import { UseHandleActiveChat } from '../../../hooks/chat/UseHandleActiveChat';
 
 const ChatEnvironment = () => {
     const { authData } = UseAuth();

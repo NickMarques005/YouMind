@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Treatment, UseTreatment } from '../../../contexts/TreatmentContext';
+import { Treatment, UseTreatment } from '../../../providers/TreatmentProvider';
 import { FlatList, View, Text, Image, } from 'react-native';
 import Treatments from './Treatments';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 
 interface UserTreatmentData {
     _id: string;

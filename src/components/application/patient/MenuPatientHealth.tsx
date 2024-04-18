@@ -4,7 +4,7 @@ import Health_Menu from '../../health_screen/Health_Menu';
 import Health_Questionaries from '../../health_screen/Health_Questionaries';
 import Health_Medicines from '../../health_screen/Health_Medicines';
 import Health_Call from '../../health_screen/Health_Call';
-import { UseHealthPage } from '../../../contexts/HealthPageContext';
+import { UseHealthPage } from '../../../providers/HealthProvider';
 
 //retorna as dimensões do dispositivo 
 const screenWidth = Dimensions.get('window').width;

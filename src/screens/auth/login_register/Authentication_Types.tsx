@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text } from 'react-native';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import UserLogin from '../../../components/authentication/login_register/UserLogin';
 import RegisterScreen from './register/RegisterScreen';
 

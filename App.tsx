@@ -1,23 +1,13 @@
-import React from 'react';
-import MainRouter from './src/routes/MainRouter';
-import { WelcomeProvider } from './src/contexts/WelcomeContext';
+import MainProvider from "@features/root/providers/MainProvider";
+import Root from "./src/features/root/Root";
 import { NavigationContainer } from '@react-navigation/native';
-import { RootProvider } from './src/contexts/RootContext';
-import { AuthProvider } from './src/contexts/AuthContext';
-import { EventProvider } from './src/contexts/EventContext';
 
 export default function App() {
   return (
-    <EventProvider>
-        <WelcomeProvider>
-          <AuthProvider>
-            <NavigationContainer>
-              <RootProvider>
-                <MainRouter />
-              </RootProvider>
-            </NavigationContainer>
-          </AuthProvider>
-        </WelcomeProvider>
-    </EventProvider>
+    <NavigationContainer>
+      <MainProvider>
+        <Root />
+      </MainProvider>
+    </NavigationContainer>
   );
 }

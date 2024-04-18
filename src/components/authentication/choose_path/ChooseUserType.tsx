@@ -3,11 +3,11 @@ import { View, Image, Dimensions, TextInput, TouchableOpacity, Text, StyleSheet 
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { AuthStackTypes } from '../../../routes/MainRouter';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { AuthStackTypes } from '../../../navigation/stacks/MainStack';
 
 //Tela onde retornará duas escolhas: se é paciente ou médico
 const ChooseUserType = () => {

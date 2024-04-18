@@ -1,6 +1,6 @@
 import React from 'react'
-import { UseAuth } from '../../../../../contexts/AuthContext'
-import { NotepadType, UseNotepad } from '../../../../../contexts/NotepadContext';
+import { UseAuth } from '../../../../../providers/AuthenticationProvider'
+import { NotepadType, UseNotepad } from '../../../../../providers/NotepadProvider';
 import WithLoader from '../../../../hoc/withLoader';
 import NoteHandle from './NoteHandle';
 

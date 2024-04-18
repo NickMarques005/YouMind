@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { AuthData } from '../../../contexts/AuthContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { AuthData } from '../../../providers/AuthenticationProvider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { ApiRequest } from '../../../services/APIService';

@@ -1,9 +1,9 @@
 import React from 'react';
 import WithLoader from '../../hoc/withLoader';
 import TreatmentHandle from './TreatmentHandle';
-import { UseAuth } from '../../../contexts/AuthContext';
-import { UseTreatment } from '../../../contexts/TreatmentContext';
-import { Treatment } from '../../../contexts/TreatmentContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
+import { UseTreatment } from '../../../providers/TreatmentProvider';
+import { Treatment } from '../../../providers/TreatmentProvider';
 
 interface TreatmentListProps {
     handleTreatmentClick: (treatment: Treatment) => void

@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import MenuDoctor from '../../../components/application/doctor/MenuDoctor';
-import { Stack } from '../../../components/stack/Stack';
+import { Stack } from '../../../navigation/Stack';
 import Notifications from '../../../components/notifications/components/Notifications';
 import { usePushNotifications } from '../../../components/notifications/hooks/ConfigureNotification';
-import { UseAuth } from '../../../contexts/AuthContext';
-import { ApiRequest } from '../../../services/APIService';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import { saveNotifications } from '../../../components/notifications/hooks/SaveNotifications';
 import { UpdateTreatment } from '../../../services/treatment/TreatmentServices';
 import USE_ENV from '../../../services/server_url/ServerUrl';
 import UseRegisterPushToken from '../../../services/notification/PushNotificationService';
 import UseSocketService from '../../../services/socket/SocketService';
-import { UseForm } from '../../../contexts/UserContext';
-import { UseTreatment } from '../../../contexts/TreatmentContext';
-import { FetchData } from '../../../services/fetchUtils/APIUtils';
+import { UseForm } from '../../../providers/UserProvider';
+import { UseTreatment } from '../../../providers/TreatmentProvider';
 
-function DoctorApp() {
+function DoctorStack() {
     const { pushToken } = usePushNotifications();
     const { authData } = UseAuth();
     const { addTreatment, treatment_state } = UseTreatment();
@@ -26,10 +24,10 @@ function DoctorApp() {
     const { formData } = UseForm();
 
     const fetchDataAndUpdateTreatment = async () => {
-        console.log("\n(DoctorApp) FETCH TREATMENT DATA TEST!!\n");
+        console.log("\n(DoctorStack) FETCH TREATMENT DATA TEST!!\n");
         try {
             if (!authData || !authData.accessToken || !authData.type) {
-                console.error('(DoctorApp) Token ou tipo de autenticação ausentes. AccessToken: ', authData.accessToken);
+                console.error('(DoctorStack) Token ou tipo de autenticação ausentes. AccessToken: ', authData.accessToken);
                 return;
             }
 
@@ -44,7 +42,7 @@ function DoctorApp() {
             const result = await FetchData(apiRequestData, {accessToken: authData.accessToken, refreshToken: authData.refreshToken}, fullApiServerUrl);
 
             if (result.success) {
-                console.log('(DoctorApp) Dados do tratamento requisitado:', result.data);
+                console.log('(DoctorStack) Dados do tratamento requisitado:', result.data);
                 const data = result.data;
 
                 data.forEach((item: any) => {
@@ -57,10 +55,10 @@ function DoctorApp() {
                     }
                 });
             } else {
-                console.log('(DoctorApp) Erro ao buscar dados do tratamento:', result.errors || result.error);
+                console.log('(DoctorStack) Erro ao buscar dados do tratamento:', result.errors || result.error);
             }
         } catch (err) {
-            console.log('(DoctorApp) Erro inesperado:', err);
+            console.log('(DoctorStack) Erro inesperado:', err);
         }
     };
 
@@ -90,7 +88,7 @@ function DoctorApp() {
         }
     }, [shouldUpdateTreatment]);
 
-    console.log("(DoctorApp) SHOULD UPDATE: ", shouldUpdateTreatment);
+    console.log("(DoctorStack) SHOULD UPDATE: ", shouldUpdateTreatment);
 
     //Busca pelo Treatment
     UpdateTreatment(authData);
@@ -108,9 +106,8 @@ function DoctorApp() {
                 <Stack.Screen name="mainPage" component={MenuDoctor} />
                 <Stack.Screen name="notifications" component={Notifications} />
             </Stack.Navigator>
-
         </>
     )
 }
 
-export default DoctorApp;
+export default DoctorStack;

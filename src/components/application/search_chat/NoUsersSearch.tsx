@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { screenHeight } from '../../screen_size/Screen_Size';
+import { screenHeight } from '../../../utils/layout/Screen_Size';
 
 function NoUsersSearch() {
     return (

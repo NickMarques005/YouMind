@@ -1,4 +1,4 @@
-import { EventManagerTemplate } from "../../../hooks/events/EventManager";
+import { EventManagerTemplate } from "../../../hooks/events/UseEventManager";
 import { EventTypes } from "../../../types/events/EventTypes";
 
 export const HandleErrors = (errorResponse: string | undefined) => {

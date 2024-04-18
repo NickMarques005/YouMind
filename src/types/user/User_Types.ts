@@ -1,3 +1,5 @@
+export type UserType = 'patient' | 'doctor' | undefined;
+
 export interface Request_GetUserDataArgs {
 
 }

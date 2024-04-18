@@ -3,7 +3,7 @@ import WithLoader from '../../hoc/withLoader';
 import { RequestInitializeTreatmentData } from './Notifications';
 import HandleResponse from '../../errors/HandleResponse';
 import { FetchData } from '../../../services/fetchUtils/APIUtils';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
 import USE_ENV from '../../../services/server_url/ServerUrl';
 

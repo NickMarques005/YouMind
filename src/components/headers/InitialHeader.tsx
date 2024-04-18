@@ -1,19 +1,23 @@
 import React from 'react';
 import { View, Image, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { screenHeight, screenWidth } from '../../components/screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
+import images from '@assets/images';
 
 interface InitialHeaderProps {
     onBackPress: () => void;
 }
 
+const logo = images.generic_images.logo.logo_mobile_default;
+
 const InitialHeader = ({ onBackPress }: InitialHeaderProps) => {
+
     return (
         <LinearGradient colors={['#ab32a5', '#54b0c4']}
             start={{ x: 0.1, y: 0 }}
             end={{ x: 1, y: 0 }} style={styleInitialHeader.header}>
             <Image
-                source={require('../../assets/YouMind_Mobile.jpg')}
+                source={logo}
                 style={styleInitialHeader.imageYouMind}
             />
             <TouchableOpacity onPress={onBackPress} style={styleInitialHeader.buttonBack}>

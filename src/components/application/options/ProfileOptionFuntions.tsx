@@ -1,4 +1,4 @@
-import { Token, Tokens } from "../../../contexts/AuthContext";
+import { Token, Tokens } from "../../../providers/AuthenticationProvider";
 
 export interface SignOutData {
     tokens: Tokens | undefined;

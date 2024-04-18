@@ -1,6 +1,6 @@
 import React from 'react'
 import { View } from 'react-native';
-import { UseAuth } from '../../../../contexts/AuthContext';
+import { UseAuth } from '../../../../providers/AuthenticationProvider';
 import PatientRegister from '../../../../components/authentication/login_register/PatientRegister';
 import DoctorRegister from '../../../../components/authentication/login_register/DoctorRegister';
 

@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import { Modal, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { ConvertISODate } from '../../../functions/dates/ConvertDate';
-import { NotificationData } from '../../../contexts/NotificationsContext';
+import { NotificationData } from '../../../providers/NotificationProvider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { UpdateTreatment } from '../../../services/treatment/TreatmentServices';
-import { UseAuth } from '../../../contexts/AuthContext';
-import { UseTreatment } from '../../../contexts/TreatmentContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
+import { UseTreatment } from '../../../providers/TreatmentProvider';
 import { FetchData } from '../../../services/fetchUtils/APIUtils';
 import USE_ENV from '../../../services/server_url/ServerUrl';
 

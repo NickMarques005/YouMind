@@ -8,12 +8,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ForgotPassword from '../forgot_pass/ForgotPasswordModal';
 import { LinearGradient } from 'expo-linear-gradient';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
-import { UseAuth, AuthContextData, Tokens } from '../../../contexts/AuthContext';
-import { UseAuthentication } from '../../../services/auth/AuthenticationServices';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { AuthStackTypes } from '../../../routes/MainRouter';
-
-
+import { UseAuth, AuthContextData } from '../../../providers/AuthenticationProvider';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { AuthStackTypes } from '../../../navigation/stacks/MainStack';
+import { Tokens } from '../../../types/auth/Auth_Types';
 
 function UserLogin({ }) {
 

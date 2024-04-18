@@ -1,9 +1,13 @@
 import React from 'react';
 import { View, Text, Modal, Button, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
+import images from '@assets/images';
 
 const LeaveModal = ({ visible, onConfirm, onCancel }) => {
+    
+    const leave_icon = images.generic_images.leave.leave_icon;
+    
     return (
         <Modal
             transparent={true}
@@ -15,7 +19,7 @@ const LeaveModal = ({ visible, onConfirm, onCancel }) => {
                     <Text style={styles.leaveTitle}>Deseja sair do aplicativo YouMind?</Text>
                     
                     <View style={styles.leaveImgView}>
-                        <Image style={styles.leaveImg} source={require('../../assets/init/leave/leave_icon.png')}/>
+                        <Image style={styles.leaveImg} source={leave_icon}/>
                     </View>
                     
                     <View style={styles.buttonContainer}>
@@ -33,9 +37,7 @@ const LeaveModal = ({ visible, onConfirm, onCancel }) => {
                             <TouchableOpacity style={styles.buttonLeaveTouch} onPress={() => onConfirm()}>
                                 <Text style={[styles.buttonLeaveText, {color: '#f8dbff'}]}>Sair</Text>
                             </TouchableOpacity>
-
                         </LinearGradient>
-
                     </View>
                 </View>
             </View>

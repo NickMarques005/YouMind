@@ -8,11 +8,11 @@ import Chat from './MenuPatientTreatment';
 import Profile from './MenuPatientProfile';
 import Health from './MenuPatientHealth';
 import Bluetooth from './MenuPatientBluetooth';
-import { AppStackTypes } from '../../../routes/MainRouter';
+import { AppStackTypes } from '../../../navigation/stacks/MainStack';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { MenuTypes, UseMenu } from '../../../contexts/MenuContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { MenuTypes, UseMenu } from '../../../providers/MenuProvider';
 
 const MenuPatient = () => {
     //Utilização do navigation: widget para o funcionamento da navegação entre telas através de Pilhas.

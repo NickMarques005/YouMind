@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { AppStackTypes } from '../../../routes/MainRouter';
+import { AppStackTypes } from '../../../navigation/stacks/MainStack';
 import { useNavigation } from '@react-navigation/native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import CountNotifications from '../../notifications/components/CountNotifications';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { UseForm } from '../../../contexts/UserContext';
-import { UseNotifications } from '../../../contexts/NotificationsContext';
-import { UseAuth } from '../../../contexts/AuthContext';
-import { UseMenu } from '../../../contexts/MenuContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { UseForm } from '../../../providers/UserProvider';
+import { UseNotifications } from '../../../providers/NotificationProvider';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
+import { UseMenu } from '../../../providers/MenuProvider';
 
 const Doctor_Home = () => {
     const navigation = useNavigation<AppStackTypes>();

@@ -1,7 +1,7 @@
 //HOC (Higher-Order Component) para permitir acesso ao AuthContext fora da árvore de renderização do componente
 
 import React, { ComponentType } from 'react';
-import { UseAuth, AuthContextData } from '../../contexts/AuthContext';
+import { UseAuth, AuthContextData } from '../../providers/AuthenticationProvider';
 
 interface WithAuthContextProps {
     AuthContext: AuthContextData;

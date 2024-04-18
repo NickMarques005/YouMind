@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Dimensions, Image, TouchableOpacity, Animated, Easing } from 'react-native';
-import { screenWidth, screenHeight } from '../screen_size/Screen_Size';
+import { screenWidth, screenHeight } from '../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 import { HandleNotificationResponse } from '../notifications/components/HandleNotification';

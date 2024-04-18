@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList,Animated } from 'react-native';
 import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler';
-import { screenWidth, screenHeight } from '../../../../screen_size/Screen_Size';
+import { screenWidth, screenHeight } from '../../../../../utils/layout/Screen_Size';
 import Note from './Note';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SharedValue } from 'react-native-reanimated';

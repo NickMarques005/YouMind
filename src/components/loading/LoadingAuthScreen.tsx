@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ActivityIndicator, Text, Dimensions } from 'react-native';
 import LottieView from 'lottie-react-native';
 
-import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../utils/layout/Screen_Size';
 
 function LoadingAuthScreen() {
     return (

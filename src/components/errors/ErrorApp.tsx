@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
-import { UseAuth } from '../../contexts/AuthContext';
+import { UseAuth } from '../../providers/AuthenticationProvider';
 
 function ErrorApp({errors, message, reloadData}: {errors?: string[], message?: string, reloadData?: () => void}) {
     const { signOut, authData } = UseAuth();

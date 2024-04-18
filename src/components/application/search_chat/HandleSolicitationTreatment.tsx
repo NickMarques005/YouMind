@@ -3,7 +3,7 @@ import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, Flat
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
 import HandleResponse from '../../errors/HandleResponse';
 import { FetchData } from '../../../services/fetchUtils/APIUtils';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import { RequestSolicitationTreatmentData } from './StartTreatment';
 import { RequestSolicitation } from './CurrentTreatment';
 import USE_ENV from '../../../services/server_url/ServerUrl';

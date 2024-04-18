@@ -3,10 +3,10 @@ import {
     View, Animated, Text, StyleSheet, SafeAreaView, FlatList
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { screenHeight, screenWidth } from '../../../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../../../utils/layout/Screen_Size';
 import CardPatientAnalysis from './CardPatientAnalysis';
-import { PatientAnalysis } from '../../../../../contexts/AnalysisContext';
-import { UseTreatment } from '../../../../../contexts/TreatmentContext';
+import { PatientAnalysis } from '../../../../../providers/AnalysisProvider';
+import { UseTreatment } from '../../../../../providers/TreatmentProvider';
 
 
 function MainAnalysis() {

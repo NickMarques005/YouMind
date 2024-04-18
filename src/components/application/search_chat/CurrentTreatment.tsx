@@ -9,12 +9,12 @@ import Animated, {
     Easing,
 
 } from 'react-native-reanimated';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Treatment, UseTreatment } from '../../../contexts/TreatmentContext';
+import { Treatment, UseTreatment } from '../../../providers/TreatmentProvider';
 import HandleNoteResponse from '../../errors/HandleNoteResponse';
 import MidLoading from '../../loading/MidLoading';
-import { UseAuth } from '../../../contexts/AuthContext';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { UpdateTreatment } from '../../../services/treatment/TreatmentServices';
 import HandleSolicitationTreatment from './HandleSolicitationTreatment';

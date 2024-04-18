@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, Alert, ScrollView, TouchableOpacity } from 'react-native'
-import { UseAuth } from '../../../contexts/AuthContext';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
 import { useNavigation, StackActions } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { AuthStackTypes } from '../../../routes/MainRouter';
 import LoadingAuthScreen from '../../loading/LoadingAuthScreen';
-import { UseAuthentication } from '../../../services/auth/AuthenticationServices';
 
 function PatientRegister() {
     const { handleLogin, userType } = UseAuth();
@@ -74,11 +72,7 @@ function PatientRegister() {
     return (
         <ScrollView style={{ flex: 1 }}>
             <KeyboardAwareScrollView enableOnAndroid={true} contentContainerStyle={stylePatientRegister.patientRegister_scrollviewKeyboard}>
-                {
-                    loading ?
-                        <LoadingAuthScreen />
-                        : ""
-                }
+                
                 <View style={stylePatientRegister.patientRegister_mainContainer}>
                     <LinearGradient colors={['#4d2448', '#823d94', '#729edb']}
                         start={{ x: 0.7, y: 0 }}

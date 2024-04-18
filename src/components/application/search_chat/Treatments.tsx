@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Treatment } from '../../../contexts/TreatmentContext';
+import { Treatment } from '../../../providers/TreatmentProvider';
 
 
 interface TreatmentsProps {

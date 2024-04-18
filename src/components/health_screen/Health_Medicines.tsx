@@ -4,20 +4,20 @@ import {
     ToastAndroid, Image, FlatList, Dimensions, ImageBackground, TextInput, TouchableOpacity, Text, StyleSheet, SafeAreaView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useCurrentDate } from '../../contexts/CurrentDateContext';
+import { useCurrentDate } from '../../providers/CurrentDateProvider';
 import { DateTime, Settings } from 'luxon';
 import CurrentDateCard from './medicines/CurrentDateCard';
-import { UseMedicines } from '../../contexts/MedicineContext';
+import { UseMedicines } from '../../providers/MedicineProvider';
 import MedicineList from './medicines/MedicineList';
 import { Easing } from 'react-native-reanimated';
-import { ShowMedicineOnDate, FilterMedicineForCurrentDate } from '../../functions/medicines/ShowMedicineOnDate';
+import { ShowMedicineOnDate, FilterMedicineForCurrentDate } from '../../features/app/patient/health/utils/MedicineDates';
 import { FormatDate, FormatRelativeDate } from '../../functions/medicines/FormatDate';
 import NoMedicines from './medicines/NoMedicines';
 
 Settings.defaultLocale = 'pt';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../utils/layout/Screen_Size';
 
 
 interface Medicine {

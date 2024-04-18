@@ -1,12 +1,10 @@
 import React, { LegacyRef, MutableRefObject, RefObject, useEffect, useState } from 'react'
 import { KeyboardAvoidingView, View, TouchableOpacity, Text, StyleSheet, TextInput, Keyboard, Image } from 'react-native';
-import { screenHeight, screenWidth } from '../../../../components/screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../../utils/layout/Screen_Size';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { AuthStackTypes } from '../../../../routes/MainRouter';
+import { AuthStackTypes } from '../../../../navigation/stacks/MainStack';
 import { useNavigation, RouteProp, useRoute } from '@react-navigation/native';
-import { UseAuthentication } from '../../../../services/auth/AuthenticationServices';
 import LoadingAuthScreen from '../../../../components/loading/LoadingAuthScreen';
-import { UseAuth } from '../../../../contexts/AuthContext';
 
 const inputs = Array(4).fill('');
 
@@ -18,7 +16,7 @@ type AuthStackParamList = {
 
 let newInputIndex = 0;
 
-const OTPScreen = () => {
+const OTP = () => {
     const route = useRoute<RouteProp<AuthStackParamList, 'otp'>>();
     const navigation = useNavigation<AuthStackTypes>();
     const { ValidateOTP, loading } = UseAuthentication();
@@ -202,4 +200,4 @@ const OtpStyles = StyleSheet.create({
     }
 });
 
-export default OTPScreen;
+export default OTP;

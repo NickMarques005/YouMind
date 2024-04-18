@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { screenHeight, screenWidth } from '../../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
 import ChatTemplateUser from '../ChatTemplateUser';
-import { Treatment, UseTreatment } from '../../../../contexts/TreatmentContext';
-import { UseAuth } from '../../../../contexts/AuthContext';
-import { UseHandleActiveChat } from '../../../../functions/chat/HandleActiveChat';
+import { Treatment, UseTreatment } from '../../../../providers/TreatmentProvider';
+import { UseAuth } from '../../../../providers/AuthenticationProvider';
+import { UseHandleActiveChat } from '../../../../hooks/chat/UseHandleActiveChat';
 
 interface PatientTreatmentRunningProps {
     handleChat: (other_members: Treatment) => void

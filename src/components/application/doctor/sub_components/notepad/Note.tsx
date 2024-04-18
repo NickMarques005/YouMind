@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { View, Image, TextInput, TouchableOpacity, Text, StyleSheet, } from 'react-native';
-import { screenHeight, screenWidth } from '../../../../screen_size/Screen_Size';
+import { screenHeight, screenWidth } from '../../../../../utils/layout/Screen_Size';
 import { LinearGradient } from 'expo-linear-gradient';
-import { UseNotepad } from '../../../../../contexts/NotepadContext';
-import { NotepadType } from '../../../../../contexts/NotepadContext';
+import { UseNotepad } from '../../../../../providers/NotepadProvider';
+import { NotepadType } from '../../../../../providers/NotepadProvider';
 import Animated, { SharedValue, useAnimatedStyle, interpolate, Extrapolate } from 'react-native-reanimated';
 
 interface NoteProps {

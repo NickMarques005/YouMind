@@ -9,11 +9,11 @@ import { Platform, NativeModules, NativeEventEmitter, PermissionsAndroid } from 
 import BleManager from 'react-native-ble-manager';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Buffer } from 'buffer';
-import { BluetoothContext } from '../../../contexts/BluetoothConnection';
+import { BluetoothContext } from '../../../providers/BluetoothProvider';
 
-import useBLE from '../../../functions/ble/useBLE';
-import { UseAuth } from '../../../contexts/AuthContext';
-import { UseForm } from '../../../contexts/UserContext';
+import useBLE from '../../../hooks/ble/UseBLE';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
+import { UseForm } from '../../../providers/UserProvider';
 
 //retorna as dimensões do dispositivo 
 const screenWidth = Dimensions.get('window').width;

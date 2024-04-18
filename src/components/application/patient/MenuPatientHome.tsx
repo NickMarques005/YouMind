@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Dimensions, FlatList, Text, Image, StyleSheet, ScrollView, ImageBackground, TouchableOpacity, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { AppStackTypes } from '../../../routes/MainRouter';
+import { AppStackTypes } from '../../../navigation/stacks/MainStack';
 import { useNavigation } from '@react-navigation/native';
 import CountNotifications from '../../notifications/components/CountNotifications';
 
 //retorna as dimensões do dispositivo 
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
-import { UseForm } from '../../../contexts/UserContext';
-import { MenuTypes, UseMenu } from '../../../contexts/MenuContext';
-import { UseHealthPage } from '../../../contexts/HealthPageContext';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
+import { UseForm } from '../../../providers/UserProvider';
+import { MenuTypes, UseMenu } from '../../../providers/MenuProvider';
+import { UseHealthPage } from '../../../providers/HealthProvider';
 
 const Patient_Home = () => {
   const navigation = useNavigation<AppStackTypes>();

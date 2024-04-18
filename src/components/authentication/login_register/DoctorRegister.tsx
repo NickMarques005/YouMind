@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, Alert, ScrollView, TouchableOpacity } from 'react-native'
-import { UseAuth } from '../../../contexts/AuthContext';
-import { screenHeight, screenWidth } from '../../screen_size/Screen_Size';
+import { UseAuth } from '../../../providers/AuthenticationProvider';
+import { screenHeight, screenWidth } from '../../../utils/layout/Screen_Size';
 import { useNavigation, StackActions } from '@react-navigation/native';
-import { AuthStackTypes } from '../../../routes/MainRouter';
+import { AuthStackTypes } from '../../../navigation/stacks/MainStack';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';

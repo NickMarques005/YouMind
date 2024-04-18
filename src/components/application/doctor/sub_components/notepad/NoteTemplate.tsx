@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Image, TouchableOpacity, Text, Animated, StyleSheet, } from 'react-native';
-import { NotepadType, UseNotepad } from '../../../../../contexts/NotepadContext';
+import { NotepadType, UseNotepad } from '../../../../../providers/NotepadProvider';
 import CarouselNotes from './CarouselNotes';
-import { screenHeight } from '../../../../screen_size/Screen_Size';
+import { screenHeight } from '../../../../../utils/layout/Screen_Size';
 import { Directions, Gesture, GestureDetector, GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { useSharedValue, withTiming, Easing, withSpring } from 'react-native-reanimated';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
