@@ -12,6 +12,7 @@ interface LatestMedicationListProps {
 
 const LatestMedicationsList = ({ latestMedications, selectLatestMedication }: LatestMedicationListProps) => {
 
+    console.log(latestMedications);
 
     return (
         <View style={{ height: screenHeight * 0.4 }}>

@@ -12,11 +12,10 @@ interface MedicationProps {
 }
 
 const Medication = ({ latestMedication, selectLatestMedication }: MedicationProps) => {
-
+    console.log(latestMedication);
     const { iconType } = useMedicationIcon(latestMedication.currentMedication.type);
     const iconSize = responsiveSize * 0.09;
     const avatarSize = responsiveSize * 0.12;
-
 
     return (
         <View style={{

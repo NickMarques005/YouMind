@@ -15,19 +15,19 @@ import { UseTreatmentNavigation } from '../../treatment/hooks/UseTreatmentNaviga
 import { useTabNavigation } from '@features/app/hooks/UseTabNavigator';
 import { HealthPage, UseHealthPage } from '@features/app/providers/patient/HealthProvider';
 
-interface SelectedNotification {
+export interface SelectedNotification {
     removeNotification?: (notificationId: string | string[]) => void;
     notification: NotificationData;
 }
 
-interface UseNotificationManager {
+export interface UseNotificationManager {
     setDeleteNotificationLoading: React.Dispatch<React.SetStateAction<boolean>>;
     setModalLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userType: string | undefined;
     userData?: UserData;
 }
 
-interface HandlePageDirectionParams {
+export interface HandlePageDirectionParams {
     tab: DoctorScreenName | PatientScreenName,
     sender?: TreatmentInfoTemplate, 
     healthPage?: HealthPage,

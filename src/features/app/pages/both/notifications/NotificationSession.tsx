@@ -54,21 +54,13 @@ const NotificationSession = () => {
 
             {
                 userData && selectedNotification &&
-                <DefaultModal
-                    disableGestures={modalLoading.loading}
-                    isVisible={!!selectedNotification}
-                    onClose={handleClearSelectedNotification}
-                >
-                    <Solicitation
-                        userData={userData}
-                        messageSolicitation={selectedNotification.notification.body}
-                        titleAccept={selectedNotification.notification.titleAccept ? selectedNotification.notification.titleAccept : "Aceitar"}
-                        titleCancel={selectedNotification.notification.titleCancel ? selectedNotification.notification.titleCancel : 'Cancelar'}
-                        handleSolicitation={() => handleNotificationAccept(selectedNotification.notification, selectedNotification.removeNotification)}
-                        icon={selectedNotification.notification.icon}
-                        closeModal={handleClearSelectedNotification}
-                    />
-                </DefaultModal>
+                <Solicitation
+                    userData={userData}
+                    selectedNotification={selectedNotification}
+                    modalLoading={modalLoading}
+                    handleClearSelectedNotification={handleClearSelectedNotification}
+                    handleNotificationAccept={handleNotificationAccept}
+                />
             }
         </View>
     )

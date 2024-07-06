@@ -18,6 +18,7 @@ import { useTerminateTreatment } from '../main/components/doctor/hooks/UseTermin
 import { UseLoading } from '@hooks/loading/UseLoading';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import DefaultLoading from '@components/loading/DefaultLoading';
+import CloseTreatmentVerification from './components/CloseTreatmentVerification';
 
 export interface TreatmentSelectedParams {
     currenTreatment?: TreatmentInfoTemplate;
@@ -37,7 +38,7 @@ const SelectedTreatment = () => {
     const { patientProgress, history, productivityLevel, performanceMessage } = UsePatientProgressHandling(currentTreatment?.uid);
     const backIcon = images.generic_images.back.arrow_back_white;
     const userIcon = images.app_doctor_images.chat.user_icon_chat;
-    const { handleEndTreatment } = useTerminateTreatment({ setLoading, HandleResponseAppError, HandleResponseAppSuccess });
+    const { handleEndTreatment, closeTreatmentVerification, handleCloseTreatmentVerification, clearCloseTreatmentVerification } = useTerminateTreatment({ setLoading, HandleResponseAppError, HandleResponseAppSuccess });
 
     return (
         <>
@@ -55,7 +56,7 @@ const SelectedTreatment = () => {
                                 </View>
 
                                 <View style={{ position: 'absolute', left: 15, top: '20%' }}>
-                                    <TouchableOpacity disabled={loading} onPress={() => navigateToTreatmentScreen('main_treatment')} style={{opacity: loading ? 0.5 : 1}}>
+                                    <TouchableOpacity disabled={loading} onPress={() => navigateToTreatmentScreen('main_treatment')} style={{ opacity: loading ? 0.5 : 1 }}>
                                         <Image style={{ height: 35, width: 35 }} source={backIcon} />
                                     </TouchableOpacity>
                                 </View>
@@ -116,10 +117,13 @@ const SelectedTreatment = () => {
                                 <LinearGradient colors={['#52a2ab', '#407d82', '#2a5f61',]}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 0, y: 1 }} style={{ width: '100%', borderRadius: 50, }}>
-                                    <TouchableOpacity onPress={() => currentTreatment && userData?.type && handleEndTreatment(currentTreatment._id, userData.type)} style={{ paddingVertical: 20, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                                    <TouchableOpacity
+                                        onPress={() => currentTreatment && userData?.type && handleCloseTreatmentVerification(() => handleEndTreatment(currentTreatment._id, userData.type), `Gostaria de encerrar o tratamento do paciente ${currentTreatment?.name}?`, "Encerrar") }
+                                        style={{ paddingVertical: 20, width: '100%', alignItems: 'center', justifyContent: 'center' }}
+                                    >
                                         {
                                             loading ?
-                                                <DefaultLoading size={25} color={'white'}/>
+                                                <DefaultLoading size={25} color={'white'} />
                                                 :
                                                 <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#f5f7f7' }}>
                                                     ENCERRAR TRATAMENTO
@@ -132,6 +136,16 @@ const SelectedTreatment = () => {
                     }
                 </LinearGradient>
             </ScrollView>
+            {
+                userData && closeTreatmentVerification &&
+                <CloseTreatmentVerification
+                    userData={userData}
+                    verificationMessage={closeTreatmentVerification.message || "Deseja confirmar essa ação?"}
+                    handleVerificationAccept={closeTreatmentVerification.handleAccept}
+                    handleCloseVerification={clearCloseTreatmentVerification}
+                    acceptText={closeTreatmentVerification.acceptMessage}
+                />
+            }
         </>
     )
 }

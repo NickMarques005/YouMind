@@ -3,6 +3,8 @@ import { UseNotepadService } from "@hooks/api/UseNotepadService";
 import { NoteTemplate, UpdateNote } from "types/app/doctor/notepad/Notepad_Types";
 import { UseNotepadNavigation } from "../../../hooks/UseNotepadNavigation";
 import { useNotepad } from "@features/app/providers/doctor/NotepadProvider";
+import { useState } from "react";
+import { Verification } from "types/verification/Verification_Types";
 
 interface UseCurrentNoteHandlingProps {
     updateSetLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,8 +18,25 @@ export const UseCurrentNoteHandling = ({ HandleResponseAppError, HandleResponseA
     const { performUpdateNote } = UseNotepadService(updateSetLoading);
     const { navigateToNotepadScreen } = UseNotepadNavigation();
     const { dispatch } = useNotepad();
+    const [noteVerification, setNoteVerification] = useState<Verification | undefined>(undefined);
+
+    const handleNoteVerification = (handleAccept: () => void, message?: string, acceptMessage?: string) => {
+        const verification = {
+            message,
+            acceptMessage,
+            handleAccept
+        }
+
+        setNoteVerification(verification);
+    }
+
+    const clearNoteVerification = () => {
+        setNoteVerification(undefined);
+    }
 
     const handleDeleteNote = async (noteId: string, onSuccess?: () => void) => {
+        if(noteVerification) clearNoteVerification();
+
         console.log(noteId);
         try {
             const response = await performDeleteNote(noteId);
@@ -46,6 +65,8 @@ export const UseCurrentNoteHandling = ({ HandleResponseAppError, HandleResponseA
     }
 
     const handleUpdateNote = async (noteId: string, updated_note: UpdateNote, onSuccess?: () => void) => {
+        if(noteVerification) clearNoteVerification();
+        
         try {
             const response = await performUpdateNote(updated_note, noteId);
             if (response.success) {
@@ -73,5 +94,5 @@ export const UseCurrentNoteHandling = ({ HandleResponseAppError, HandleResponseA
 
     }
 
-    return { handleDeleteNote, handleUpdateNote }
+    return { handleDeleteNote, handleUpdateNote, noteVerification, handleNoteVerification, clearNoteVerification }
 }

@@ -4,7 +4,9 @@ import { UseTreatmentNavigation } from "@features/app/pages/both/treatment/hooks
 import { usePatientHistory } from "@features/app/providers/doctor/PatientHistoryProvider";
 import { UseTreatmentService } from "@hooks/api/UseTreatmentService";
 import { UseTreatment } from "@providers/TreatmentProvider";
+import { useState } from "react";
 import { SetLoading } from "types/loading/Loading_Types"
+import { Verification } from "types/verification/Verification_Types";
 
 interface UseTerminateTreatment {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,8 +20,25 @@ export const useTerminateTreatment = ({ setLoading, HandleResponseAppError, Hand
     const { treatment_state, removeTreatment } = UseTreatment();
     const { navigateToTreatmentScreen } = UseTreatmentNavigation();
     const { performEndTreatment } = UseTreatmentService(setLoading);
+    const [closeTreatmentVerification, setCloseTreatmentVerification] = useState<Verification | undefined>(undefined);
+
+    const handleCloseTreatmentVerification = (handleAccept: () => void, message?: string, acceptMessage?: string) => {
+        const verification: Verification = {
+            handleAccept,
+            message,
+            acceptMessage
+        }
+
+        setCloseTreatmentVerification(verification);
+    }
+
+    const clearCloseTreatmentVerification = () => {
+        setCloseTreatmentVerification(undefined);
+    }
 
     const handleEndTreatment = async (treatmentId: string, type: string) => {
+        if(closeTreatmentVerification) clearCloseTreatmentVerification();
+
         try {
             const response = await performEndTreatment({ treatmentId }, type);
             if (response.success && response.data) {
@@ -51,5 +70,5 @@ export const useTerminateTreatment = ({ setLoading, HandleResponseAppError, Hand
         }
     }
 
-    return { handleEndTreatment }
+    return { handleEndTreatment, closeTreatmentVerification, handleCloseTreatmentVerification, clearCloseTreatmentVerification }
 }
