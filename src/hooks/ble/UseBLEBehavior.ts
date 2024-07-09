@@ -10,9 +10,14 @@ interface UseBLEBehaviorProps {
     setIsScanning: React.Dispatch<React.SetStateAction<boolean>>;
     setDiscoveredPeripherals: React.Dispatch<React.SetStateAction<Map<string, BleDeviceData> | undefined>>;
     setCurrentDevice: React.Dispatch<React.SetStateAction<BleDeviceData | undefined>>;
+    setBluetoothConnected: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const useBLEBehavior = ({ setCurrentDevice, setIsScanning, setDeviceState, setDiscoveredPeripherals }: UseBLEBehaviorProps) => {
+export const useBLEBehavior = ({ 
+    setCurrentDevice, setIsScanning, 
+    setDeviceState, setDiscoveredPeripherals,
+    setBluetoothConnected
+}: UseBLEBehaviorProps) => {
 
     const { HandleResponseAppError } = UseGlobalResponse();
 
@@ -67,11 +72,16 @@ export const useBLEBehavior = ({ setCurrentDevice, setIsScanning, setDeviceState
         console.log("Device Did Bond!!");
     }
 
+    const handleUpdateState = (state: string) => {
+        setBluetoothConnected(state === 'on');
+    }
+
     return {
         handleDiscoverPeripherals,
         handleStopScan,
         handleDisconnectDevice,
         handleConnectDevice,
-        handleDeviceDidBond
+        handleDeviceDidBond,
+        handleUpdateState
     }
 }

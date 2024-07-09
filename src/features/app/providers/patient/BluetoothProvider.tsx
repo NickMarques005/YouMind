@@ -17,6 +17,7 @@ interface BluetoothContextType {
   setFormBleUser: React.Dispatch<React.SetStateAction<FormBleUser | undefined>>;
   serviceUUIDs: ServiceUUIDs;
   characteristicUUIDs: CharacteristicUUIDs;
+  handleRequestBluetoothPermissions: () => Promise<boolean>;
 }
 
 type BluetoothProviderProps = {
@@ -38,7 +39,8 @@ const BluetoothProvider: React.FC<BluetoothProviderProps> = ({ children }) => {
   const [discoveredPeripherals, setDiscoveredPeripherals] = useState<Map<string, BleDeviceData> | undefined>(undefined);
   const [formBleUser, setFormBleUser] = useState<FormBleUser | undefined>(undefined);
 
-  useBleManager({ setBluetoothConnected, 
+  const { handleRequestBluetoothPermissions } = useBleManager({ 
+    setBluetoothConnected, 
     isScanning, setIsScanning, 
     setDeviceState, setDiscoveredPeripherals,
     setCurrentDevice, discoveredPeripherals,
@@ -59,7 +61,8 @@ const BluetoothProvider: React.FC<BluetoothProviderProps> = ({ children }) => {
       formBleUser,
       setFormBleUser,
       serviceUUIDs,
-      characteristicUUIDs
+      characteristicUUIDs,
+      handleRequestBluetoothPermissions
     }}>
       {children}
     </BluetoothContext.Provider>

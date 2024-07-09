@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
 import BleManager from 'react-native-ble-manager';
-import { PermissionsAndroid, Platform } from 'react-native';
 import useBLE from './UseBLE';
 import { useBluetoothListeners } from './UseBluetoothListeners';
 import { useBLEBehavior } from './UseBLEBehavior';
 import { BleDeviceData, DeviceState } from 'types/ble/Ble_Types';
+import { useEffect } from 'react';
 
 interface UseBleManagerProps {
     setBluetoothConnected: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,51 +25,60 @@ export const useBleManager = ({
     setCurrentDevice
 }: UseBleManagerProps) => {
     const { requestPermissions } = useBLE();
-    const { handleDiscoverPeripherals, handleStopScan, handleDisconnectDevice, handleConnectDevice } = useBLEBehavior({ isScanning, setIsScanning, setDeviceState, setDiscoveredPeripherals, discoveredPeripherals, setCurrentDevice });
-    const { setupListeners, cleanupListeners } = useBluetoothListeners({ handleDiscoverPeripherals, handleStopScan, handleDisconnectDevice, handleConnectDevice, });
+    const { handleDiscoverPeripherals, handleStopScan,
+        handleDisconnectDevice, handleConnectDevice, handleUpdateState } = useBLEBehavior({
+            isScanning,
+            setIsScanning,
+            setDeviceState,
+            setDiscoveredPeripherals,
+            discoveredPeripherals,
+            setCurrentDevice,
+            setBluetoothConnected
+        });
+    const { setupListeners, cleanupListeners } = useBluetoothListeners({
+        handleDiscoverPeripherals,
+        handleStopScan,
+        handleDisconnectDevice,
+        handleConnectDevice,
+        handleUpdateState
+    });
 
-    useEffect(() => {
-        requestPermissions((isGranted) => {
+    const handleRequestBluetoothPermissions = async () => {
+        try {
+            const isGranted = await new Promise<boolean>((resolve) => {
+                requestPermissions((granted) => resolve(granted));
+            });
+
             if (isGranted) {
                 console.log('Todas as permissões necessárias concedidas.');
 
-                BleManager.start({ showAlert: false })
-                    .then(() => {
-                        console.log('Bluetooth initialized');
-                    })
-                    .catch((error) => {
-                        console.error('Error initializing Bluetooth:', error);
-                    });
+                await BleManager.start({ showAlert: false });
+                console.log('Bluetooth initialized');
 
-                BleManager.enableBluetooth()
-                    .then(() => {
-                        console.log('Bluetooth is ON');
-                    })
-                    .catch((err) => {
-                        console.log('The user refused to enable bluetooth');
-                    });
+                await BleManager.enableBluetooth();
+                console.log('Bluetooth is ON');
 
                 const subscriptions = setupListeners();
 
-                BleManager.checkState()
-                    .then((state) => {
-                        if (state === 'on') {
-                            setBluetoothConnected(true);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error checking Bluetooth state:', error);
-                    });
-
-                return () => {
-                    cleanupListeners(subscriptions);
+                const state = await BleManager.checkState();
+                if (state === 'on') {
+                    setBluetoothConnected(true);
                 }
             } else {
                 console.log('Permissões necessárias não concedidas.');
                 setBluetoothConnected(false);
             }
-        });
+
+            return isGranted;
+        } catch (error) {
+            console.log('Erro ao lidar com as permissões de Bluetooth:', error);
+            return false;
+        }
+    }
+
+    useEffect(() => {
+        handleRequestBluetoothPermissions();
     }, []);
 
-    return;
+    return { handleRequestBluetoothPermissions };
 };

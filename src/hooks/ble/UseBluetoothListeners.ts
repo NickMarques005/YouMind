@@ -9,6 +9,7 @@ interface UseBluetoothListeners {
     handleStopScan: () => void;
     handleDisconnectDevice: () => void;
     handleConnectDevice: () => void;
+    handleUpdateState: (state: string) => void;
 }
 
 interface BLEEmitterSubscription {
@@ -19,7 +20,13 @@ interface BLEEmitterSubscription {
     updateState: EmitterSubscription;
 }
 
-export const useBluetoothListeners = ({ handleConnectDevice, handleDisconnectDevice, handleDiscoverPeripherals, handleStopScan }: UseBluetoothListeners) => {
+export const useBluetoothListeners = ({ 
+    handleConnectDevice,
+    handleDisconnectDevice, 
+    handleDiscoverPeripherals, 
+    handleStopScan,
+    handleUpdateState 
+}: UseBluetoothListeners) => {
 
     const BleManagerModule = NativeModules.BleManager;
     const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -29,9 +36,7 @@ export const useBluetoothListeners = ({ handleConnectDevice, handleDisconnectDev
         const stopScan = BleManagerEmitter.addListener('BleManagerStopScan', handleStopScan);
         const disconnectDevice = BleManagerEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectDevice);
         const connectDevice = BleManagerEmitter.addListener('BleManagerConnectPeripheral', handleConnectDevice);
-        const updateState = BleManagerEmitter.addListener('BleManagerDidUpdateState', (args) => {
-            console.log("Bluetooth State Updated:", args.state);
-        });
+        const updateState = BleManagerEmitter.addListener('BleManagerDidUpdateState', ({ state }) => { handleUpdateState(state) });
 
         return { discoverPeripheral, stopScan, disconnectDevice, connectDevice, updateState };
     }, [handleDiscoverPeripherals, handleStopScan, handleDisconnectDevice]);

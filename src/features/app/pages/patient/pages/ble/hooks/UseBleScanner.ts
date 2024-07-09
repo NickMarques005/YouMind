@@ -6,15 +6,25 @@ interface UseBleScannerProps {
     setDeviceState: React.Dispatch<React.SetStateAction<DeviceState>>;
     isScanning: boolean;
     setIsScanning: React.Dispatch<React.SetStateAction<boolean>>;
+    handleRequestBluetoothPermissions: () => Promise<boolean>;
+    bluetoothConnected: boolean;
 }
 
-const useBLEScanner = ({ setDeviceState, isScanning, setIsScanning }: UseBleScannerProps) => {
+const useBLEScanner = ({ setDeviceState, isScanning, setIsScanning, handleRequestBluetoothPermissions, bluetoothConnected }: UseBleScannerProps) => {
 
-    const scanTimeout = 15000;
+    const scanTimeout = 15;
 
-    const scanDevices = (serviceUUIDs: ServiceUUIDs) => {
+    const scanDevices = async (serviceUUIDs: ServiceUUIDs) => {
+        if (!bluetoothConnected) {
+            const isGranted = await handleRequestBluetoothPermissions();
+            if (!isGranted) {
+                console.log('Permissões Bluetooth não concedidas, não é possível escanear dispositivos.');
+                return;
+            }
+        }
+        
         if (!isScanning) {
-            BleManager.scan(serviceUUIDs["form"], 15, true)
+            BleManager.scan(serviceUUIDs["form"], scanTimeout, true)
                 .then(() => {
                     setIsScanning(true);
                     setDeviceState('deviceScanning');

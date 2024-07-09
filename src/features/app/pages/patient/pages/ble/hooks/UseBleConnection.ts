@@ -2,28 +2,33 @@ import { UseBluetoothDevice } from '@features/app/providers/patient/BluetoothPro
 import { UseForm } from '@features/app/providers/sub/UserProvider';
 import { useBleOperations } from '@hooks/ble/UseBleOperations';
 import { getFormBleUser } from '@utils/ble/GetBleFormData';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import BleManager from 'react-native-ble-manager';
 import { BleDeviceData, DeviceState } from 'types/ble/Ble_Types';
 import { UserData } from 'types/user/User_Types';
 import { useReadDeviceData } from './UseReadDeviceData';
 
 interface UseBleConnectionProps {
-    requestPermissions: (cb: any) => Promise<void>;
     setDiscoveredPeripherals: React.Dispatch<React.SetStateAction<Map<any, any> | undefined>>;
     setDeviceState: React.Dispatch<React.SetStateAction<DeviceState>>;
     setCurrentDevice: React.Dispatch<React.SetStateAction<BleDeviceData | undefined>>;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     HandleResponseAppError: (value: string) => void;
+    handleRequestBluetoothPermissions: () => Promise<boolean>;
     userData?: UserData;
 }
 
-export const useBleConnection = ({ userData, HandleResponseAppError, setCurrentDevice, setDeviceState, setDiscoveredPeripherals, requestPermissions, setLoading }: UseBleConnectionProps) => {
+export const useBleConnection = ({ userData, HandleResponseAppError, handleRequestBluetoothPermissions, setCurrentDevice, setDeviceState, setDiscoveredPeripherals, setLoading }: UseBleConnectionProps) => {
     const { writeCharacteristic, readCharacteristic } = useBleOperations();
-    const { serviceUUIDs, characteristicUUIDs } = UseBluetoothDevice();
-    const { getDeviceData } = useReadDeviceData({ setCurrentDevice});
+    const { serviceUUIDs, characteristicUUIDs, bluetoothConnected } = UseBluetoothDevice();
+    const { getDeviceData } = useReadDeviceData({ setCurrentDevice });
 
     const handleDeviceConnection = useCallback(async (device: BleDeviceData) => {
+        if(!bluetoothConnected)
+        {
+            handleRequestBluetoothPermissions();
+        }
+        
         setLoading(true);
         try {
             await BleManager.connect(device.id);
@@ -70,6 +75,8 @@ export const useBleConnection = ({ userData, HandleResponseAppError, setCurrentD
             setLoading(false);
         }
     }, []);
+
+    
 
     return { handleDeviceConnection, disconnectFromDevice };
 };

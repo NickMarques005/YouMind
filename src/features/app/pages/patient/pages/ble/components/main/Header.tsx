@@ -10,9 +10,10 @@ interface BleHeaderProps {
     deviceName?: string;
     isScanning: boolean;
     connectionLoading: boolean;
+    bleOn: boolean;
 }
 
-const Header = ({ connectionLoading, deviceState, deviceName, isScanning }: BleHeaderProps) => {
+const Header = ({ connectionLoading, deviceState, deviceName, isScanning, bleOn }: BleHeaderProps) => {
 
     const bleHeaderBg = images.app_patient_images.bluetooth.ble_background;
 
@@ -45,37 +46,35 @@ const Header = ({ connectionLoading, deviceState, deviceName, isScanning }: BleH
 
     return (
         <ImageBackground source={bleHeaderBg}
-            style={styles.backgroundImage_BluetoothTitle}>
+            style={[styles.backgroundImage_BluetoothTitle, { opacity: bleOn ? 1 : 0.7 }]}>
             <View style={styles.header_Bluetooth}>
-
                 <View style={styles.deviceSection_View}>
-
                     <View style={styles.deviceBluetooth_View}>
                         <View style={styles.deviceDesign_View}>
                             {
                                 renderDevice()
                             }
                         </View>
-
                         <View style={styles.deviceInfo_View}>
-
                         </View>
                     </View>
-
 
                     <View style={styles.deviceState_View}>
                         <Text style={styles.deviceState_Text}>
                             {
-                                connectionLoading ?
-                                    <DefaultLoading size={30} color={'white'}/>
+                                !bleOn ?
+                                    'Bluetooth Desligado'
                                     :
-                                    deviceState === 'deviceOff' && !isScanning
-                                        ? 'Nenhum Dispositivo Conectado'
-                                        : deviceState === 'deviceOn' && !isScanning
-                                            ? 'Dispositivo: ' + deviceName
-                                            : deviceState === 'deviceScanning' && isScanning
-                                                ? 'Escaneando...'
-                                                : ''
+                                    connectionLoading ?
+                                        <DefaultLoading size={30} color={'white'} />
+                                        :
+                                        deviceState === 'deviceOff' && !isScanning
+                                            ? 'Nenhum Dispositivo Conectado'
+                                            : deviceState === 'deviceOn' && !isScanning
+                                                ? 'Dispositivo: ' + deviceName
+                                                : deviceState === 'deviceScanning' && isScanning
+                                                    ? 'Escaneando...'
+                                                    : ''
                             }
                         </Text>
                     </View>

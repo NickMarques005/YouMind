@@ -6,7 +6,6 @@ import DeviceConnected from './DeviceConnected';
 import { UseBluetoothDevice } from '@features/app/providers/patient/BluetoothProvider';
 import useBLEScanner from '../../hooks/UseBleScanner';
 import { useBleConnection } from '../../hooks/UseBleConnection';
-import useBLE from '@hooks/ble/UseBLE';
 import { screenHeight } from '@utils/layout/Screen_Size';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import { UseLoading } from '@hooks/loading/UseLoading';
@@ -18,14 +17,20 @@ const MainBle = () => {
     const { userData } = UseForm();
     const { HandleResponseAppError } = UseGlobalResponse();
     const deviceConnectionLoading = UseLoading();
-    const { requestPermissions } = useBLE();
     const { bluetoothConnected,
             currentDevice, setCurrentDevice,
             deviceState, setDeviceState,
             discoveredPeripherals, setDiscoveredPeripherals,
-            isScanning, setIsScanning } = UseBluetoothDevice();
-    const { scanDevices } = useBLEScanner({ setDeviceState, isScanning, setIsScanning});
-    const { handleDeviceConnection } = useBleConnection({ setCurrentDevice, setDeviceState, setDiscoveredPeripherals, requestPermissions, setLoading: deviceConnectionLoading.setLoading, HandleResponseAppError, userData });
+            isScanning, setIsScanning, handleRequestBluetoothPermissions } = UseBluetoothDevice();
+    const { scanDevices } = useBLEScanner({ setDeviceState, isScanning, setIsScanning, handleRequestBluetoothPermissions, bluetoothConnected });
+    const { handleDeviceConnection } = useBleConnection({ setCurrentDevice, setDeviceState, handleRequestBluetoothPermissions, setDiscoveredPeripherals, setLoading: deviceConnectionLoading.setLoading, HandleResponseAppError, userData });
+
+    useEffect(() => {
+        if(!bluetoothConnected)
+        {
+            handleRequestBluetoothPermissions();
+        }
+    }, []);
 
     return (
         <View style={styles.screen_Bluetooth}>
@@ -33,7 +38,9 @@ const MainBle = () => {
             connectionLoading={deviceConnectionLoading.loading} 
             deviceState={deviceState} 
             deviceName={currentDevice?.name} 
-            isScanning={isScanning} />
+            isScanning={isScanning} 
+            bleOn={bluetoothConnected}
+            />
             {
                 !currentDevice ?
                     <DevicesFound 
