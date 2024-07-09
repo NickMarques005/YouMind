@@ -29,7 +29,7 @@ export const UseNotificationConfig = ({ setLoading, HandleResponseAppError, Hand
             }
             catch (err) {
                 const error = err as Error;
-                console.log("Erro ao buscar notificações: ", err);
+                console.log("Erro ao deletar notificações: ", err);
                 HandleResponseAppError(error.message);
             }
             return;
@@ -52,7 +52,7 @@ export const UseNotificationConfig = ({ setLoading, HandleResponseAppError, Hand
         }
         catch (err) {
             const error = err as Error;
-            console.log("Erro ao buscar notificações: ", err);
+            console.log("Erro ao deletar notificação: ", err);
             HandleResponseAppError(error.message);
         }
     }

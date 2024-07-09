@@ -48,7 +48,6 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
         handleCurrentHealthPage = healthPage.handleCurrentHealthPage;
     }
     
-    
     const handlePageRedirection = ({tab, sender, healthPage}: HandlePageDirectionParams) => {
         if (sender) {
             handleRedirectChat(sender);
@@ -166,7 +165,6 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
                         console.log(error);
                         HandleResponseAppError(error.message);
                     }
-
                 }
                 break;
             case "message_alert":
@@ -187,6 +185,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
 
             if (notifyType === 'chat') {
                 const senderId = notification.data?.sender_params?.id;
+                
                 if (senderId) {
                     if (!notificationMap[senderId]) {
 

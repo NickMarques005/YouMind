@@ -1,3 +1,5 @@
+import { UserType } from "types/user/User_Types";
+
 export interface NotificationContentData {
     notify_type: 'treatment' | 'chat' | 'update' | 'ble';
     notify_function: string;
@@ -10,6 +12,7 @@ export interface NotificationContentData {
         email?: string;
         id?: string;
         avatar?: string;
+        type?: UserType;
     };
     show_modal: boolean;
     redirect_params?: {

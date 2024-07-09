@@ -1,6 +1,6 @@
 import { MessageIcon } from "@components/modals/message/types/type_message_modal";
 import { UseNotepadService } from "@hooks/api/UseNotepadService";
-import { NoteTemplate, UpdateNote } from "types/app/doctor/notepad/Notepad_Types";
+import { NoteTemplate, UpdateCurrentNote, UpdateNote } from "types/app/doctor/notepad/Notepad_Types";
 import { UseNotepadNavigation } from "../../../hooks/UseNotepadNavigation";
 import { useNotepad } from "@features/app/providers/doctor/NotepadProvider";
 import { useState } from "react";
@@ -11,9 +11,12 @@ interface UseCurrentNoteHandlingProps {
     deleteSetLoading: React.Dispatch<React.SetStateAction<boolean>>;
     HandleResponseAppError: (value: string) => void;
     HandleResponseAppSuccess: (message: string, messageType?: MessageIcon) => void;
+    handleUpdateCurrentNote: ({ updatedTitle, updatedDescription, updatedContent }: UpdateCurrentNote) => void;
 }
 
-export const UseCurrentNoteHandling = ({ HandleResponseAppError, HandleResponseAppSuccess, updateSetLoading, deleteSetLoading }: UseCurrentNoteHandlingProps) => {
+export const UseCurrentNoteHandling = ({ 
+    HandleResponseAppError, HandleResponseAppSuccess, 
+    updateSetLoading, deleteSetLoading, handleUpdateCurrentNote }: UseCurrentNoteHandlingProps) => {
     const { performDeleteNote } = UseNotepadService(deleteSetLoading);
     const { performUpdateNote } = UseNotepadService(updateSetLoading);
     const { navigateToNotepadScreen } = UseNotepadNavigation();
@@ -71,8 +74,9 @@ export const UseCurrentNoteHandling = ({ HandleResponseAppError, HandleResponseA
             const response = await performUpdateNote(updated_note, noteId);
             if (response.success) {
                 if (response.data) {
-                    const data = response.data;
-                    dispatch({ type: 'UPDATE_NOTE', payload: data.updatedNote });
+                    const updatedNote = response.data.updatedNote;
+                    dispatch({ type: 'UPDATE_NOTE', payload: updatedNote });
+                    handleUpdateCurrentNote({updatedTitle: updatedNote.title, updatedDescription: updatedNote.description, updatedContent: updatedNote.content})
                 }
                 if (response.message) {
                     console.log(response);

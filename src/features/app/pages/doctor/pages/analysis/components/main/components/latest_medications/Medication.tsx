@@ -5,6 +5,7 @@ import { responsiveSize, screenHeight, screenWidth } from '@utils/layout/Screen_
 import { useMedicationIcon } from '@hooks/medications/UseMedicationIcon';
 import { FormatISOToStringDate } from '@utils/date/DateFormatting';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useIconHandling } from '@hooks/users/UseIconHandling';
 
 interface MedicationProps {
     latestMedication: LatestMedication;
@@ -14,8 +15,9 @@ interface MedicationProps {
 const Medication = ({ latestMedication, selectLatestMedication }: MedicationProps) => {
     console.log(latestMedication);
     const { iconType } = useMedicationIcon(latestMedication.currentMedication.type);
-    const iconSize = responsiveSize * 0.09;
-    const avatarSize = responsiveSize * 0.12;
+    const { handleUserIcon } = useIconHandling();
+    const iconSize = responsiveSize * 0.095;
+    const medicationStateSize = responsiveSize * 0.12;
 
     return (
         <View style={{
@@ -30,8 +32,8 @@ const Medication = ({ latestMedication, selectLatestMedication }: MedicationProp
                     <Text style={{ fontSize: 16, fontWeight: '700', color: '#badce3' }}>
                         {latestMedication.currentMedication.name}
                     </Text>
-                    <View style={{ width: iconSize, height: iconSize, padding: '2%', borderRadius: iconSize, backgroundColor: '#8fbfc9' }}>
-                        <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={iconType} />
+                    <View style={{ width: iconSize, height: iconSize, right: '15%', borderRadius: medicationStateSize, borderWidth: 2, overflow: 'hidden', borderColor: '#7eb2bf', backgroundColor: '#8fbfc9' }}>
+                        <Image style={{ width: '100%', height: '100%', resizeMode: 'contain', }} source={handleUserIcon({userAvatar: latestMedication.patientAvatar, userType: 'patient', defaultAppIcon: iconType})} />
                     </View>
                 </View>
                 <View style={{ flex: 1, paddingHorizontal: '6%', marginVertical: '3%', }}>
@@ -58,7 +60,7 @@ const Medication = ({ latestMedication, selectLatestMedication }: MedicationProp
                         }
                     </View>
                     <View style={{
-                        width: avatarSize, height: avatarSize, borderRadius: 15, overflow: 'hidden',
+                        width: medicationStateSize, height: medicationStateSize, borderRadius: 15, overflow: 'hidden',
                         backgroundColor: latestMedication.taken ? '#7bc2c9' : '#d485a0',
                         alignItems: 'center', justifyContent: 'center'
                     }}>

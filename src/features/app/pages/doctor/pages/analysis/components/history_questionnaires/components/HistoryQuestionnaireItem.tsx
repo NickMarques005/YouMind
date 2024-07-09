@@ -14,11 +14,8 @@ interface HistoryQuestinnaireItemProps {
 }
 
 const HistoryQuestionnaireItem = ({ questionnaire, patientHistory, selectQuestionnaire }: HistoryQuestinnaireItemProps) => {
-
-    const userIcon = images.app_doctor_images.chat.user_icon_chat;
-    const iconSize = responsiveSize * 0.3;
-    const avatarSize = responsiveSize * 0.15;
-    const subIconSize = responsiveSize * 0.06;
+    const iconSize = responsiveSize * 0.09;
+    const stateSize = responsiveSize * 0.3;
 
     const answeredGradient = ['#24404d', '#4195a6'];
     const notansweredGradient = ['#4a232f', '#ad5376'];
@@ -34,9 +31,9 @@ const HistoryQuestionnaireItem = ({ questionnaire, patientHistory, selectQuestio
                 <View style={{ width: '0%', height: '100%', justifyContent: 'center' }}>
                     <LinearGradient colors={iconGradient}
                         start={{ x: 0, y: 0 }}
-                        end={{ x: 0.2, y: 1 }} style={{ width: iconSize * 1.4, left: -iconSize / 1.3, height: iconSize, padding: '5%', borderRadius: iconSize, zIndex: 2, alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <View style={{ width: avatarSize, height: avatarSize, right: '15%', borderRadius: avatarSize, borderWidth: 2, overflow: 'hidden', borderColor: '#7eb2bf' }}>
-                            <Image style={{ width: '100%', height: '100%', resizeMode: 'contain', }} source={patientHistory?.patientAvatar ? { uri: patientHistory?.patientAvatar } : userIcon} />
+                        end={{ x: 0.2, y: 1 }} style={{ width: stateSize * 1.4, left: -stateSize / 1.3, height: stateSize, padding: '5%', borderRadius: stateSize, zIndex: 2, alignItems: 'flex-end', justifyContent: 'center' }}>
+                        <View style={{ width: iconSize, height: iconSize, right: '14%', }}>
+                            <MaterialIcons name="assignment" size={iconSize} color="#e1f0f5" />
                         </View>
                     </LinearGradient>
                 </View>
@@ -47,11 +44,6 @@ const HistoryQuestionnaireItem = ({ questionnaire, patientHistory, selectQuestio
                             <View style={{ width: '84%' }}>
                                 <Text style={{ color: '#e9f2f5' }} numberOfLines={1} ellipsizeMode="tail">Paciente {patientHistory?.patientName}</Text>
                             </View>
-                        </View>
-                        <View style={{ width: subIconSize, height: subIconSize, }}>
-                            {
-                                <MaterialIcons name="assignment" size={subIconSize * 0.9} color="#e1f0f5" />
-                            }
                         </View>
                     </View>
                     <View style={{ flex: 1, backgroundColor: '#f2f8fa', borderBottomWidth: 2, paddingLeft: '15%', paddingRight: '3%', alignItems: 'center', flexDirection: 'row', borderBottomColor: '#809ca6' }}>

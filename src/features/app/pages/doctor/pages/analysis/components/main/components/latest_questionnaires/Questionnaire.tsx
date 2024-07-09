@@ -4,6 +4,7 @@ import { HistoryQuestionnaire, LatestQuestionnaire } from 'types/history/Patient
 import { responsiveSize, screenHeight } from '@utils/layout/Screen_Size';
 import images from '@assets/images';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useIconHandling } from '@hooks/users/UseIconHandling';
 
 interface QuestionnaireProps {
     latestQuestionnaire: LatestQuestionnaire;
@@ -11,10 +12,10 @@ interface QuestionnaireProps {
 }
 
 const Questionnaire = ({ latestQuestionnaire, selectLatestQuestionnaire }: QuestionnaireProps) => {
-
-    const iconSize = responsiveSize * 0.09;
-    const avatarSize = responsiveSize * 0.12;
-    const userIcon = images.app_doctor_images.chat.user_icon_chat;
+    const questionnaireIcon = images.app_patient_images.health.quiz.latest_questionnaire_icon;
+    const { handleUserIcon } = useIconHandling();
+    const iconSize = responsiveSize * 0.095;
+    const questionnaireStateSize = responsiveSize * 0.12;
 
     return (
         <View style={{
@@ -29,10 +30,8 @@ const Questionnaire = ({ latestQuestionnaire, selectLatestQuestionnaire }: Quest
                     <Text style={{ fontSize: 16, fontWeight: '700', color: '#badce3' }}>
                         {latestQuestionnaire.currentQuestionnaire.name}
                     </Text>
-                    <View style={{ width: iconSize, height: iconSize, borderRadius: iconSize, backgroundColor: '#8fbfc9', alignItems: 'center', justifyContent: 'center' }}>
-                        {
-                            <MaterialIcons name="assignment" size={iconSize * 0.7} color="#2c3b4a" />
-                        }
+                    <View style={{ width: iconSize, height: iconSize, right: '15%', borderRadius: iconSize, borderWidth: 2, overflow: 'hidden', borderColor: '#7eb2bf', backgroundColor: '#8fbfc9' }}>
+                        <Image style={{ width: '100%', height: '100%', resizeMode: 'contain', }} source={handleUserIcon({userAvatar: latestQuestionnaire.patientAvatar, userType: 'patient', defaultAppIcon: questionnaireIcon})} />
                     </View>
                 </View>
 
@@ -54,7 +53,7 @@ const Questionnaire = ({ latestQuestionnaire, selectLatestQuestionnaire }: Quest
                         }
                     </View>
                     <View style={{
-                        width: avatarSize, height: avatarSize, borderRadius: 15, overflow: 'hidden',
+                        width: questionnaireStateSize, height: questionnaireStateSize, borderRadius: 15, overflow: 'hidden',
                         backgroundColor: latestQuestionnaire.answered ? '#7bc2c9' : '#d485a0',
                         alignItems: 'center', justifyContent: 'center'
                     }}>

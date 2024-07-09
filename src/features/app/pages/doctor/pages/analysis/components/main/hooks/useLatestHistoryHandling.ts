@@ -25,7 +25,8 @@ export const useLatestHistoryHandling = () => {
                     if (treatment) {
                         return {
                             ...questionnaire,
-                            patientName: treatment.name
+                            patientName: treatment.name,
+                            patientAvatar: treatment.avatar
                         };
                     }
                     return questionnaire;
@@ -43,7 +44,8 @@ export const useLatestHistoryHandling = () => {
                     if (treatment) {
                         return {
                             ...medication,
-                            patientName: treatment.name
+                            patientName: treatment.name,
+                            patientAvatar: treatment.avatar
                         };
                     }
                     return medication;

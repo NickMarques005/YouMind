@@ -40,6 +40,7 @@ export interface HistoryQuestionnaire {
     _id: string;
     patientId: string;
     patientName?: string;
+    patientAvatar?: string;
     currentQuestionnaire: Questionnaire;
     template?: QuestionnaireTemplate;
     pending: boolean;
@@ -50,6 +51,7 @@ export interface HistoryQuestionnaire {
 export interface HistoryMedication {
     _id: string;
     patientId: string;
+    patientAvatar?: string;
     patientName?: string;
     currentMedication: Medication;
     currentSchedule: string;

@@ -8,6 +8,12 @@ export interface NoteTemplate {
     doctor_id: string;
 }
 
+export interface UpdateCurrentNote {
+    updatedTitle?: string;
+    updatedDescription?: string;
+    updatedContent?: string[];
+}
+
 export interface Request_CreateNewNoteArgs {
     title: string;
     description?: string;

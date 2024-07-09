@@ -1,6 +1,6 @@
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import React, { SetStateAction, useEffect } from 'react'
-import Animated, { useSharedValue, useAnimatedStyle, withDelay, withSpring, runOnJS } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withDelay, withSpring, runOnJS, withTiming } from 'react-native-reanimated';
 import images from '@assets/images';
 import { NotificationData } from 'types/notification/Notification_Types';
 import { UseLoading } from '@hooks/loading/UseLoading';
@@ -9,12 +9,15 @@ import { UseNotificationConfig } from '../hooks/UseNotificationConfig';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import { MessageIcon } from '@components/modals/message/types/type_message_modal';
 import { formatRelativeTime } from '@utils/date/DateFormatting';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { responsiveSize, screenWidth } from '@utils/layout/Screen_Size';
+import { UseNotificationIcon } from '../hooks/UseNotificationIcon';
 
 interface NotificationsListProps {
     filteredNotifications: NotificationData[];
     userType: string;
     handleNotificationPress: (
-        notification: NotificationData, 
+        notification: NotificationData,
         removeNotification?: (notificationId: string | string[]) => void
     ) => void;
     groupNotificationsBySender: (notifications: NotificationData[]) => NotificationData[];
@@ -28,7 +31,7 @@ interface NotificationItemProps {
     HandleResponseAppSuccess: (message: string, messageType: MessageIcon) => void;
     HandleResponseAppError: (value: string) => void;
     handleNotificationPress: (
-        notification: NotificationData, 
+        notification: NotificationData,
         removeNotification?: (notificationId: string | string[]) => void
     ) => void;
 }
@@ -61,40 +64,19 @@ const NotificationList = ({ filteredNotifications, userType, handleNotificationP
 const NotificationItem = ({ item, index, userType, setLoading, HandleResponseAppError, HandleResponseAppSuccess, handleNotificationPress }: NotificationItemProps) => {
     const { dispatch } = UseNotifications();
     const { handleDeleteNotification } = UseNotificationConfig({ setLoading, HandleResponseAppError, HandleResponseAppSuccess });
-    const logoNotifications = images.generic_images.notifications.youmind_notifications;
-    const avatar = item.data?.sender_params?.avatar;
-    const iconRemove = images.generic_images.back.default_back_gray;
+    const { handleNotificationIcon } = UseNotificationIcon();
 
-    const height = useSharedValue(100);
+    const translateX = useSharedValue(0);
     const opacity = useSharedValue(0);
     const translateY = useSharedValue(-30);
-
-    const handleRemove = (notificationId: string | string[]) => {
-        const springConfig = {
-            damping: 20,
-            stiffness: 100,
-            mass: 1
-        };
-        height.value = withSpring(0, springConfig, () => {
-            if(typeof notificationId === 'string')
-            {
-                runOnJS(removeItem)(notificationId);
-            }
-            else{
-                runOnJS(removeItems)(notificationId);
-            }
-            
-        });
-        opacity.value = withSpring(0, springConfig);
-    };
+    const height = useSharedValue(responsiveSize * 0.22);
 
     const removeItem = (notificationId: string) => {
         try {
             dispatch({ type: 'REMOVE_NOTIFICATION', payload: notificationId });
         }
         catch (err) {
-            const error = err as Error;
-            console.log("Erro em dispatch Notifications: ", error);
+            throw err;
         }
     };
 
@@ -103,16 +85,52 @@ const NotificationItem = ({ item, index, userType, setLoading, HandleResponseApp
             dispatch({ type: 'REMOVE_NOTIFICATIONS', payload: notificationIds });
         }
         catch (err) {
-            const error = err as Error;
-            console.log("Erro em dispatch Notifications: ", error);
+            throw err;
         }
     }
 
+    const handleRemove = async (notificationId: string | string[]) => {
+
+        try {
+            if (typeof notificationId === 'string') {
+                removeItem(notificationId);
+                await handleDeleteNotification(notificationId);
+            }
+            else {
+                removeItems(notificationId);
+            }
+        } catch (err) {
+            const error = err as Error;
+            console.error("Erro ao remover notificação: ", error);
+        }
+    };
+
+    const removeNotification = () => {
+        handleRemove(item._id);
+    }
+
+    const swipeGesture = Gesture.Pan()
+        .onUpdate((event) => {
+            translateX.value = Math.max(event.translationX, 0);
+        })
+        .onEnd(() => {
+            if (translateX.value > screenWidth * 0.5) {
+                translateX.value = withTiming(screenWidth, { duration: 300 }, () => {
+                    height.value = withTiming(0, { duration: 200 });
+                    runOnJS(removeNotification)();
+                });
+            } else {
+                translateX.value = withSpring(0, { stiffness: 90, damping: 20 });
+            }
+        });
+
     const animatedStyles = useAnimatedStyle(() => {
         return {
-            height: height.value,
             opacity: opacity.value,
-            transform: [{ translateY: translateY.value }],
+            transform: [
+                { translateY: translateY.value },
+                { translateX: translateX.value }],
+            height: height.value,
         };
     });
 
@@ -123,45 +141,52 @@ const NotificationItem = ({ item, index, userType, setLoading, HandleResponseApp
     }, []);
 
     return (
-        <Animated.View style={[styles.notificationMessage_view, animatedStyles]}>
-            <TouchableOpacity onPress={() => handleNotificationPress(item, handleRemove)} style={{}}>
-                <View style={styles.notificationMessageContainer_view}>
-                    <View style={[styles.notificationMessageIcon_view, { borderColor: userType === 'patient' ? '#ba7ce6' : '#7cb3e6'}]}>
-                        <Image
-                            style={styles.notificationMessageIcon_image}
-                            source={avatar ? {uri: avatar} : logoNotifications}
-                        />
-                    </View>
-                    <View style={styles.notificationMessageContent_view}>
-                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.notificationMessage_titleText, { color: `${userType === "patient" ? "#5f2b6e" : "#2b516e"}` }]}>{item.title}</Text>
-                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.notificationMessage_bodyText, { color: `${userType === "patient" ? '#9a72ab' : "#72a8ab"}` }]}>{item.body}</Text>
-                        <Text style={{ fontSize: 13, color: userType === 'patient' ? `#a192ad` : "#929dad" }}>{formatRelativeTime(item.updatedAt)}</Text>
-                    </View>
-                    {
-                        item.group?.count && 
-                        <View style={[styles.countView, { backgroundColor: userType === 'patient' ? '#754299' : '#428b99'}]}>
-                            <Text style={styles.countText}>{item.group.count}</Text>
+        <GestureHandlerRootView style={styles.container}>
+            <GestureDetector gesture={swipeGesture}>
+                <Animated.View style={[styles.notificationMessage_view, animatedStyles]}>
+                    <TouchableOpacity onPress={() => handleNotificationPress(item, handleRemove)}>
+                        <View style={styles.notificationMessageContainer_view}>
+                            <View style={[styles.notificationMessageIcon_view, { borderColor: userType === 'patient' ? '#ba7ce6' : '#7cb3e6' }]}>
+                                <Image
+                                    style={styles.notificationMessageIcon_image}
+                                    source={handleNotificationIcon(item)}
+                                />
+                            </View>
+                            <View style={styles.notificationMessageContent_view}>
+                                <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.notificationMessage_titleText, { color: `${userType === "patient" ? "#5f2b6e" : "#2b516e"}` }]}>{item.title}</Text>
+                                <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.notificationMessage_bodyText, { color: `${userType === "patient" ? '#9a72ab' : "#72a8ab"}` }]}>{item.body}</Text>
+                                <Text style={{ fontSize: 13, color: userType === 'patient' ? `#a192ad` : "#929dad" }}>{formatRelativeTime(item.updatedAt)}</Text>
+                            </View>
+                            {
+                                item.group?.count &&
+                                <View style={[styles.countView, { backgroundColor: userType === 'patient' ? '#754299' : '#428b99' }]}>
+                                    <Text style={styles.countText}>{item.group.count}</Text>
+                                </View>
+                            }
                         </View>
-                    }
-                </View>
-            </TouchableOpacity>
-        </Animated.View>
+                    </TouchableOpacity>
+                </Animated.View>
+            </GestureDetector>
+        </GestureHandlerRootView>
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        overflow: 'hidden',
+    },
     notificationsMessage_list: {
     },
     notificationMessage_view: {
         borderBottomWidth: 0.5,
-        borderBottomColor: '#abacc4'
+        borderBottomColor: '#abacc4',
+        justifyContent: 'center',
     },
     notificationMessageContainer_view: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 15,
         paddingHorizontal: 18,
         gap: 15,
 

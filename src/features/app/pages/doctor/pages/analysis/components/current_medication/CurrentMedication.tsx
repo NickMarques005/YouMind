@@ -83,7 +83,7 @@ const CurrentMedication = () => {
                                     <View style={{ flexDirection: 'row', gap: 5, flexWrap: 'wrap' }}>
 
                                         {medication.currentMedication.schedules.map((schedule, index) => (
-                                            <View style={{ padding: '2%', borderRadius: 5, backgroundColor: '#518994' }}>
+                                            <View key={index} style={{ padding: '2%', borderRadius: 5, backgroundColor: '#518994' }}>
                                                 <Text style={{ fontSize: 15, color: 'white' }} key={index}>{schedule}</Text>
                                             </View>
 

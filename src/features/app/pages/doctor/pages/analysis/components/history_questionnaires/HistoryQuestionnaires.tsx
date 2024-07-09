@@ -15,6 +15,7 @@ import DefaultLoading from '@components/loading/DefaultLoading';
 import HistoryQuestionnaireList from './components/HistoryQuestionnaireList';
 import NoHistoryQuestionnaire from './components/NoHistoryQuestionnaire';
 import { useHistoryQuestionnaireBehavior } from './hooks/useHistoryQuestionnaireBehavior';
+import { useIconHandling } from '@hooks/users/UseIconHandling';
 
 export interface CurrentPatientParams {
     currenPatient?: PatientHistory;
@@ -25,6 +26,7 @@ export default function HistoryQuestionnaires() {
     const { navigateToAnalysisScreen } = UseAnalysisNavigation();
     const { analysisNavigateOnSuccess } = UseNavigateOnSuccess();
     const { HandleResponseAppError } = UseGlobalResponse();
+    const { handleUserIcon } = useIconHandling();
     const { loading, setLoading } = UseLoading(true);
     const nextLoading = UseLoading(false);
 
@@ -33,8 +35,10 @@ export default function HistoryQuestionnaires() {
     const { currentPatientHistory } = UseCurrentPatientQuestionnaires({ params: currentPatientParams });
 
     const backButtonSize = responsiveSize * 0.085;
+    const avatarSize = responsiveSize * 0.13;
     const loadingSize = responsiveSize * 0.16;
     const backIcon = images.generic_images.back.arrow_back_white;
+    const defaultIcon = images.app_doctor_images.analysis.icon_medicine_analysis;
 
     const handleBackToCurrentPatient = (currentPatient?: string) => {
         if (!currentPatient) {
@@ -54,10 +58,13 @@ export default function HistoryQuestionnaires() {
                         <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={backIcon} />
                     </TouchableOpacity>
                 </View>
-                <View style={{flex: 1, height: '100%', justifyContent: 'center',}}>
-                    <View style={{width: '70%', padding: '5%', alignItems: 'center'}}>
+                <View style={{flex: 1, height: '100%', justifyContent: 'center'}}>
+                    <View style={{width: '100%', padding: '5%'}}>
                         <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>{`Questionários de ${currentPatientHistory?.patientName}`}</Text>
                     </View>
+                </View>
+                <View style={{ width: avatarSize, height: avatarSize,borderRadius: avatarSize, marginHorizontal: '5%', borderWidth: 2, overflow: 'hidden', borderColor: '#7eb2bf' }}>
+                    <Image style={{ width: '100%', height: '100%', resizeMode: 'contain', }} source={handleUserIcon({ userAvatar: currentPatientHistory?.patientAvatar, userType: 'patient', defaultAppIcon: defaultIcon })} />
                 </View>
             </View>
             <View style={{ flex: 1, }}>

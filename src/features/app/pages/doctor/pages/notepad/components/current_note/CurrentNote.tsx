@@ -14,12 +14,9 @@ import { UseNotepadNavigation } from '../../hooks/UseNotepadNavigation';
 import { NoteTemplate } from 'types/app/doctor/notepad/Notepad_Types';
 import { NotepadStackNavigation } from 'types/navigation/Navigation_Types';
 import { UseCurrentNote } from './hooks/UseCurrentNote';
-import { useCurrentNoteData } from './hooks/UserCurrentNoteData';
-import { useCurrentNoteGestures } from './hooks/UseCurrentNoteAnimation';
+import { useCurrentNoteData } from './hooks/UseCurrentNoteData';
 import { useHeaderGestures } from './hooks/UseHeaderAnimations';
 import Header from './components/Header';
-import { UseNotesHandling } from '../../hooks/UseNotesHandling';
-import { UseLoading } from '@hooks/loading/UseLoading';
 import { usePageHandling } from './hooks/UsePageHandling';
 import { usePageGestures } from './hooks/UsePageGestures';
 import { screenHeight } from '@utils/layout/Screen_Size';
@@ -40,7 +37,7 @@ const CurrentNote = () => {
     const { note } = UseCurrentNote({ params: currentNoteParams });
     const [currentNote, setCurrentNote] = useState<NoteTemplate>(note);
     const [configNoteVisible, setConfigNoteVisible] = useState(false);
-    const { updatePage } = useCurrentNoteData({ setCurrentNote });
+    const { updateCurrentNoteData } = useCurrentNoteData({ setCurrentNote });
     const { headerHeight, handleHeaderDragging } = useHeaderGestures();
     const { activeIndex, editContent, addPage, deletePage, setEditContent } = usePageHandling({ initialContent: currentNote.content });
     const { handlePageFlingDown, handlePageFlingLeft, handlePageFlingRight, handlePageFlingUp } = usePageGestures({ editContent, addPage, deletePage, activeIndex });
@@ -99,7 +96,8 @@ const CurrentNote = () => {
                         <NoteConfig
                             newContent={editContent}
                             visible={configNoteVisible}
-                            noteData={note}
+                            handleUpdateCurrentNote={updateCurrentNoteData}
+                            currentNote={currentNote}
                             onClose={closeHandleNote}
                         />
                     }

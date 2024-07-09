@@ -50,7 +50,9 @@ const generic_images = {
         no_notifications: require('./img/generic/notifications/no_notifications.png'),
         youmind_notifications: require('./img/generic/notifications/youmind_notifications.png'),
         icon_notification_typeA: require('./img/generic/notifications/icon_notification_typeA.png'),
-        icon_notification_typeB: require('./img/generic/notifications/icon_notification_typeB.png')
+        icon_notification_typeB: require('./img/generic/notifications/icon_notification_typeB.png'),
+        default_chat_doctor_notification_icon: require('./img/generic/notifications/default_chat_doctor_notification_icon.jpg'),
+        default_chat_patient_notification_icon: require('./img/generic/notifications/default_chat_patient_notification_icon.jpg')
     },
     remove: {
         remove_icon: require('./img/generic/remove/remove_icon.png'),
@@ -153,6 +155,7 @@ const app_patient_images = {
             performance_icon_bom:require('./img/app_patient/health/quiz/performance_icon_bom.png'),
             performance_icon_nadamal:require('./img/app_patient/health/quiz/performance_icon_nadamal.png'),
             performance_icon_precisamelhorar:require('./img/app_patient/health/quiz/performance_icon_precisamelhorar.png'),
+            latest_questionnaire_icon:require('./img/app_patient/health/quiz/latest_questionnaire_icon.png')
         },
         menu: {
             icon_menu_call: require('./img/app_patient/health/menu/icon_menu_call.png'),
