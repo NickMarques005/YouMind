@@ -2,7 +2,7 @@ import USE_ENV from "@api/constants/server_url/ServerUrl";
 import UseSocketService from "@api/socket/SocketService";
 import { UseSocket } from "@features/app/providers/sub/SocketProvider";
 import { UseChatService } from "@hooks/api/UseChatService";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatUser, MessageTemplate } from "types/chat/Chat_Types";
 import { UserData } from "types/user/User_Types";
 
@@ -22,6 +22,29 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
     const conversationRef = useRef(conversation);
     conversationRef.current = conversation;
 
+    const handleAddNewMessage = useCallback((message: MessageTemplate) => {
+        setMessages((prevMessages) => [message, ...prevMessages]);
+    }, []);
+
+    const handleUpdateMessageReadBy = useCallback(({ messageId, userId }: { messageId: string, userId: string }) => {
+        setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+                msg._id === messageId ? { ...msg, readBy: Array.from(new Set([...(msg.readBy || []), userId])) } : msg
+            )
+        );
+    }, []);
+
+    const handleAddPreviousMessages = useCallback((data: MessageTemplate[]) => {
+        setMessages((prevMessages) => {
+            const newMessagesSet = new Set(prevMessages.map((msg) => msg._id));
+            return [...prevMessages, ...data.filter((msg) => !newMessagesSet.has(msg._id))];
+        });
+    }, []);
+
+    const handleAddAllMessages = useCallback((data: MessageTemplate[]) => {
+        setMessages(data);
+    }, []);
+
     const handleSocket = async (conversationId: string) => {
         console.log("Socket Conversation");
         socket?.emit('joinRoom', {room: conversationId});
@@ -30,7 +53,7 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
             console.log("Nova mensagem do SOCKET: ", data);
             console.log("NOVA MENSAGEM: ", data);
             console.log("MENSAGENS: ", messages);
-            setMessages((prevMessages) => [data, ...prevMessages]);
+            handleAddNewMessage(data);
         });
 
         socket?.on('messagesLoaded', (data: MessageTemplate[]) => {
@@ -39,18 +62,12 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
                 return;
             }
 
-            setMessages(prevMessages => {
-                const newMessagesSet = new Set(prevMessages.map(msg => msg._id));
-                return [...prevMessages, ...data.filter(msg => !newMessagesSet.has(msg._id))];
-            }
-            );
+            handleAddPreviousMessages(data);
             increasePage();
         });
 
         socket?.on('updateMessageStatus', ({ messageId, userId }) => {
-            setMessages(prevMessages => prevMessages.map(msg =>
-                msg._id === messageId ? { ...msg, readBy: Array.from(new Set([...(msg.readBy || []), userId])) } : msg
-            ));
+            handleUpdateMessageReadBy({ messageId, userId });
         });
     }
 
@@ -71,7 +88,7 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
     }
 
     const fetchChatData = async () => {
-
+        //***ALTERAR LÓGICA
         try {
             const response = await performGetConversationTreatment({ email_1: user?.email, email_2: member?.email });
             if (response.success) {
@@ -108,5 +125,9 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
         }
     }, [user?.email, member]);
 
-    return { socket, messages, conversation, getMessages, page, handleReadMessage }
+    return { socket, messages, 
+        conversation, getMessages, page, 
+        handleReadMessage, handleAddAllMessages,
+        handleAddNewMessage, handleAddPreviousMessages 
+    }
 }

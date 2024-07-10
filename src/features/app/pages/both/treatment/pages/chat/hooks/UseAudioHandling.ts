@@ -9,7 +9,7 @@ interface AudioHandling {
     isRecording: boolean;
     startRecording: () => void;
     stopRecording: () => Promise<ResolveRecording>;
-    handleAudioRelease: () => void;
+    handleAudioRelease: (senderId: string) => void;
     handleAudioPress: () => void;
     recordTime: number;
 }
@@ -21,7 +21,7 @@ interface ResolveRecording {
 
 interface UseAudioHandlingProps {
     HandleResponseAppError: (value: string) => void;
-    handleSendNewMessage: (audio?: AudioTemplate) => Promise<void>;
+    handleSendNewMessage: (senderId: string, audio?: AudioTemplate) => Promise<void>;
 }
 
 const recorderOptions = {
@@ -133,7 +133,7 @@ const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage }: UseA
         }
     }
 
-    const handleAudioRelease = async () => {
+    const handleAudioRelease = async (senderId: string) => {
         if(!isRecording) return;
         try {
             const { filePath, duration} = await stopRecording();
@@ -145,7 +145,7 @@ const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage }: UseA
             }
             console.log("Audio: ", audio);
 
-            handleSendNewMessage(audio);
+            handleSendNewMessage(senderId, audio);
         } catch (err) {
             const error = err as Error;
             console.error(err);

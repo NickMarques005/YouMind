@@ -18,7 +18,9 @@ const CurrentChat = () => {
     const { singleMember } = UseChatBehavior({ currentChat, redirectChat });
     const { navigateToTreatmentScreen } = UseTreatmentNavigation();
     const { loading, setLoading } = UseLoading(true);
-    const { messages, conversation, socket, getMessages, page, handleReadMessage } = UseChatDataHandling({ setLoading, member: singleMember, user: userData })
+    const { messages, conversation, socket, 
+        getMessages, page, handleReadMessage,
+        handleAddNewMessage } = UseChatDataHandling({ setLoading, member: singleMember, user: userData })
 
     return (
         <View style={styles.currentChat_View}>
@@ -27,7 +29,7 @@ const CurrentChat = () => {
                 loading ?
                     <DefaultLoading size={50} color={userData?.type === 'doctor' ? '#348b91' : '#7d3491'} />
                     :
-                    <Content handleReadMessage={handleReadMessage} page={page} getMessages={getMessages} userType={userData?.type} chatUser={singleMember} userData={userData} messages={messages} conversation={conversation} socket={socket} />
+                    <Content handleAddNewMessage={handleAddNewMessage} handleReadMessage={handleReadMessage} page={page} getMessages={getMessages} userType={userData?.type} chatUser={singleMember} userData={userData} messages={messages} conversation={conversation} socket={socket} />
             }
         </View>
     )

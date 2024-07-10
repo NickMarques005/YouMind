@@ -26,15 +26,20 @@ interface ContentHeaderProps {
     getMessages: (conversationId: string, page: number) => Promise<void>;
     page: number;
     handleReadMessage: (message: MessageTemplate, user?: UserData) => void;
+    handleAddNewMessage: (message: MessageTemplate) => void;
 }
 
 interface ViewableItem extends ViewToken {
     item: ProcessedMessageItem;
 }
 
-const Content = ({ handleReadMessage, userType, chatUser, messages, userData, conversation, socket, page, getMessages }: ContentHeaderProps) => {
+const Content = ({ 
+    handleReadMessage, userType, chatUser, 
+    messages, userData, conversation, 
+    socket, page, getMessages,
+    handleAddNewMessage }: ContentHeaderProps) => {
     const { HandleResponseAppError } = UseGlobalResponse();
-    const { newMessage, handleSendNewMessage, setNewMessage, newMessageLoading, preprocessMessages } = UseMessageHandling({ conversation, socket });
+    const { newMessage, handleSendNewMessage, setNewMessage, newMessageLoading, preprocessMessages } = UseMessageHandling({ conversation, socket, handleAddNewMessage });
     const { handleAudioPress, handleAudioRelease, isRecording, recordTime } = useAudioHandling({ HandleResponseAppError, handleSendNewMessage });
     const viewabilityConfig = {
         itemVisiblePercentThreshold: 50
@@ -46,7 +51,7 @@ const Content = ({ handleReadMessage, userType, chatUser, messages, userData, co
             if (viewableItem.item.type !== 'dateLabel') {
                 const ownMessage = viewableItem.item.data.sender === userData?._id;
                 if (!ownMessage && userData && !viewableItem.item.data.readBy?.includes(userData?._id)) {
-                    console.log("\n(ViewableConfig) Mensagem visível e não é do próprio usuário: ", viewableItem.item);
+                    //console.log("\n(ViewableConfig) Mensagem visível e não é do próprio usuário: ", viewableItem.item);
                     handleReadMessage(viewableItem.item.data, userData);
                 }
             }
@@ -59,7 +64,9 @@ const Content = ({ handleReadMessage, userType, chatUser, messages, userData, co
     }, [messages]);
     const audioIcon = userType === 'doctor' ? images.app_doctor_images.chat.icon_audio : images.app_patient_images.chat.icon_audio;
     const sendIcon = userType === 'doctor' ? images.app_doctor_images.chat.icon_send : images.app_patient_images.chat.icon_send;
-    const { animatedStyle, longPressGesture } = UseChatAnimation({ handleAudioPress, handleAudioRelease, newMessageLoading })
+    const { animatedStyle, longPressGesture } = UseChatAnimation({ 
+        handleAudioPress, handleAudioRelease, 
+        newMessageLoading, userId: userData?._id })
 
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}
@@ -118,7 +125,7 @@ const Content = ({ handleReadMessage, userType, chatUser, messages, userData, co
 
                             <View style={styles.chatButtons_View}>
 
-                                <TouchableOpacity disabled={isRecording || newMessageLoading} onPress={() => handleSendNewMessage()} style={[styles.chat_Button, { opacity: newMessageLoading ? 0.5 : 1 }]}>
+                                <TouchableOpacity disabled={isRecording || newMessageLoading} onPress={() => handleSendNewMessage(userData?._id)} style={[styles.chat_Button, { opacity: newMessageLoading ? 0.5 : 1 }]}>
                                     <Image
                                         source={sendIcon}
                                         style={styles.chatEnvio_Image}

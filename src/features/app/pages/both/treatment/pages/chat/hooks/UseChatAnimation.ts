@@ -4,11 +4,12 @@ import { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } fro
 
 interface UseChatAnimationProps {
     handleAudioPress: () => void;
-    handleAudioRelease: () => void;
+    handleAudioRelease: (senderId: string) => void;
     newMessageLoading: boolean;
+    userId?: string;
 }
 
-export const UseChatAnimation = ({ handleAudioPress, handleAudioRelease, newMessageLoading }: UseChatAnimationProps) => {
+export const UseChatAnimation = ({ handleAudioPress, handleAudioRelease, newMessageLoading, userId }: UseChatAnimationProps) => {
     const audioScale = useSharedValue(1);
     const audioOpacity = useSharedValue(0.5);
     const triggeredPress = useSharedValue(false);
@@ -43,7 +44,7 @@ export const UseChatAnimation = ({ handleAudioPress, handleAudioRelease, newMess
             audioScale.value = withSpring(1, { damping: 40, stiffness: 80, mass: 2, }, () => {
                 if (triggeredPress.value) {
                     console.log("Handle Audio Release")
-                    runOnJS(handleAudioRelease)();
+                    userId && runOnJS(handleAudioRelease)(userId);
                     triggeredPress.value = false;
                 }
 

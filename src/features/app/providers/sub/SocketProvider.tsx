@@ -31,7 +31,31 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         const initSocket = async () => {
             const token = await GetAccessToken();
             if (token) {
-                activeSocket = io(serverUrl, { auth: { token: `Bearer ${token}` } });
+                activeSocket = io(serverUrl, { 
+                    reconnection: true,
+                    reconnectionAttempts: Infinity,
+                    reconnectionDelay: 1000,
+                    reconnectionDelayMax: 5000,
+                    timeout: 20000,
+                    auth: { token: `Bearer ${token}` } 
+                });
+
+                activeSocket.on('connect', () => {
+                    console.log('Conectado ao server socket');
+                });
+
+                activeSocket.on('disconnect', (reason) => {
+                    console.log('Desconectado do socket:', reason);
+                });
+
+                activeSocket.on('reconnect_attempt', (attemptNumber) => {
+                    console.log('Tentativa de reconexão:', attemptNumber);
+                });
+
+                activeSocket.on('reconnect', (attemptNumber) => {
+                    console.log('Reconectado ao socket após', attemptNumber, 'tentativas');
+                });
+
                 setSocket(activeSocket);
             } else {
                 console.log("Não há token disponível.");
