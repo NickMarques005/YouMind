@@ -10,29 +10,22 @@ interface UseChatHandlingProps {
 
 export const UseChatBehavior = ({ currentChat, redirectChat }: UseChatHandlingProps) => {
 
-    const [singleMember, setSingleMember] = useState<ChatUser | undefined>(undefined);
+    const [chat, setChat] = useState<ChatUser | undefined>(undefined);
 
     useEffect(() => {
         if (currentChat) {
-            if (currentChat.members.length === 1) {
-                console.log(currentChat);
-                setSingleMember(currentChat.members[0])
-            }
-            else {
-                console.log("Mais de um membro");
-                console.log(currentChat);
-                setSingleMember(undefined);
-            }
+                console.log("CURRENT CHAT: ", currentChat);
+                setChat(currentChat);
         }
         else{
             if(redirectChat)
             {
                 console.log("REDIRECT CHAT: ", redirectChat);
-                setSingleMember(redirectChat);
+                setChat(redirectChat);
             }
         }
 
     }, [currentChat, redirectChat]);
 
-    return { singleMember }
+    return { chat }
 }

@@ -8,13 +8,10 @@ export const UseHandleActiveChat = () => {
     const { setCurrentChat } = UseChat();
     const { navigateToTreatmentScreen } = UseTreatmentNavigation();
 
-    const HandleActiveChat = (member: TreatmentInfoTemplate) => {
-        console.log("MEMBRO: ", member);
-        const members = {
-            members: [member]
-        };
+    const HandleActiveChat = (treatmentChat: TreatmentInfoTemplate) => {
+        console.log("TREATMENT CHAT: ", treatmentChat);
 
-        setCurrentChat(members);
+        setCurrentChat(treatmentChat);
         navigateToTreatmentScreen('chat_treatment');
         console.log("NAVIGATE TO CHAT!!");
     }

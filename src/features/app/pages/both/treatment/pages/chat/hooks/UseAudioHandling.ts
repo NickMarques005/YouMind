@@ -22,6 +22,7 @@ interface ResolveRecording {
 interface UseAudioHandlingProps {
     HandleResponseAppError: (value: string) => void;
     handleSendNewMessage: (senderId: string, audio?: AudioTemplate) => Promise<void>;
+    senderId?: string;
 }
 
 const recorderOptions = {
@@ -33,7 +34,7 @@ const recorderOptions = {
     encoder: 'aac'
 }
 
-const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage }: UseAudioHandlingProps): AudioHandling => {
+const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage, senderId }: UseAudioHandlingProps): AudioHandling => {
     const [recorder, setRecorder] = useState<Recorder | null>(null);
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -79,11 +80,6 @@ const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage }: UseA
                     newRecorder.record();
                     setRecorder(newRecorder);
                     setIsRecording(true);
-                    timeoutRef.current = setTimeout(() => {
-                        if (isRecording) {
-                            stopRecording();
-                        }
-                    }, 60000);
                 }
             });
         } catch (err) {
@@ -168,8 +164,13 @@ const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage }: UseA
             setRecordTime(0);
         }
 
+        if (isRecording && recordTime === 59) {
+            console.log("Limite de tempo atingido. Parando gravação...");
+            senderId && handleAudioRelease(senderId);
+        }
+
         return () => clearInterval(intervalId);
-    })
+    });
 
     return {
         isRecording,

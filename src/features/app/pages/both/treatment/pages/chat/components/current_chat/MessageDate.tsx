@@ -1,4 +1,5 @@
 import { screenWidth } from "@utils/layout/Screen_Size";
+import { memo } from "react";
 import { Text } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
@@ -22,4 +23,4 @@ const MessageDate: React.FC<MessageDateProps> = ({ date, userType }) => {
     )
 }
 
-export default MessageDate;
+export default memo(MessageDate);

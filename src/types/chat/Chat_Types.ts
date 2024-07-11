@@ -1,3 +1,4 @@
+import { TreatmentInfoTemplate } from "types/treatment/Treatment_Types";
 import { UserData } from "types/user/User_Types";
 
 export interface Request_GetConversationTreatmentArgs {
@@ -30,6 +31,7 @@ export interface MessageTemplate {
     readBy?: string[];
     audioUrl?: string;
     duration?: string;
+    sending?: boolean;
 }
 
 export type ChatUser = {
@@ -43,9 +45,7 @@ export type ChatUser = {
     online?: boolean;
 };
 
-export type CurrentChat = {
-    members: ChatUser[];
-};
+export type CurrentChat = TreatmentInfoTemplate;
 
 export type ChatParamList = {
     current_chat: {

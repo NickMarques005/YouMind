@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native'
 import React from 'react'
-import { screenWidth } from '@utils/layout/Screen_Size';
+import { responsiveSize, screenWidth } from '@utils/layout/Screen_Size';
 import Header from './Header';
 import DefaultLoading from '@components/loading/DefaultLoading';
 import { UseLoading } from '@hooks/loading/UseLoading';
@@ -15,21 +15,22 @@ import { UseChatBehavior } from '../../hooks/UseChatBehavior';
 const CurrentChat = () => {
     const { userData } = UseForm();
     const { currentChat, redirectChat } = UseChat();
-    const { singleMember } = UseChatBehavior({ currentChat, redirectChat });
+    const { chat } = UseChatBehavior({ currentChat, redirectChat });
     const { navigateToTreatmentScreen } = UseTreatmentNavigation();
     const { loading, setLoading } = UseLoading(true);
-    const { messages, conversation, socket, 
+    const { messages, socket, 
         getMessages, page, handleReadMessage,
-        handleAddNewMessage } = UseChatDataHandling({ setLoading, member: singleMember, user: userData })
+        handleAddNewMessage } = UseChatDataHandling({ setLoading, chat, user: userData });
+    const loadingIconSize = responsiveSize * 0.08;
 
     return (
         <View style={styles.currentChat_View}>
-            <Header navigateToTreatmentScreen={navigateToTreatmentScreen} userType={userData?.type} chatUser={singleMember} />
+            <Header navigateToTreatmentScreen={navigateToTreatmentScreen} userType={userData?.type} chatUser={chat} />
             {
                 loading ?
-                    <DefaultLoading size={50} color={userData?.type === 'doctor' ? '#348b91' : '#7d3491'} />
+                    <DefaultLoading size={loadingIconSize} color={userData?.type === 'doctor' ? '#348b91' : '#7d3491'} />
                     :
-                    <Content handleAddNewMessage={handleAddNewMessage} handleReadMessage={handleReadMessage} page={page} getMessages={getMessages} userType={userData?.type} chatUser={singleMember} userData={userData} messages={messages} conversation={conversation} socket={socket} />
+                    <Content handleAddNewMessage={handleAddNewMessage} handleReadMessage={handleReadMessage} page={page} getMessages={getMessages} userType={userData?.type} chatUser={chat} userData={userData} messages={messages} socket={socket} />
             }
         </View>
     )

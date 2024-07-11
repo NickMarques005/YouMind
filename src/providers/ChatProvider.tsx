@@ -7,7 +7,6 @@ type ChatContextProps = {
     setCurrentChat: (chat: CurrentChat | null) => void;
     redirectChat: TreatmentInfoTemplate | null;
     handleRedirectChat: (value: TreatmentInfoTemplate | null) => void;
-
 };
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);

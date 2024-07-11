@@ -23,8 +23,8 @@ function LastChatList({ handleActiveChat, userData, treatment_state }: LastChatP
         <>
             {
                 treatment_state.treatments.length !== 0 ?
-                    treatment_state.treatments.map((user) => (
-                        <TemplateChatUser key={user._id} user={user} userData={userData} handleActiveChat={handleActiveChat} />
+                    treatment_state.treatments.map((treatment) => (
+                        <TemplateChatUser key={treatment._id} treatment={treatment} userData={userData} handleActiveChat={handleActiveChat} />
                     ))
                     :
                     <View style={{ width: '100%', height: screenHeight * 0.3, alignItems: 'center', marginTop: 40, justifyContent: 'center', display: 'flex',  gap: 10 }}>

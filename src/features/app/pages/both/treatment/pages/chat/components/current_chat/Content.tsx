@@ -1,5 +1,5 @@
 import { View, Text, KeyboardAvoidingView, ScrollView, FlatList, TextInput, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import { ChatUser, MessageTemplate, ProcessedMessageItem } from 'types/chat/Chat_Types';
@@ -15,6 +15,7 @@ import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-ha
 import { UseChatAnimation } from '../../hooks/UseChatAnimation';
 import AudioTimer from './AudioTimer';
 import { ViewToken, ViewabilityConfigCallbackPairs } from 'react-native';
+import { UseLoading } from '@hooks/loading/UseLoading';
 
 interface ContentHeaderProps {
     userType: string | undefined;
@@ -22,7 +23,6 @@ interface ContentHeaderProps {
     chatUser?: ChatUser;
     messages: MessageTemplate[];
     socket: any;
-    conversation: string | null;
     getMessages: (conversationId: string, page: number) => Promise<void>;
     page: number;
     handleReadMessage: (message: MessageTemplate, user?: UserData) => void;
@@ -33,40 +33,70 @@ interface ViewableItem extends ViewToken {
     item: ProcessedMessageItem;
 }
 
-const Content = ({ 
-    handleReadMessage, userType, chatUser, 
-    messages, userData, conversation, 
-    socket, page, getMessages,
-    handleAddNewMessage }: ContentHeaderProps) => {
-    const { HandleResponseAppError } = UseGlobalResponse();
-    const { newMessage, handleSendNewMessage, setNewMessage, newMessageLoading, preprocessMessages } = UseMessageHandling({ conversation, socket, handleAddNewMessage });
-    const { handleAudioPress, handleAudioRelease, isRecording, recordTime } = useAudioHandling({ HandleResponseAppError, handleSendNewMessage });
-    const viewabilityConfig = {
-        itemVisiblePercentThreshold: 50
-    };
-    const [processedMessages, setProcessedMessages] = useState<ProcessedMessageItem[]>([]);
+interface ViewableItemsChanged {
+    viewableItems: ViewableItem[];
+}
 
-    const handleViewableItemsChanged = useRef((info: { viewableItems: ViewableItem[] }) => {
-        info.viewableItems.forEach(viewableItem => {
+const Content = ({
+    handleReadMessage, userType, chatUser,
+    messages, userData, socket, 
+    page, getMessages, handleAddNewMessage }: ContentHeaderProps
+    ) => {
+    const { HandleResponseAppError } = UseGlobalResponse();
+    const { newMessage, handleSendNewMessage, setNewMessage, newMessageLoading, preprocessMessages } = UseMessageHandling({ conversation: chatUser?._id, socket, handleAddNewMessage });
+    const { handleAudioPress, handleAudioRelease, isRecording, recordTime } = useAudioHandling({ HandleResponseAppError, handleSendNewMessage, senderId: userData?._id });
+    const [processedMessages, setProcessedMessages] = useState<ProcessedMessageItem[]>([]);
+    const viewabilityConfig = { itemVisiblePercentThreshold: 50 };
+    const audioIcon = userType === 'doctor' ? images.app_doctor_images.chat.icon_audio : images.app_patient_images.chat.icon_audio;
+    const sendIcon = userType === 'doctor' ? images.app_doctor_images.chat.icon_send : images.app_patient_images.chat.icon_send;
+    const { animatedStyle, longPressGesture } = UseChatAnimation({
+        handleAudioPress, handleAudioRelease,
+        newMessageLoading, userId: userData?._id
+    });
+
+
+    const renderMessageItem = useCallback(({ item, index }: { item: ProcessedMessageItem, index: number }) => {
+        if (item.type === 'dateLabel') {
+            return <MessageDate date={item.date} userType={userType} />;
+        } else {
+            const messageData = item.data;
+            const nextItem = processedMessages[index + 1];
+            const isDifferentSender = nextItem && nextItem.type === 'message' && messageData.sender !== nextItem.data.sender;
+            const isLastMessage = index === processedMessages.length - 1;
+            const nextIsDate = nextItem && nextItem.type === 'dateLabel';
+            const showUserIcon = isLastMessage || isDifferentSender || nextIsDate;
+            const isRead = chatUser?.uid && messageData.readBy && messageData.readBy.includes(chatUser.uid) ? true : false;
+            return (
+                <Message
+                    isRead={isRead}
+                    key={index.toString()}
+                    avatar={messageData.sender === userData?._id ? userData.avatar : chatUser?.avatar}
+                    message={messageData}
+                    ownMessage={messageData.sender === userData?._id}
+                    showUserIcon={showUserIcon}
+                    userType={userData?.type}
+                    audioUrl={messageData.audioUrl}
+                    duration={messageData.duration}
+                />
+            );
+        }
+    }, [processedMessages, userType, userData, chatUser]);
+
+    const handleViewableItemsChanged = useCallback(({ viewableItems }: ViewableItemsChanged) => {
+        viewableItems.forEach(viewableItem => {
             if (viewableItem.item.type !== 'dateLabel') {
                 const ownMessage = viewableItem.item.data.sender === userData?._id;
                 if (!ownMessage && userData && !viewableItem.item.data.readBy?.includes(userData?._id)) {
-                    //console.log("\n(ViewableConfig) Mensagem visível e não é do próprio usuário: ", viewableItem.item);
                     handleReadMessage(viewableItem.item.data, userData);
                 }
             }
         });
-    }).current;
+    }, [handleReadMessage, userData]);
 
     useEffect(() => {
         const updatedMessages = preprocessMessages(messages);
         setProcessedMessages(updatedMessages);
     }, [messages]);
-    const audioIcon = userType === 'doctor' ? images.app_doctor_images.chat.icon_audio : images.app_patient_images.chat.icon_audio;
-    const sendIcon = userType === 'doctor' ? images.app_doctor_images.chat.icon_send : images.app_patient_images.chat.icon_send;
-    const { animatedStyle, longPressGesture } = UseChatAnimation({ 
-        handleAudioPress, handleAudioRelease, 
-        newMessageLoading, userId: userData?._id })
 
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}
@@ -77,38 +107,14 @@ const Content = ({
                     <FlatList
                         data={processedMessages}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item, index }) => {
-                            if (item.type === 'dateLabel') {
-                                return <MessageDate date={item.date} userType={userType} />;
-                            }
-                            else {
-                                const messageData = item.data;
-                                const nextItem = processedMessages[index + 1];
-                                const isDifferentSender = nextItem && nextItem.type === 'message' && messageData.sender !== nextItem.data.sender;
-                                const isLastMessage = index === processedMessages.length - 1;
-                                const nextIsDate = nextItem && nextItem.type === 'dateLabel';
-                                const showUserIcon = isLastMessage || isDifferentSender || nextIsDate;
-                                const isRead = chatUser?.uid && messageData.readBy && messageData.readBy.includes(chatUser.uid) ? true : false;
-                                return <Message
-                                    isRead={isRead}
-                                    key={index.toString()}
-                                    avatar={messageData.sender === userData?._id ? userData.avatar : chatUser?.avatar}
-                                    message={messageData}
-                                    ownMessage={messageData.sender === userData?._id}
-                                    showUserIcon={showUserIcon}
-                                    userType={userData?.type}
-                                    audioUrl={messageData.audioUrl}
-                                    duration={messageData.duration}
-                                />
-                            }
-                        }}
+                        renderItem={renderMessageItem}
                         inverted
                         viewabilityConfig={viewabilityConfig}
                         onViewableItemsChanged={handleViewableItemsChanged}
                         style={{ width: '100%', }}
                         contentContainerStyle={{ width: '100%', paddingVertical: 30, paddingTop: screenHeight * 0.1 }}
-                        onEndReached={() => conversation && getMessages(conversation, page)}
-                        onEndReachedThreshold={0.5}
+                        onEndReached={() => chatUser?._id && getMessages(chatUser?._id, page)}
+                        onEndReachedThreshold={0.7}
                     />
                     <View style={[styles.textInput_View]}>
                         <AudioTimer recordTime={recordTime} isRecording={isRecording} userType={userData?.type} />

@@ -9,18 +9,13 @@ import { UserData } from "types/user/User_Types";
 interface UseGetMessagesProps {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     user?: UserData;
-    member?: ChatUser;
+    chat?: ChatUser;
 }
 
-export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessagesProps) => {
-    const { performGetConversationTreatment } = UseChatService(setLoading);
+export const UseChatDataHandling = ({ setLoading, chat, user }: UseGetMessagesProps) => {
     const { socket } = UseSocket();
     const [messages, setMessages] = useState<MessageTemplate[]>([]);
-    const [conversation, setConversation] = useState<string | null>(null);
     const [page, setPage] = useState<number>(0);
-
-    const conversationRef = useRef(conversation);
-    conversationRef.current = conversation;
 
     const handleAddNewMessage = useCallback((message: MessageTemplate) => {
         setMessages((prevMessages) => [message, ...prevMessages]);
@@ -31,6 +26,14 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
             prevMessages.map((msg) =>
                 msg._id === messageId ? { ...msg, readBy: Array.from(new Set([...(msg.readBy || []), userId])) } : msg
             )
+        );
+    }, []);
+
+    const handleReceiveMessage = useCallback(({ newMessage, tempId }: {newMessage: MessageTemplate, tempId: string }) => {
+        setMessages((prevMessages) =>
+            prevMessages.some((msg) => msg._id === tempId)
+                ? prevMessages.map((msg) => (msg._id === tempId ? newMessage : msg))
+                : [newMessage, ...prevMessages]
         );
     }, []);
 
@@ -45,19 +48,16 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
         setMessages(data);
     }, []);
 
-    const handleSocket = async (conversationId: string) => {
-        console.log("Socket Conversation");
-        socket?.emit('joinRoom', {room: conversationId});
+    const handleSocket = async (chatId: string) => {
+        console.log("Socket Chat");
+        socket?.emit('joinRoom', { room: chatId });
 
-        socket?.on('receiveMessage', (data: MessageTemplate) => {
-            console.log("Nova mensagem do SOCKET: ", data);
-            console.log("NOVA MENSAGEM: ", data);
-            console.log("MENSAGENS: ", messages);
-            handleAddNewMessage(data);
+        socket?.on('receiveMessage', (data: { newMessage: MessageTemplate, tempId: string }) => {
+            console.log("Nova mensagem do SOCKET: ", data.newMessage);
+            handleReceiveMessage(data);
         });
 
         socket?.on('messagesLoaded', (data: MessageTemplate[]) => {
-            console.log("Mensagens buscadas: ", data);
             if (data.length === 0) {
                 return;
             }
@@ -76,7 +76,6 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
     }
 
     const getMessages = async (conversationId: string, page: number) => {
-        console.log("Get Messages");
         console.log("Page: ", page);
         socket?.emit('getMessages', { conversationId, page });
     }
@@ -87,47 +86,43 @@ export const UseChatDataHandling = ({ setLoading, member, user }: UseGetMessages
         }
     }
 
-    const fetchChatData = async () => {
-        //***ALTERAR LÓGICA
+    const handleStartChat = async (chatId: string) => {
+        setLoading(true);
         try {
-            const response = await performGetConversationTreatment({ email_1: user?.email, email_2: member?.email });
-            if (response.success) {
-                console.log("ID Conversation: ", response.data);
-                const conversationId = response.data as string;
-                console.log(conversationId);
-                await handleSocket(conversationId);
-                setConversation(conversationId);
-            }
-            else {
-                console.log("Erro ao buscar dados de conversa: ", response);
-            }
+            await handleSocket(chatId);
+            await getMessages(chatId, page);
         }
         catch (err) {
-            console.log("Deu erro ao buscar dados de conversa...", err);
+            const error = err as Error;
+            console.log("Houve um erro ao entrar na conversa: ", error);
+
+        }
+        finally{
+            setLoading(false);
         }
     }
 
     useEffect(() => {
-        if (member) {
-            fetchChatData();
+        if (chat && chat._id) {
+            console.log("Chat: ", chat);
+            handleStartChat(chat._id);
         }
 
         return () => {
-            console.log("Removendo conversationId: ", conversation);
-            socket?.emit('leaveRoom', { room: conversationRef.current});
+            console.log("Removendo chat: ", chat);
+            socket?.emit('leaveRoom', { room: chat?._id });
             socket?.off('receiveMessage');
             socket?.off('messagesLoaded');
             socket?.off('messageRead');
             socket?.off('updateMessageStatus');
-            setConversation(null);
             setPage(0);
             setMessages([]);
         }
-    }, [user?.email, member]);
+    }, [user?.email, chat]);
 
-    return { socket, messages, 
-        conversation, getMessages, page, 
+    return {
+        socket, messages, getMessages, page,
         handleReadMessage, handleAddAllMessages,
-        handleAddNewMessage, handleAddPreviousMessages 
+        handleAddNewMessage, handleAddPreviousMessages
     }
 }

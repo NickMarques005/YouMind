@@ -31,8 +31,8 @@ const TreatmentRunning = ({ handleActiveChat, userType, userData, treatment_stat
                     <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={illustrationImg} />
                 </View>
                 <View style={{ width: '100%', paddingHorizontal: 15, justifyContent: 'center', }}>
-                    {treatment_state.treatments.map((user) => (
-                        <TemplateChatUser key={user._id} user={user} userData={userData} handleActiveChat={handleActiveChat} />
+                    {treatment_state.treatments.map((treatment) => (
+                        <TemplateChatUser key={treatment._id} treatment={treatment} userData={userData} handleActiveChat={handleActiveChat} />
                     ))}
                 </View>
             </LinearGradient>

@@ -21,7 +21,7 @@ const AudioPlayer = ({ totalDuration, url, message, ownMessage, showUserIcon }: 
     const { playerRef, currentUrl, handleCurrentUrl } = UseAudioPlayer();
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [duration, setDuration] = useState<number>(0);
+    const [duration, setDuration] = useState<number>(playerRef.current?.duration || 0);
 
     const setupPlayer = () => {
         console.log("Current Url Audio: ", url);
@@ -37,6 +37,7 @@ const AudioPlayer = ({ totalDuration, url, message, ownMessage, showUserIcon }: 
                 console.log("Error preparing player:", err);
                 return;
             }
+                
             setDuration(playerRef.current?.duration || 0);
             playerRef.current?.play((err) => {
                 if (err) {
@@ -48,7 +49,7 @@ const AudioPlayer = ({ totalDuration, url, message, ownMessage, showUserIcon }: 
     };
 
     useEffect(() => {
-        if (!playerRef.current?.isPlaying) {
+        if (!playerRef.current?.isPlaying && !playerRef.current?.isPaused) {
             setIsPlaying(false);
             setProgress(0);
         }
@@ -62,7 +63,6 @@ const AudioPlayer = ({ totalDuration, url, message, ownMessage, showUserIcon }: 
             return () => clearInterval(interval);
         }
     }, [isPlaying]);
-
 
 
     const playPauseAudio = async () => {

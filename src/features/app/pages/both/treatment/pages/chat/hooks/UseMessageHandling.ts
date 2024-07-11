@@ -7,7 +7,7 @@ import { useState } from "react"
 import { MessageTemplate, ProcessedMessageItem } from "types/chat/Chat_Types";
 
 interface UseMessageHandlingProps {
-    conversation: string | null;
+    conversation?: string;
     socket: any;
     handleAddNewMessage: (message: MessageTemplate) => void;
 }
@@ -21,7 +21,6 @@ export const UseMessageHandling = ({ conversation, socket, handleAddNewMessage }
     const [newMessage, setNewMessage] = useState('');
     const { loading, setLoading } = UseLoading();
     const { HandleResponseAppError } = UseGlobalResponse();
-    const { performSaveNewMessage } = UseChatService(setLoading);
 
     const preprocessMessages = (messages: MessageTemplate[]) => {
         const processedMessages: ProcessedMessageItem[] = [];
@@ -68,11 +67,11 @@ export const UseMessageHandling = ({ conversation, socket, handleAddNewMessage }
                 sender: senderId,
                 createdAt: timestamp,
                 updatedAt: timestamp,
+                sending: true,
             }
 
             handleAddNewMessage(newMessageData);
-
-            //socket?.emit("sendMessage", newMessageData);
+            socket?.emit("sendMessage", newMessageData);
             setNewMessage('');
         }
         catch (err) {
