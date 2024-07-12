@@ -10,10 +10,11 @@ const PatientSession: React.FC = () => {
     const { setLoading } = UseLoading();
     const { HandleConnectionAppError } = UseGlobalResponse();
 
+    /*
     UseGetQuestionnaires({ setLoading, HandleConnectionAppError});
     UseGetMedications({setLoading, HandleConnectionAppError});
     UseGlobalSocketHandling();
-    useMedicationPendingNavigation();
+    useMedicationPendingNavigation();*/
 
     return <PatientTab />
 };

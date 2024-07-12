@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { UseForm } from '@features/app/providers/sub/UserProvider';
 import ErrorApp from '@components/errors/ErrorApp';
 import PatientProvider from '@features/app/providers/PatientProvider';
@@ -17,45 +17,61 @@ import { UseGetNotifications, UseGetQuestionnaires, UseGetTreatments } from './h
 import { UseAuth } from '@features/root/providers/AuthenticationProvider';
 
 const AppSession = () => {
+    console.log("\n(APP SESSION)\n");
     const [reloadData, setReloadData] = useState<(() => Promise<any | boolean>) | undefined>(undefined);
     const [tryConnection, setTryConnection] = useState(true);
+    const initializedRef = useRef(false);
+
     const { uid } = UseAuth();
     const { userData, UpdateUserData } = UseForm();
     const { loading, setLoading } = UseLoading();
     const { HandleConnectionAppError, ClearConnectionAppError,
         ClearResponseAppError, responseAppError, responseAppSuccess,
         ClearResponseAppSuccess, connectionAppError } = UseGlobalResponse();
-    console.log("\n(APP SESSION)\n");
     const { setNotificationListeners, returnNotificationListeners, RegisterPushTokenInFirebase } = UsePushNotificationRegistration({ setLoading, HandleConnectionAppError });
     const { fetchUserData } = UseUserData({ setLoading, HandleConnectionAppError, UpdateUserData, setReloadData });
-    UseGetNotifications({ setLoading, HandleConnectionAppError });
-    UseGetTreatments({ setLoading, HandleConnectionAppError });
+    const { getNotificationsData } = UseGetNotifications({ setLoading, HandleConnectionAppError });
+    const { getTreatmentsData } = UseGetTreatments({ setLoading, HandleConnectionAppError });
 
     const initializeAppSession = async () => {
         try {
             const tokenKey = await RegisterPushTokenInFirebase();
             if (tokenKey) {
-
+                console.log("Initialize Session");
                 setNotificationListeners();
-                await fetchUserData();
+                const userData = await fetchUserData();
+                if(userData)
+                {
+                    await getNotificationsData(userData._id);
+                    await getTreatmentsData(userData);
+                }
             }
         } catch (error) {
             console.error("Error initializing app session: ", error);
             setLoading(false);
         }
+        finally{
+            setLoading(false);
+        }
+    };
+
+    const resetConnection = () => {
+        initializedRef.current = false;
+        setTryConnection(true);
     };
 
     useEffect(() => {
-        console.log("Try connection: ", tryConnection);
-        if (uid && tryConnection) {
+        console.log("App session USE EFFECT FOR initiate App")
+        if (uid && tryConnection && !initializedRef.current) {
             initializeAppSession();
+            initializedRef.current = true;
             setTryConnection(false);
         }
 
         return () => {
             returnNotificationListeners();
         }
-    }, [tryConnection, uid]);
+    }, [uid]);
 
     return (
         <>
@@ -101,7 +117,7 @@ const AppSession = () => {
                             }
                         </>
                     :
-                    <ErrorApp loading={loading} error={connectionAppError} setTryConnection={setTryConnection} resolveError={ClearConnectionAppError} reloadData={setTryConnection} />
+                    <ErrorApp loading={loading} error={connectionAppError} setTryConnection={setTryConnection} resolveError={ClearConnectionAppError} reloadData={resetConnection} />
             }
         </>
     )

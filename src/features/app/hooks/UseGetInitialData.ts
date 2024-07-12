@@ -5,7 +5,6 @@ import { UseNotificationService } from "@hooks/api/UseNotificationService";
 import { UseNotifications } from "../reducers/NotificationReducer";
 import { UseTreatmentService } from "@hooks/api/UseTreatmentService";
 import { UseTreatment } from "@providers/TreatmentProvider";
-import { UseNotepadService } from "@hooks/api/UseNotepadService";
 import { UseQuestionnaireService } from "@hooks/api/UseQuestionnaireService";
 import { UseQuestionnaire } from "../providers/patient/QuestionariesProvider";
 import { UseMedicationService } from "@hooks/api/UseMedicationService";
@@ -13,6 +12,7 @@ import { UseMedications } from "../providers/patient/MedicationProvider";
 import { UsePatientHistoryService } from "@hooks/api/UsePatientHistoryService";
 import { useQuestionPerformance } from "../providers/patient/QuestionPerformanceProvider";
 import { useMedicationPending } from "../providers/patient/MedicationPendingProvider";
+import { UserData } from "types/user/User_Types";
 
 interface UseGetInitialDataProps {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,8 +47,8 @@ export const UseGetNotifications = ({ setLoading, HandleConnectionAppError }: Us
         }
     }
 
-    const getNotificationsData = () => {
-        if (uid && userData?._id) {
+    const getNotificationsData = (userId?: string) => {
+        if (uid && userId) {
             handleGetNotifications().then(notifications => {
                 if (notifications) {
                     dispatch({ type: 'SET_NOTIFICATIONS', payload: notifications });
@@ -57,23 +57,18 @@ export const UseGetNotifications = ({ setLoading, HandleConnectionAppError }: Us
         }
     }
 
-    useEffect(() => {
-        getNotificationsData();
-    }, [userData?._id, uid]);
-
     return { getNotificationsData };
 }
 
 export const UseGetTreatments = ({ setLoading, HandleConnectionAppError }: UseGetInitialDataProps) => {
     const { performGetTreatment } = UseTreatmentService(setLoading);
     const { setTreatments } = UseTreatment();
-    const { userData } = UseForm();
     const { uid } = UseAuth();
 
-    const handleGetTreatments = async () => {
+    const handleGetTreatments = async (userData: UserData) => {
         try {
             console.log("Handle Get Treatments");
-            const response = await performGetTreatment(userData?.type as string);
+            const response = await performGetTreatment(userData.type as string);
             if (response.success) {
                 console.log(response.data);
                 const treatments = response.data;
@@ -90,20 +85,15 @@ export const UseGetTreatments = ({ setLoading, HandleConnectionAppError }: UseGe
         }
     }
 
-    const getTreatmentsData = () => {
-        handleGetTreatments().then(treatments => {
-            if (treatments) {
-                setTreatments(treatments);
-            }
-        });
-    }
-
-    useEffect(() => {
-
-        if (userData?.type && userData?._id && uid) {
-            getTreatmentsData();
+    const getTreatmentsData = (userData: UserData) => {
+        if (uid && userData) {
+            handleGetTreatments(userData).then(treatments => {
+                if (treatments) {
+                    setTreatments(treatments);
+                }
+            });
         }
-    }, [userData?._id, userData?.type, uid]);
+    }
 
     return { getTreatmentsData };
 }
@@ -173,14 +163,10 @@ export const UseGetQuestionnaires = ({ setLoading, HandleConnectionAppError }: U
         }
     }
 
-    useEffect(() => {
-        getQuestionnairesData();
-    }, [userData?._id]);
-
-    return null;
+    return { getQuestionnairesData };
 }
 
-export const UseGetMedications = ({setLoading, HandleConnectionAppError}: UseGetInitialDataProps) => {
+export const UseGetMedications = ({ setLoading, HandleConnectionAppError }: UseGetInitialDataProps) => {
     const { performGetMedications, performGetMedicationPending } = UseMedicationService(setLoading);
     const { handleMedicationPending } = useMedicationPending();
     const { dispatch } = UseMedications();
@@ -234,16 +220,12 @@ export const UseGetMedications = ({setLoading, HandleConnectionAppError}: UseGet
                 }
             });
             handleGetMedicationPending().then(medicationPending => {
-                if(medicationPending){
+                if (medicationPending) {
                     handleMedicationPending(medicationPending);
                 }
             })
         }
     }
 
-    useEffect(() => {
-        getMedicationsData();
-    }, [userData?._id]);
-
-    return null;
+    return { getMedicationsData };
 }

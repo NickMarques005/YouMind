@@ -28,20 +28,20 @@ const UseUserData = ({ setReloadData, setLoading, UpdateUserData, HandleConnecti
                 console.log("(USE USER DATA) Dados usuário: ", userData);
                 UpdateUserData(userData);
                 handleUserType(userData?.type as UserType);
+                return userData;
             }
             if (response.error) {
                 console.log(response);
                 HandleConnectionAppError(response.error);
                 setReloadData(() => fetchUserData);
-                return false
             }
-            return response.success;
+            return undefined;
         } catch (err) {
             const error = err as Error;
             console.error(err);
             HandleConnectionAppError(error.message);
             setReloadData(() => fetchUserData);
-            return false;
+            return undefined;
         }
     };
 
