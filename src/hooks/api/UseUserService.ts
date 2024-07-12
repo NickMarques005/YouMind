@@ -6,11 +6,12 @@ import { Request_FilterUsersArgs, Request_UpdateUserAvatar, Request_UpdateUserDe
 export const UseUserService = (setLoading: SetLoading) => {
     const { HandleRequest } = UseRequest();
 
-    const performFetchUserData = async () => {
+    const performFetchUserData = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: UserService.FetchUserData,
             setLoading,
-            params: []
+            params: [],
+            stopLoading
         });
     };
 

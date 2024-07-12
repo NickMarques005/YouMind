@@ -9,12 +9,10 @@ import { useMedicationPendingNavigation } from './hooks/UseMedicationPendingNavi
 const PatientSession: React.FC = () => {
     const { setLoading } = UseLoading();
     const { HandleConnectionAppError } = UseGlobalResponse();
-
-    /*
+    UseGlobalSocketHandling();
     UseGetQuestionnaires({ setLoading, HandleConnectionAppError});
     UseGetMedications({setLoading, HandleConnectionAppError});
-    UseGlobalSocketHandling();
-    useMedicationPendingNavigation();*/
+    useMedicationPendingNavigation();
 
     return <PatientTab />
 };

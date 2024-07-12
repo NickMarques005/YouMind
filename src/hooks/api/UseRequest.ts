@@ -12,12 +12,13 @@ export interface RequestParams<T, Params extends any[]> {
     setLoading: SetLoading;
     params: Params;
     firebaseFunction?: (res: Response<T>) => Promise<Response<T>>;
+    stopLoading?: boolean;
 }
 
 export const UseRequest = () => {
 
     const HandleRequest = useCallback(async <T, Params extends any[]>(
-        { serviceFunction, setLoading, params, firebaseFunction }: RequestParams<T, Params>
+        { serviceFunction, setLoading, params, firebaseFunction, stopLoading = true }: RequestParams<T, Params>
     ): Promise<Response<T>> => {
         setLoading(true);
         let response: Response<T>;
@@ -31,7 +32,9 @@ export const UseRequest = () => {
             console.log("(Use Request) Error: ", err);
             throw err;
         } finally {
-            setLoading(false);
+            if (stopLoading) {
+                setLoading(false);
+            }
         }
     }, []);
 

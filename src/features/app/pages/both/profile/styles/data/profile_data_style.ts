@@ -57,7 +57,7 @@ export const profile_data_style = (userType: string | undefined) => {
         accountImage: {
             width: '102%',
             height: '102%',
-            backgroundColor: '#602e75'
+            backgroundColor: userType === 'doctor' ? '#2e6875' : '#602e75'
         },
         accountUserTextView: {
             maxWidth: '70%',

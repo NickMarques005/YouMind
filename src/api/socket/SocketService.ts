@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react';
-import UseUserData from '@features/app/hooks/UseUserData';
 import { UseSocket } from '@features/app/providers/sub/SocketProvider';
 import { UseForm } from '@features/app/providers/sub/UserProvider';
 import { UseAuth } from '@features/root/providers/AuthenticationProvider';

@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         minHeight: screenHeight * 0.3,
-        backgroundColor: 'red'
     },
 
 });

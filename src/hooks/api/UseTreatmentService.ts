@@ -15,12 +15,13 @@ export const UseTreatmentService = (setLoading: SetLoading) => {
         });
     };
 
-    const performGetTreatment = async (type: string) => {
+    const performGetTreatment = async (type: string, stopLoading?: boolean) => {
         
         return HandleRequest({
             serviceFunction: TreatmentService.GetTreatment,
             setLoading,
-            params: [type]
+            params: [type],
+            stopLoading
         });
     };
 

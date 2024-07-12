@@ -48,7 +48,6 @@ const AppSession = () => {
             }
         } catch (error) {
             console.error("Error initializing app session: ", error);
-            setLoading(false);
         }
         finally{
             setLoading(false);

@@ -6,11 +6,12 @@ import { SetLoading } from "types/loading/Loading_Types";
 export const UseNotificationService = (setLoading: SetLoading) => {
     const { HandleRequest } = UseRequest();
 
-    const performGetNotifications = async () => {
+    const performGetNotifications = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: NotificationService.GetNotifications,
             setLoading,
-            params: []
+            params: [],
+            stopLoading
         });
     }
 

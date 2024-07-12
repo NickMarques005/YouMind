@@ -18,7 +18,8 @@ const UseUserData = ({ setReloadData, setLoading, UpdateUserData, HandleConnecti
 
     const fetchUserData = async () => {
         try {
-            const response = await performFetchUserData();
+            const stopLoading = false;
+            const response = await performFetchUserData(stopLoading);
             if (response.success) {
                 const userData = response.data;
 

@@ -22,12 +22,12 @@ interface UseGetInitialDataProps {
 export const UseGetNotifications = ({ setLoading, HandleConnectionAppError }: UseGetInitialDataProps) => {
     const { performGetNotifications } = UseNotificationService(setLoading);
     const { dispatch } = UseNotifications();
-    const { userData } = UseForm();
     const { uid } = UseAuth();
 
     const handleGetNotifications = async () => {
         try {
-            const response = await performGetNotifications();
+            const stopLoading = false;
+            const response = await performGetNotifications(stopLoading);
             if (response.success) {
                 console.log("Get notifications: ", response);
                 const notifications = response.data;
@@ -68,7 +68,8 @@ export const UseGetTreatments = ({ setLoading, HandleConnectionAppError }: UseGe
     const handleGetTreatments = async (userData: UserData) => {
         try {
             console.log("Handle Get Treatments");
-            const response = await performGetTreatment(userData.type as string);
+            const stopLoading = false;
+            const response = await performGetTreatment(userData.type as string, stopLoading);
             if (response.success) {
                 console.log(response.data);
                 const treatments = response.data;
@@ -163,7 +164,11 @@ export const UseGetQuestionnaires = ({ setLoading, HandleConnectionAppError }: U
         }
     }
 
-    return { getQuestionnairesData };
+    useEffect(() => {
+        getQuestionnairesData();
+    }, [userData?._id]);
+
+    return null;
 }
 
 export const UseGetMedications = ({ setLoading, HandleConnectionAppError }: UseGetInitialDataProps) => {
@@ -226,6 +231,10 @@ export const UseGetMedications = ({ setLoading, HandleConnectionAppError }: UseG
             })
         }
     }
+
+    useEffect(() => {
+        getMedicationsData();
+    }, [userData?._id]);
 
     return { getMedicationsData };
 }

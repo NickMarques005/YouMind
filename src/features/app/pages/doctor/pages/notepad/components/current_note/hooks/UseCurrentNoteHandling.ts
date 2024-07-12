@@ -5,6 +5,7 @@ import { UseNotepadNavigation } from "../../../hooks/UseNotepadNavigation";
 import { useNotepad } from "@features/app/providers/doctor/NotepadProvider";
 import { useState } from "react";
 import { Verification } from "types/verification/Verification_Types";
+import { NoteBehavior } from "../components/NoteVerification";
 
 interface UseCurrentNoteHandlingProps {
     updateSetLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,14 +23,16 @@ export const UseCurrentNoteHandling = ({
     const { navigateToNotepadScreen } = UseNotepadNavigation();
     const { dispatch } = useNotepad();
     const [noteVerification, setNoteVerification] = useState<Verification | undefined>(undefined);
+    const [noteBehavior, setNoteBehavior] = useState<NoteBehavior | undefined>(undefined);
 
-    const handleNoteVerification = (handleAccept: () => void, message?: string, acceptMessage?: string) => {
+    const handleNoteVerification = (handleAccept: () => void, message?: string, acceptMessage?: string, behavior?: NoteBehavior) => {
         const verification = {
             message,
             acceptMessage,
             handleAccept
         }
 
+        setNoteBehavior(behavior);
         setNoteVerification(verification);
     }
 
@@ -98,5 +101,7 @@ export const UseCurrentNoteHandling = ({
 
     }
 
-    return { handleDeleteNote, handleUpdateNote, noteVerification, handleNoteVerification, clearNoteVerification }
+    return { handleDeleteNote, handleUpdateNote, 
+        noteVerification, noteBehavior,
+        handleNoteVerification, clearNoteVerification }
 }

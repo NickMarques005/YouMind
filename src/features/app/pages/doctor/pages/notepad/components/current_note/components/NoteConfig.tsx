@@ -47,7 +47,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
     const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
     const { handleDeleteNote, handleUpdateNote, 
         noteVerification, handleNoteVerification, 
-        clearNoteVerification } = UseCurrentNoteHandling({ 
+        clearNoteVerification, noteBehavior } = UseCurrentNoteHandling({ 
             updateSetLoading: updateLoading.setLoading, deleteSetLoading: deleteLoading.setLoading, 
             HandleResponseAppError, HandleResponseAppSuccess, handleUpdateCurrentNote });
     const translateY = useSharedValue(400);
@@ -60,7 +60,6 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
     const [typeRequestResponse, setTypeRequestResponse] = useState<'delete' | 'update'>();
     const isAnimating = useSharedValue(false);
 
-    console.log(NewCurrentNote);
     useEffect(() => {
         translateY.value = withSpring(visible ? screenHeight * 0.15 : 1000, { damping: 60, mass: 3 }, (isFinished) => {
             if (!isFinished && !visible) {
@@ -151,7 +150,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
                                 <View style={styleAddNote.eventView}>
                                     <TouchableOpacity
                                         disabled={deleteLoading.loading || updateLoading.loading}
-                                        onPress={() => handleNoteVerification(() => handleUpdateNote(currentNote._id, NewCurrentNote), 'Gostaria de salvar esta anotação?', 'Salvar')}
+                                        onPress={() => handleNoteVerification(() => handleUpdateNote(currentNote._id, NewCurrentNote), 'Gostaria de salvar esta anotação?', 'Salvar', 'update')}
                                         style={[styleAddNote.eventButton, { backgroundColor: '#356d75', opacity: deleteLoading.loading || updateLoading.loading ? 0.5 : 1 }]}
                                     >
                                         {
@@ -164,7 +163,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
 
                                     <TouchableOpacity
                                         disabled={deleteLoading.loading || updateLoading.loading}
-                                        onPress={() => handleNoteVerification(() => handleDeleteNote(currentNote._id, handleCloseAddNote), 'Deseja realmente deletar esta anotação?', 'Deletar')}
+                                        onPress={() => handleNoteVerification(() => handleDeleteNote(currentNote._id, handleCloseAddNote), 'Deseja realmente deletar esta anotação?', 'Deletar', 'delete')}
                                         style={[styleAddNote.eventButton, { backgroundColor: '#2f5a66', opacity: deleteLoading.loading || updateLoading.loading ? 0.5 : 1 }]}
                                     >
                                         {
@@ -188,6 +187,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
                     handleVerificationAccept={noteVerification.handleAccept}
                     acceptText={noteVerification.acceptMessage}
                     handleCloseVerification={clearNoteVerification}
+                    behavior={noteBehavior}
                 />
             }
         </>
