@@ -1,3 +1,5 @@
+import { SearchUserTreatmentInfo } from "types/treatment/Search_Types";
+
 export type UserType = 'patient' | 'doctor' | undefined;
 
 export type UserGender = 'Masculino' | 'Feminino' | 'Prefiro não informar';
@@ -11,6 +13,7 @@ export interface FilterUserPatient {
     avatar: string;
     gender?: UserGender;
     birth?: string;
+    doctor?: SearchUserTreatmentInfo;
     is_treatment_running: boolean;
 }
 
@@ -23,7 +26,7 @@ export interface FilterUserDoctor {
     avatar: string;
     gender?: UserGender;
     birth?: string;
-    total_treatments: Array<string>;
+    total_treatments: SearchUserTreatmentInfo[];
 }
 
 export type FilteredUser = FilterUserPatient | FilterUserDoctor;

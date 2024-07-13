@@ -1,7 +1,7 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import LinearGradient from 'react-native-linear-gradient'
-import { screenHeight } from '@utils/layout/Screen_Size'
+import { responsiveSize, screenHeight } from '@utils/layout/Screen_Size'
 import { SearchUserData } from 'types/treatment/Search_Types';
 import { UserData } from 'types/user/User_Types';
 import images from '@assets/images';
@@ -11,6 +11,7 @@ import DefaultModal from '@components/modals/default/DefaultModal';
 import ConfirmSolicitationModal from './ConfirmSolicitationModal';
 import DefaultLoading from '@components/loading/DefaultLoading';
 import LoadingScreen from '@components/loading/LoadingScreen';
+import { FormatISOToStringDate } from '@utils/date/DateFormatting';
 
 
 interface StartTreatmentProps {
@@ -24,19 +25,24 @@ const StartTreatment = ({ userSearch, userData, userType, handleBackSearch }: St
 
     const { loading, setLoading } = UseLoading();
     const { handleModalSolicitation, modalSolicitation, handleTreatmentSolicitation } = UseSolicitation({ setLoading });
-    const isDoctorTreatment = (userData && userSearch.total_treatments && userSearch.total_treatments.includes(userType === 'patient' ? userData.email : ""));
+    const isDoctorTreatment = (userData && userSearch.total_treatments && userSearch.total_treatments.some(treatment => treatment.email === userData.email));
     const userIcon = userSearch.type === 'doctor' ? images.app_doctor_images.chat.doctor_icon_chat : images.app_patient_images.chat.user_icon_chat;
+    const treatmentUserIcon = userType === 'patient' ? images.app_patient_images.chat.doctor_icon_chat : images.app_doctor_images.chat.user_icon_chat;
     const backIcon = images.generic_images.back.arrow_back_white;
-    const iconSize = 135;
+    const iconUserSize = responsiveSize * 0.4;
+    const iconInfoSize = responsiveSize * 0.1;
+    const iconTreatmentUserSize = responsiveSize * 0.1;
 
     const iconInTreatment = images.app_doctor_images.treatment.in_treatment;
     const iconSearchUser = images.generic_images.search.user_icon;
     const iconSearchEmail = images.generic_images.search.email_icon;
     const iconSearchPhone = images.generic_images.search.phone_icon;
+    const iconSearchGender = images.generic_images.search.gender_icon;
+    const iconSearchBirth = images.generic_images.search.birth_icon;
     const iconTreatments = images.generic_images.search.treatment_icon;
-
+    
     return (
-        <>
+        <View style={{ width: '100%', flex: 1, }}>
             <View style={styles.staticContentTreatment_View}>
                 <View style={styles.userSearchTreatment_Header}>
                     <TouchableOpacity disabled={loading} onPress={() => handleBackSearch(userSearch)} style={[styles.userSearchTreatment_BackButton, { opacity: loading ? 0.5 : 1 }]}>
@@ -45,45 +51,81 @@ const StartTreatment = ({ userSearch, userData, userType, handleBackSearch }: St
                 </View>
                 <View style={styles.userSearchTreatmentImg_View}>
                     <View style={[styles.userSearchIcon_View, { backgroundColor: `${userSearch.type === "doctor" ? "rgba(108, 181, 212, 0.2)" : "rgba(157, 108, 212, 0.2)"}` }]}>
-                        <Image style={{ width: screenHeight * ((iconSize) / 1000), height: screenHeight * ((iconSize) / 1000) }} source={userSearch.avatar ? { uri: userSearch.avatar } : userIcon} />
+                        <Image style={{ width: iconUserSize, height: iconUserSize }} source={userSearch.avatar ? { uri: userSearch.avatar } : userIcon} />
                     </View>
                 </View>
             </View>
             <View style={styles.userSearchTreatment_Container}>
                 <LinearGradient colors={userSearch.type === 'doctor' ? ["#437a7d", 'rgba(98, 126, 138, 0.1)'] : ["#8a6283", "#7d4373", "rgba(148, 112, 142, 0.2)"]}
                     start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }} style={[styles.userSearchTreatment_Gradient, { paddingBottom: userSearch.is_treatment_running ? 0 : 100 }]}>
+                    end={{ x: 0, y: 1 }} style={[styles.userSearchTreatment_Gradient]}>
                     <View style={styles.userSearchContent_View}>
                         <View style={styles.userSearchNameTreatment_View}>
                             <Text style={styles.userSearchNameTreatment_Text}>{userType === 'patient' ? `Dr. ${userSearch.name}` : userSearch.name}</Text>
                         </View>
                         <View style={styles.userSearchInfoTreatment_View}>
                             <View style={styles.userSearchInfoTemplateContainer}>
-                                <Image style={{ width: 40, height: 40 }} source={iconSearchEmail} />
+                                <Image style={{ width: iconInfoSize, height: iconInfoSize }} source={iconSearchEmail} />
                                 <Text style={styles.userSearchTextTemplate}>
                                     {userSearch.email}
                                 </Text>
                             </View>
                             <View style={styles.userSearchInfoTemplateContainer}>
-                                <Image style={{ width: 40, height: 40 }} source={iconSearchPhone} />
+                                <Image style={{ width: iconInfoSize, height: iconInfoSize }} source={iconSearchPhone} />
                                 <Text style={styles.userSearchTextTemplate}>
                                     {userSearch.phone}
                                 </Text>
                             </View>
                             <View style={styles.userSearchInfoTemplateContainer}>
-                                {
-                                    userSearch.type === "doctor" ?
-                                        <>
-                                            <Image style={{ width: 40, height: 40 }} source={iconTreatments} />
-                                            <Text style={styles.userSearchTextTemplate}>
-                                                {`Total de ${userSearch.total_treatments ? userSearch.total_treatments.length : 0} tratamentos feitos`}
-                                            </Text>
-                                        </>
-                                        :
-                                        ""
-                                }
+                                <Image style={{ width: iconInfoSize, height: iconInfoSize }} source={iconSearchBirth} />
+                                <Text style={styles.userSearchTextTemplate}>
+                                    {userSearch.birth ? FormatISOToStringDate(userSearch.birth) : "Não informado"}
+                                </Text>
                             </View>
+                            <View style={styles.userSearchInfoTemplateContainer}>
+                                <Image style={{ width: iconInfoSize, height: iconInfoSize }} source={iconSearchGender} />
+                                <Text style={styles.userSearchTextTemplate}>
+                                    {userSearch.gender ? userSearch.gender : "Não informado"}
+                                </Text>
+                            </View>
+                            {
+                                userSearch.total_treatments || userSearch.doctor ?
+                                    <View style={styles.userSearchInfoTemplateContainer}>
+                                        <Image style={{ width: iconInfoSize, height: iconInfoSize }} source={iconTreatments} />
+                                        <View style={{ paddingVertical: '2%', paddingHorizontal: '4%', borderRadius: 10, flex: 1, backgroundColor: userSearch.type === 'doctor' ? 'rgba(26, 45, 46, 0.3)' : 'rgba(40, 26, 46, 0.3)' }}>
+                                            <Text style={styles.treatmentName}>
+                                                {userSearch.total_treatments ? "Tratamentos" : "Doutor"}
+                                            </Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 5, width: '95%', overflow: 'hidden' }}>
+                                                {
+                                                    userSearch.total_treatments && (
+                                                        userSearch.total_treatments.map((treatment, index) => (
+                                                            <View key={index} style={styles.treatmentItem}>
+                                                                <Image
+                                                                    style={{ height: iconTreatmentUserSize, width: iconTreatmentUserSize, borderRadius: iconTreatmentUserSize, borderWidth: 2, borderColor: userType === 'patient' ? '#43264a' : '#417c91' }}
+                                                                    source={treatment.avatar ? { uri: treatment.avatar } : userIcon}
+                                                                />
+                                                            </View>
+                                                        ))
+                                                    )
+                                                }
+                                                {
+                                                    userSearch.doctor && (
+                                                        <View style={styles.treatmentItem}>
+                                                            <Image
+                                                                style={{ height: iconTreatmentUserSize, width: iconTreatmentUserSize, borderRadius: iconTreatmentUserSize, borderWidth: 2, borderColor: userType === 'patient' ? '#43264a' : '#417c91' }}
+                                                                source={userSearch.doctor.avatar ? { uri: userSearch.doctor.avatar } : userIcon}
+                                                            />
+                                                        </View>
+                                                    )
+                                                }
+                                            </View>
+                                        </View>
+                                    </View>
+                                : ""
+                            }
                         </View>
+
                     </View>
                     {
                         !userSearch.is_treatment_running || isDoctorTreatment ?
@@ -127,7 +169,7 @@ const StartTreatment = ({ userSearch, userData, userType, handleBackSearch }: St
                     />
                 </DefaultModal>
             }
-        </>
+        </View>
     )
 }
 
@@ -136,14 +178,18 @@ export default StartTreatment;
 const styles = StyleSheet.create({
     staticContentTreatment_View: {
         width: '100%',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '30%',
+        marginBottom: '10%'
     },
     userSearchTreatment_Header: {
         display: 'flex',
         width: '100%',
         alignItems: 'flex-start',
-        paddingHorizontal: 25,
-        paddingVertical: 25,
+        justifyContent: 'center',
+        paddingHorizontal: '6%',
+        paddingVertical: '6%',
     },
     userSearchTreatment_BackButton: {
         width: 30,
@@ -152,8 +198,6 @@ const styles = StyleSheet.create({
     userSearchTreatmentImg_View: {
         display: 'flex',
         paddingTop: 5,
-        paddingBottom: 30,
-
     },
     userSearchIcon_View: {
         borderRadius: 100,
@@ -162,23 +206,24 @@ const styles = StyleSheet.create({
     },
     userSearchTreatment_Container: {
         display: 'flex',
-        width: '100%'
+        width: '100%',
+        flex: 1,
     },
     userSearchTreatment_Gradient: {
-        display: 'flex',
-        paddingTop: 50,
-        paddingBottom: 70,
-        gap: 20,
+        flex: 1,
+        paddingVertical: '10%',
         width: '100%',
-        height: '90%',
-        borderRadius: 40,
+        borderTopRightRadius: 40,
+        borderTopLeftRadius: 40,
         justifyContent: 'space-between',
-
     },
     userSearchContent_View: {
         width: '100%',
+        flex: 1,
         alignItems: 'center',
-        paddingHorizontal: 40,
+        paddingHorizontal: '10%',
+        justifyContent: 'space-between',
+        
     },
     userSearchNameTreatment_View: {
         display: 'flex',
@@ -190,11 +235,10 @@ const styles = StyleSheet.create({
     },
 
     userSearchInfoTreatment_View: {
-        display: 'flex',
         width: '100%',
-        gap: 10,
-        paddingVertical: 45,
-        justifyContent: 'center'
+        flex: 1,
+        justifyContent: 'space-between',
+        marginVertical: '6%',
     },
     userSearchInfoTemplateContainer: {
         display: 'flex',
@@ -202,29 +246,43 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
+        paddingBottom: '1.5%',
     },
     userSearchTextTemplate: {
         fontSize: 16,
         color: 'rgba(197, 203, 209, 0.8)',
-
+    },
+    treatmentItem: {
+        alignItems: 'center',
+    },
+    treatmentAvatar: {
+    },
+    treatmentName: {
+        color: 'white',
+        fontSize: 12,
+        marginBottom: '3%',
+    },
+    treatmentsContainer: {
+        alignItems: 'center',
     },
     initTreatment_Container: {
         backgroundColor: 'transparent',
         borderRadius: 50,
         elevation: 5,
-        marginHorizontal: 30,
+        marginHorizontal: '8%',
     },
     handleTreatment_View: {
         width: '100%',
         alignItems: 'center',
         borderRadius: 50,
-
+        height: screenHeight * 0.1,
     },
     initTreatment_Button: {
-        paddingVertical: 25,
-        height: screenHeight * 0.1,
+        flex: 1,
+        width: '100%',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderRadius: 50,
     },
     initTreatment_Text: {
         fontSize: 20,

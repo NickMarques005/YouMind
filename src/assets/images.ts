@@ -63,6 +63,8 @@ const generic_images = {
         phone_icon: require('./img/generic/search/phone_icon.png'),
         treatment_icon: require('./img/generic/search/treatment_icon.png'),
         search_warning_icon: require('./img/generic/search/search_warning_icon.png'),
+        birth_icon: require('./img/generic/search/birth_icon.png'),
+        gender_icon: require('./img/generic/search/gender_icon.png')
     },
     divisa: {
         divisa_normal: require('./img/generic/divisa/divisa_normal.png')

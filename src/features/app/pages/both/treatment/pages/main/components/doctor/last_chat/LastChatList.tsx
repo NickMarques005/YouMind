@@ -17,7 +17,7 @@ interface LastChatProps {
 function LastChatList({ handleActiveChat, userData, treatment_state }: LastChatProps) {
     const noChatIcon = images.app_doctor_images.treatment.no_treatments_found;
 
-    const iconSize = responsiveSize * 0.2;
+    const iconSize = responsiveSize * 0.16;
 
     return (
         <>
@@ -29,7 +29,7 @@ function LastChatList({ handleActiveChat, userData, treatment_state }: LastChatP
                     :
                     <View style={{ width: '100%', height: screenHeight * 0.3, alignItems: 'center', marginTop: 40, justifyContent: 'center', display: 'flex',  gap: 10 }}>
                         <MaterialIcons name="message" size={iconSize} color="rgba(117, 143, 156, 1)" />
-                        <Text style={{ fontSize: 16, fontWeight: '600', maxWidth: '70%',  color: '#3a6c70', textAlign: 'center', }}>Não há conversas disponíveis no momento...</Text>
+                        <Text style={{ fontSize: 16, fontWeight: '600', maxWidth: '70%',  color: '#3a6c70', textAlign: 'center', marginTop: '2%' }}>Não há conversas disponíveis no momento...</Text>
                     </View>
             }
         </>

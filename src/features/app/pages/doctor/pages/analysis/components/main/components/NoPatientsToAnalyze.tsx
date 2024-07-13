@@ -9,8 +9,8 @@ const NoPatientsToAnalyze = () => {
     const noPatientsToAnalyze = images.app_doctor_images.analysis.no_patients_to_analyze;
 
     return (
-        <View style={{ alignItems: 'center', justifyContent: 'center', gap: 7 }}>
-            <View style={{ width: iconSize, height: iconSize }}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', gap: 10, top: '-7%' }}>
+            <View style={{ width: iconSize, height: iconSize, borderRadius: iconSize, borderWidth: 4, borderColor: '#367791', padding: '3.5%',}}>
                 <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={noPatientsToAnalyze} />
             </View>
             <View style={{maxWidth: '65%'}}>
@@ -18,7 +18,6 @@ const NoPatientsToAnalyze = () => {
                     Oops! Não há pacientes para analisar
                 </Text>
             </View>
-
         </View>
     )
 }
