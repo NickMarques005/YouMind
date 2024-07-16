@@ -35,10 +35,10 @@ const AppSession = () => {
 
     const initializeAppSession = async () => {
         try {
-            const tokenKey = await RegisterPushTokenInFirebase();
+            const tokenKey = true//await RegisterPushTokenInFirebase();
             if (tokenKey) {
                 console.log("Initialize Session");
-                setNotificationListeners();
+                //setNotificationListeners();
                 const userData = await fetchUserData();
                 if(userData)
                 {

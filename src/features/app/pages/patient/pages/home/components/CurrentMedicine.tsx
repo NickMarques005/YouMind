@@ -15,10 +15,9 @@ const CurrentMedicine = () => {
         nameParts = nextMedication.name.split(' ');
     }
 
-
     const currentmed = images.app_patient_images.home.icon_med3;
     const currentMedBg = images.app_patient_images.home.bg_home_content_2;
-
+    
 
     return (
         <View style={styles.medicines_View}>

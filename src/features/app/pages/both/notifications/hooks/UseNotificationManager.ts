@@ -16,7 +16,7 @@ import { useTabNavigation } from '@features/app/hooks/UseTabNavigator';
 import { HealthPage, UseHealthPage } from '@features/app/providers/patient/HealthProvider';
 
 export interface SelectedNotification {
-    removeNotification?: (notificationId: string | string[]) => void;
+    removeNotification?: () => void;
     notification: NotificationData;
 }
 
@@ -35,7 +35,7 @@ export interface HandlePageDirectionParams {
 
 export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationLoading, userType, userData }: UseNotificationManager) => {
     const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
-    const { handleDeleteNotification } = UseNotificationConfig({ setLoading: setDeleteNotificationLoading, HandleResponseAppError, HandleResponseAppSuccess });
+    const { handleDeleteNotification, handleRemove } = UseNotificationConfig({ setLoading: setDeleteNotificationLoading, HandleResponseAppError, HandleResponseAppSuccess });
     const { performInitializeTreatment } = UseTreatmentService(setModalLoading);
     const [selectedNotification, setSelectedNotification] = useState<SelectedNotification | null>(null);
     const { handleRedirectChat } = UseChat();
@@ -66,7 +66,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
 
     const handleNotificationPress = useCallback(async (
         notification: NotificationData,
-        removeNotification?: (notificationId: string | string[]) => void
+        removeNotification?: () => void
     ) => {
         const notificationData = notification.data;
 
@@ -119,12 +119,12 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
 
                 if (removeNotification) {
                     if (notification.group) {
-                        const group = notification.group;
-                        handleDeleteNotification(notification._id, removeNotification, group._ids);
+                        const groupNotifications = notification.group;
+                        handleRemove(groupNotifications._ids);
                         return;
                     }
                     else {
-                        handleDeleteNotification(notification._id, removeNotification);
+                        handleRemove(notification._id);
                         return;
                     }
                 }
@@ -134,7 +134,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
         setSelectedNotification({ notification, removeNotification });
     }, []);
 
-    const handleNotificationAccept = useCallback(async (notification: NotificationData, removeNotification?: (notificationId: string | string[]) => void) => {
+    const handleNotificationAccept = useCallback(async (notification: NotificationData, removeNotification?: () => void) => {
         const notificationData = notification.data ? notification.data : undefined;
 
         if (notificationData === undefined) {
@@ -152,7 +152,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
                         if (response.success) {
                             console.log(response);
                             if (removeNotification) {
-                                handleDeleteNotification(notification._id, removeNotification);
+                                removeNotification();
                             }
                         }
 

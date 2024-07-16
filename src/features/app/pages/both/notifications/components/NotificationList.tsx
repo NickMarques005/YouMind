@@ -12,13 +12,14 @@ import { formatRelativeTime } from '@utils/date/DateFormatting';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { responsiveSize, screenWidth } from '@utils/layout/Screen_Size';
 import { UseNotificationIcon } from '../hooks/UseNotificationIcon';
+import { useNotificationAnimations } from '../hooks/UseNotificationAnimations';
 
 interface NotificationsListProps {
     filteredNotifications: NotificationData[];
     userType: string;
     handleNotificationPress: (
         notification: NotificationData,
-        removeNotification?: (notificationId: string | string[]) => void
+        removeNotification?: () => void
     ) => void;
     groupNotificationsBySender: (notifications: NotificationData[]) => NotificationData[];
 }
@@ -32,7 +33,7 @@ interface NotificationItemProps {
     HandleResponseAppError: (value: string) => void;
     handleNotificationPress: (
         notification: NotificationData,
-        removeNotification?: (notificationId: string | string[]) => void
+        removeNotification?: () => void
     ) => void;
 }
 
@@ -62,52 +63,9 @@ const NotificationList = ({ filteredNotifications, userType, handleNotificationP
 };
 
 const NotificationItem = ({ item, index, userType, setLoading, HandleResponseAppError, HandleResponseAppSuccess, handleNotificationPress }: NotificationItemProps) => {
-    const { dispatch } = UseNotifications();
-    const { handleDeleteNotification } = UseNotificationConfig({ setLoading, HandleResponseAppError, HandleResponseAppSuccess });
+    const { handleRemove } = UseNotificationConfig({ setLoading, HandleResponseAppError, HandleResponseAppSuccess });
+    const {translateX, translateY, opacity, height, animatedStyles, notificationAnimateIn, notificationAnimateOut } = useNotificationAnimations({ index, screenWidth: screenWidth, removeNotification: () => handleRemove(item._id)})
     const { handleNotificationIcon } = UseNotificationIcon();
-
-    const translateX = useSharedValue(0);
-    const opacity = useSharedValue(0);
-    const translateY = useSharedValue(-30);
-    const height = useSharedValue(responsiveSize * 0.22);
-
-    const removeItem = (notificationId: string) => {
-        try {
-            dispatch({ type: 'REMOVE_NOTIFICATION', payload: notificationId });
-        }
-        catch (err) {
-            throw err;
-        }
-    };
-
-    const removeItems = (notificationIds: string[]) => {
-        try {
-            dispatch({ type: 'REMOVE_NOTIFICATIONS', payload: notificationIds });
-        }
-        catch (err) {
-            throw err;
-        }
-    }
-
-    const handleRemove = async (notificationId: string | string[]) => {
-
-        try {
-            if (typeof notificationId === 'string') {
-                removeItem(notificationId);
-                await handleDeleteNotification(notificationId);
-            }
-            else {
-                removeItems(notificationId);
-            }
-        } catch (err) {
-            const error = err as Error;
-            console.error("Erro ao remover notificação: ", error);
-        }
-    };
-
-    const removeNotification = () => {
-        handleRemove(item._id);
-    }
 
     const swipeGesture = Gesture.Pan()
         .onUpdate((event) => {
@@ -115,36 +73,22 @@ const NotificationItem = ({ item, index, userType, setLoading, HandleResponseApp
         })
         .onEnd(() => {
             if (translateX.value > screenWidth * 0.5) {
-                translateX.value = withTiming(screenWidth, { duration: 300 }, () => {
-                    height.value = withTiming(0, { duration: 200 });
-                    runOnJS(removeNotification)();
-                });
+                runOnJS(notificationAnimateOut)();
             } else {
                 translateX.value = withSpring(0, { stiffness: 90, damping: 20 });
             }
         });
 
-    const animatedStyles = useAnimatedStyle(() => {
-        return {
-            opacity: opacity.value,
-            transform: [
-                { translateY: translateY.value },
-                { translateX: translateX.value }],
-            height: height.value,
-        };
-    });
-
 
     useEffect(() => {
-        opacity.value = withDelay(index * 100, withSpring(1));
-        translateY.value = withDelay(index * 100, withSpring(0));
+        notificationAnimateIn();
     }, []);
 
     return (
         <GestureHandlerRootView style={styles.container}>
             <GestureDetector gesture={swipeGesture}>
                 <Animated.View style={[styles.notificationMessage_view, animatedStyles]}>
-                    <TouchableOpacity onPress={() => handleNotificationPress(item, handleRemove)}>
+                    <TouchableOpacity onPress={() => handleNotificationPress(item, notificationAnimateOut)}>
                         <View style={styles.notificationMessageContainer_view}>
                             <View style={[styles.notificationMessageIcon_view, { borderColor: userType === 'patient' ? '#ba7ce6' : '#7cb3e6' }]}>
                                 <Image

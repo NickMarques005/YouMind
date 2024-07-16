@@ -1,43 +1,47 @@
-import { UseNotifications } from '@features/app/reducers/NotificationReducer';
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Animated } from 'react-native';
-import { NotificationData } from 'types/notification/Notification_Types';
+import { responsiveSize } from '@utils/layout/Screen_Size';
+import { useSharedValue, useAnimatedStyle, withDelay, withSpring, withTiming, runOnJS } from 'react-native-reanimated';
 
-interface NotificationAnimationState {
-    height: Animated.Value;
-    opacity: Animated.Value;
+interface UseNotificationAnimations {
+    index: number;
+    screenWidth: number;
+    removeNotification: () => void;
 }
 
-export const UseNotificationAnimation = (filterNotifications: NotificationData[]) => {
+export const useNotificationAnimations = ({index, screenWidth, removeNotification}: UseNotificationAnimations) => {
+    const translateX = useSharedValue(0);
+    const opacity = useSharedValue(0);
+    const translateY = useSharedValue(-30);
+    const height = useSharedValue(responsiveSize * 0.22);
 
-    const notificationAnimations: NotificationAnimationState[] = useMemo(() => {
-        return filterNotifications.map(() => ({
-            height: new Animated.Value(100),
-            opacity: new Animated.Value(1),
-        }));
-    }, [filterNotifications]);
-
-    const updateNotificationAnimations = useCallback(() => {
-        return filterNotifications.map(() => ({
-            height: new Animated.Value(100),
-            opacity: new Animated.Value(1),
-        }));
-    }, [filterNotifications]);
-
-    const animateOut = (index: number) => new Promise<void>((resolve) => {
-        Animated.parallel([
-            Animated.timing(notificationAnimations[index].height, {
-                toValue: 0,
-                duration: 300,
-                useNativeDriver: false
-            }),
-            Animated.timing(notificationAnimations[index].opacity, {
-                toValue: 0,
-                duration: 300,
-                useNativeDriver: false
-            })
-        ]).start(() => resolve());
+    const animatedStyles = useAnimatedStyle(() => {
+        return {
+            opacity: opacity.value,
+            transform: [
+                { translateY: translateY.value },
+                { translateX: translateX.value }
+            ],
+            height: height.value,
+        };
     });
 
-    return { notificationAnimations, updateNotificationAnimations, animateOut };
+    const notificationAnimateIn = () => {
+        opacity.value = withDelay(index * 100, withSpring(1));
+        translateY.value = withDelay(index * 100, withSpring(0));
+    };
+
+    const notificationAnimateOut = () => {
+        translateX.value = withTiming(screenWidth, { duration: 300 }, () => {
+            height.value = withTiming(0, { duration: 200 });
+            runOnJS(removeNotification)();
+        });
+    };
+
+    return { animatedStyles, 
+        notificationAnimateIn, 
+        notificationAnimateOut, 
+        translateX,
+        translateY,
+        opacity,
+        height
+    };
 };

@@ -10,7 +10,7 @@ interface SolicitationProps {
     selectedNotification: SelectedNotification;
     modalLoading: { loading: boolean };
     handleClearSelectedNotification: () => void;
-    handleNotificationAccept: (notification: NotificationData, removeNotification?: (notificationId: string | string[]) => void) => Promise<void>;
+    handleNotificationAccept: (notification: NotificationData, removeNotification?: () => void) => Promise<void>;
 }
 
 const Solicitation: React.FC<SolicitationProps> = ({ userData, selectedNotification, modalLoading, handleClearSelectedNotification, handleNotificationAccept }) => {
