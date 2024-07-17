@@ -22,6 +22,7 @@ export type AppStackNavigation = {
     notifications: NavigationWithParams;
     answer_questionnaire: NavigationWithParams;
     alert_medication: NavigationWithParams;
+    welcome: NavigationWithParams;
 }
 
 export type DoctorTabNavigatorParamList = {
@@ -31,6 +32,7 @@ export type DoctorTabNavigatorParamList = {
     Análises: NavigationWithParams;
     Notepad: NavigationWithParams;
 }
+
 export type DoctorTabTypes = BottomTabNavigationProp<DoctorTabNavigatorParamList>;
 
 export type PatientTabNavigatorParamList = {

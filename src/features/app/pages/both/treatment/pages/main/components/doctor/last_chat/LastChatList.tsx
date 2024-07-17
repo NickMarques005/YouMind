@@ -15,8 +15,7 @@ interface LastChatProps {
 }
 
 function LastChatList({ handleActiveChat, userData, treatment_state }: LastChatProps) {
-    const noChatIcon = images.app_doctor_images.treatment.no_treatments_found;
-
+    
     const iconSize = responsiveSize * 0.16;
 
     return (

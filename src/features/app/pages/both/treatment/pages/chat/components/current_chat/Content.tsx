@@ -54,7 +54,6 @@ const Content = ({
         newMessageLoading, userId: userData?._id
     });
 
-
     const renderMessageItem = useCallback(({ item, index }: { item: ProcessedMessageItem, index: number }) => {
         if (item.type === 'dateLabel') {
             return <MessageDate date={item.date} userType={userType} />;

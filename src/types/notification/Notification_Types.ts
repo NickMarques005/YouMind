@@ -10,9 +10,12 @@ export interface NotificationContentData {
     sender_params?: {
         name?: string;
         email?: string;
-        id?: string;
+        _id?: string;
         avatar?: string;
         type?: UserType;
+        birth?: string;
+        gender?: string;
+        uid?: string;
     };
     show_modal: boolean;
     redirect_params?: {

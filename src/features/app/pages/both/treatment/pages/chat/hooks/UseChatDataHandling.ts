@@ -49,7 +49,7 @@ export const UseChatDataHandling = ({ setLoading, chat, user }: UseGetMessagesPr
     }, []);
 
     const handleSocket = async (chatId: string) => {
-        console.log("Socket Chat");
+        console.log("Socket Chat: ", chatId);
         socket?.emit('joinRoom', { room: chatId });
 
         socket?.on('receiveMessage', (data: { newMessage: MessageTemplate, tempId: string }) => {

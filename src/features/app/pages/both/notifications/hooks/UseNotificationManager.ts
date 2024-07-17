@@ -35,7 +35,7 @@ export interface HandlePageDirectionParams {
 
 export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationLoading, userType, userData }: UseNotificationManager) => {
     const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
-    const { handleDeleteNotification, handleRemove } = UseNotificationConfig({ setLoading: setDeleteNotificationLoading, HandleResponseAppError, HandleResponseAppSuccess });
+    const { handleRemove } = UseNotificationConfig({ setLoading: setDeleteNotificationLoading, HandleResponseAppError, HandleResponseAppSuccess });
     const { performInitializeTreatment } = UseTreatmentService(setModalLoading);
     const [selectedNotification, setSelectedNotification] = useState<SelectedNotification | null>(null);
     const { handleRedirectChat } = UseChat();
@@ -50,6 +50,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
     
     const handlePageRedirection = ({tab, sender, healthPage}: HandlePageDirectionParams) => {
         if (sender) {
+            console.log("HANDLE REDIRECT CHAT!!");
             handleRedirectChat(sender);
         }
         if (userData?.type === 'doctor') {
@@ -79,14 +80,18 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
                         console.log("TREATMENT SCREEN REDIRECT!");
                         const senderParams = notificationData.sender_params;
                         
-                        if ( senderParams && senderParams.name && senderParams.email && senderParams.id) {
+                        if ( senderParams && senderParams.name && 
+                            senderParams.email && senderParams._id ) {
                             const screen = redirectParams.screen;
                             const menuOption = redirectParams.menu_option;
                             const sender: TreatmentInfoTemplate = {
-                                _id: senderParams.id,
+                                _id: senderParams._id,
                                 name: senderParams.name,
                                 email: senderParams.email,
-                                avatar: senderParams.avatar
+                                avatar: senderParams.avatar,
+                                birth: senderParams.birth,
+                                gender: senderParams.gender,
+                                uid: senderParams.uid
                             }
                             console.log("Current Chat: ", sender);
                             if (screen === 'chat_treatment') {
@@ -184,7 +189,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
             const notifyType = notification.data?.notify_type;
 
             if (notifyType === 'chat') {
-                const senderId = notification.data?.sender_params?.id;
+                const senderId = notification.data?.sender_params?._id;
                 
                 if (senderId) {
                     if (!notificationMap[senderId]) {

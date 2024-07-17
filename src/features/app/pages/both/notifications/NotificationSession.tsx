@@ -36,6 +36,8 @@ const NotificationSession = () => {
     const { filteredNotifications, typeNotifications, handleFilterNotifications } = UseNotificationFilter({ typeNotificationsInitial, notifications: state.notifications, setLoading, loading });
     const { handleClearSelectedNotification, handleNotificationAccept, handleNotificationPress, selectedNotification, groupNotificationsBySender} = UseNotificationManager({ setModalLoading: modalLoading.setLoading, setDeleteNotificationLoading: deleteLoading.setLoading , userType, userData});
 
+    console.log(state.notifications);
+
     return (
         <View style={styles.notifications_mainView}>
             {

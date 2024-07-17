@@ -13,6 +13,7 @@ export const UseChatBehavior = ({ currentChat, redirectChat }: UseChatHandlingPr
     const [chat, setChat] = useState<ChatUser | undefined>(undefined);
 
     useEffect(() => {
+        console.log("SETAR CHAT BEHAVIOR");
         if (currentChat) {
                 console.log("CURRENT CHAT: ", currentChat);
                 setChat(currentChat);
@@ -20,11 +21,10 @@ export const UseChatBehavior = ({ currentChat, redirectChat }: UseChatHandlingPr
         else{
             if(redirectChat)
             {
-                console.log("REDIRECT CHAT: ", redirectChat);
+                console.log(" SET REDIRECT CHAT: ", redirectChat);
                 setChat(redirectChat);
             }
         }
-
     }, [currentChat, redirectChat]);
 
     return { chat }

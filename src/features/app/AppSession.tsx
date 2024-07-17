@@ -68,7 +68,7 @@ const AppSession = () => {
         }
 
         return () => {
-            returnNotificationListeners();
+            //returnNotificationListeners();
         }
     }, [uid]);
 
