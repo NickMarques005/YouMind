@@ -11,12 +11,12 @@ interface WelcomeMenuProps {
     goBackToHome: () => void;
     menuOptions: WelcomeMenuSelectOption[];
     youMindLogo: any;
+    backIconSize: number;
 }
 
-const WelcomeMenu = ({ handleSelectOption, goBackToHome, menuOptions, youMindLogo }: WelcomeMenuProps) => {
+const WelcomeMenu = ({ handleSelectOption, goBackToHome, menuOptions, youMindLogo, backIconSize }: WelcomeMenuProps) => {
 
     const logoSize = responsiveSize * 0.32;
-    const backIcon = responsiveSize * 0.11;
 
     return (
         <LinearGradient
@@ -26,7 +26,7 @@ const WelcomeMenu = ({ handleSelectOption, goBackToHome, menuOptions, youMindLog
             <View style={[styles.header, { height: screenHeight * 0.35, width: '100%', }]}>
                 <View style={{ width: '100%', height: '25%', }}>
                     <TouchableOpacity onPress={goBackToHome}>
-                        <MaterialIcons name="arrow-back" size={backIcon} color="white" />
+                        <MaterialIcons name="arrow-back" size={backIconSize} color="white" />
                     </TouchableOpacity>
                 </View>
                 <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center', flex: 1, }}>

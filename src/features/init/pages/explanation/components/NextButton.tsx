@@ -14,7 +14,7 @@ const NextButton = ({ showModal}: NextButtonProps) => {
     const styles = explanation_nextbutton_style();
 
     return (
-        <LinearGradient colors={['#4b99d1', '#2f4e9c']}
+        <LinearGradient colors={['#4b99d1', '#539acf']}
             start={{ x: 0.1, y: 0 }}
             end={{ x: 1, y: 0 }} style={styles.containerbuttonNext}>
                 <CustomButton

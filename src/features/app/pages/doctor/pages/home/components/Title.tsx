@@ -8,14 +8,16 @@ import { UseAppNavigation } from '@features/app/hooks/UseAppNavigation';
 
 interface TitleProps {
     name?: string;
+    gender?: string;
 }
 
-const Title = ({ name }: TitleProps) => {
+const Title = ({ name, gender }: TitleProps) => {
     const { navigateToAppScreen } = UseAppNavigation();
 
     const homeHeader = images.app_doctor_images.home.home_header_doctor;
     const icon_notification = images.generic_images.notifications.icon_notification_typeA;
-    
+    const doctorNounGender = gender === "Feminino" ? "a" : "o";
+
     return (
         <ImageBackground
             source={homeHeader}
@@ -23,7 +25,7 @@ const Title = ({ name }: TitleProps) => {
         >
             <View style={styles.title_View}>
 
-                <Text style={styles.title_Text}>{`Bem-vindo,\n${"Dr. "}${name ? (name).split(' ')[0] : "Usuário"}!`}</Text>
+                <Text style={styles.title_Text}>{`Bem-vind${doctorNounGender},\n${"Dr. "}${name ? (name).split(' ')[0] : `Doutor${doctorNounGender}`}!`}</Text>
                 <TouchableOpacity onPress={() => navigateToAppScreen('notifications')} style={styles.notify_Button}>
                     <Image
                         source={icon_notification}

@@ -10,9 +10,9 @@ const ActionButton = () => {
     const styles = action_button_style();
 
     return (
-        <LinearGradient colors={['#ab32a5', '#54b0c4']}
-            start={{ x: 0.1, y: 0 }}
-            end={{ x: 1, y: 0 }} style={styles.buttonViewStart}>
+        <LinearGradient colors={['#7e388f', '#9446a6']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }} style={styles.buttonViewStart}>
             <CustomButton
                 onPress={() => navigateToInitScreen('explanation')}
                 title={"COMEÇAR"}

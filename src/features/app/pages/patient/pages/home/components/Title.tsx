@@ -7,16 +7,17 @@ import CountNotifications from '@features/app/pages/both/notifications/component
 
 interface TitleProps {
     name?: string;
+    gender?: string;
 }
 
-const Title = ({ name }: TitleProps) => {
+const Title = ({ name, gender }: TitleProps) => {
     const { navigateToAppScreen  } = UseAppNavigation();
 
     const icon_notification = images.generic_images.notifications.icon_notification_typeA;
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{`Bem-vindo,\n${name ? (name).split(' ')[0] : "Usuário"}!`}</Text>
+            <Text style={styles.title}>{`Bem-vind${gender === "Feminino" ? "a" : "o"},\n${name ? (name).split(' ')[0] : "Paciente"}!`}</Text>
             <TouchableOpacity onPress={() => navigateToAppScreen('notifications')} style={styles.notifyButton}>
                 <Image source={icon_notification} style={styles.notificationIcon} />
                 <CountNotifications/>

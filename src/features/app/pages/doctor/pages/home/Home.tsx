@@ -15,7 +15,7 @@ const Home = () => {
     return (
         <ScrollView>
             <LinearGradient colors={['#f7fbfc', '#bee1e6']} style={styles.screen_Home}>
-                <Title name={userData?.name} />
+                <Title name={userData?.name} gender={userData?.gender} />
                 <View style={styles.content}>
                     <SearchPatients navigateTo={navigateToDoctorScreen}/>
                     <ProgressOverview navigateTo={navigateToDoctorScreen} patientsProgress={30} missMedicines={5} />

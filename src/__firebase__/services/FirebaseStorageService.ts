@@ -1,4 +1,4 @@
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 import { FIREBASE_STORAGE } from '../FirebaseConfig';
 import { Platform } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -79,12 +79,33 @@ const fetchAvatar = async (userUid: string) => {
     }
 }
 
+const fetchInstructionsImages = async (selectedOption: 'Paciente' | 'Doutor' | 'Tratamento'): Promise<string[]> => {
+    const imageUrls: string[] = [];
+    const storageRef = ref(FIREBASE_STORAGE, `instructions/${selectedOption}`);
+
+    try {
+        const result = await listAll(storageRef);
+        
+        for (const itemRef of result.items) {
+            const url = await getDownloadURL(itemRef);
+            imageUrls.push(url);
+        }
+        return imageUrls;
+    } catch (error) {
+        console.error("Erro ao buscar as imagnes de instruções no Firebase:", error);
+        throw error;
+    }
+};
+
 const FirebaseStorageService = {
     uploadAudio,
     fetchAudio,
     uploadAvatar,
     fetchAvatar,
-    deleteAvatar
+    deleteAvatar,
+    fetchInstructionsImages
 };
+
+
 
 export default FirebaseStorageService;

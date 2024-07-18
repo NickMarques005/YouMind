@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import Title from './components/Title';
-import Medicines from './components/MedicationDisplayList';
 import Questions from './components/Questions';
 import Call from './components/Call';
 import MedSection from './components/MedSection';
@@ -13,10 +12,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import CurrentMedicine from './components/CurrentMedicine';
 import { useTabNavigation } from '@features/app/hooks/UseTabNavigator';
 import { UseMedications } from '@features/app/providers/patient/MedicationProvider';
-import { Medication } from 'types/app/patient/health/Medicine_Types';
-import { useQuestionnairePerformanceIcon } from '@hooks/questionnaires/useQuestionnairePerformanceIcon';
-import { useQuestionPerformance } from '@features/app/providers/patient/QuestionPerformanceProvider';
-
 
 const Home = () => {
     const { userData } = UseForm();
@@ -32,7 +27,7 @@ const Home = () => {
                     source={headerBg}
                     style={styles.backgroundImage_HomeTitle}
                 >
-                    <Title name={userData?.name} />
+                    <Title name={userData?.name} gender={userData?.gender} />
                 </ImageBackground>
 
                 <View style={styles.content}>

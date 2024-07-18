@@ -35,7 +35,7 @@ const Header = ({ userType, chatUser, navigateToTreatmentScreen }: ChatHeaderPro
                 <View style={{ display: 'flex', gap: 0, height: '100%', flex: 1, justifyContent: 'center' }}>
                     <Text style={styles.otherUser_Text}>
                         {
-                            chatUser && chatUser.name ? chatUser.name : userType === 'doctor' ? 'Médico' : 'Paciente'
+                            chatUser && chatUser.name ? chatUser.name : userType === 'doctor' ? 'Paciente' : 'Doutor'
                         }
                     </Text>
                     <Text  style={{ fontSize: 14, color: '#cbd1d6'}}>
