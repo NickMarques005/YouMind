@@ -28,7 +28,7 @@ const StartTreatment = ({ userSearch, userData, userType, handleBackSearch }: St
     const { handleModalSolicitation, modalSolicitation, handleTreatmentSolicitation } = UseSolicitation({ setLoading });
     const { handleShowDoctorTreatments, showDoctorTreatments } = useSearchUserBehavior();
     const isDoctorTreatment = (userData && userSearch.total_treatments && userSearch.total_treatments.some(treatment => treatment.email === userData.email));
-    const userIcon = userSearch.type === 'doctor' ? images.app_doctor_images.chat.doctor_icon_chat : images.app_patient_images.chat.user_icon_chat;
+    const userIcon = userSearch.type === 'doctor' ? images.app_doctor_images.profile.doctor_profile_icon : images.app_patient_images.profile.user_profile_icon;
     const treatmentUserIcon = userType === 'patient' ? images.app_patient_images.chat.doctor_icon_chat : images.app_doctor_images.chat.user_icon_chat;
     const backIcon = images.generic_images.back.arrow_back_white;
     const backIconSize = responsiveSize * 0.08;

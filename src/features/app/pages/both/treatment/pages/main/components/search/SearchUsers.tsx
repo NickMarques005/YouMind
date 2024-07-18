@@ -14,7 +14,6 @@ import images from '@assets/images';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import DefaultLoading from '@components/loading/DefaultLoading';
 
-
 interface SearchUsersProps {
     visible: boolean;
     onClose: () => void;

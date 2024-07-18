@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
     View, Animated, Text, FlatList,
     ScrollView
@@ -63,7 +63,11 @@ function MainAnalysis() {
                                     }
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <LatestHistory selectLatestMedication={selectLatestMedication} selectLatestQuestionnaire={selectLatestQuestionnaire} />
+                                    <LatestHistory 
+                                        selectLatestMedication={selectLatestMedication} 
+                                        selectLatestQuestionnaire={selectLatestQuestionnaire}
+                                        loadingSize={loadingSize}
+                                    />
                                 </View>
                             </View>
                         </View>

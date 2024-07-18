@@ -29,7 +29,7 @@ const Medication = ({ latestMedication, selectLatestMedication }: MedicationProp
         }}>
             <TouchableOpacity style={{ width: '100%', height: '100%', overflow: 'hidden', backgroundColor: '#fff', borderRadius: 20, elevation: 4 }} onPress={() => selectLatestMedication(latestMedication)}>
                 <View style={{ width: '100%', minHeight: '30%', backgroundColor: '#2f5f70', padding: '4%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', }}>
-                    <Text style={{ fontSize: 16, fontWeight: '700', color: '#badce3' }}>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: '#badce3', width: '80%' }}>
                         {latestMedication.currentMedication.name}
                     </Text>
                     <View style={{ width: iconSize, height: iconSize, right: '15%', borderRadius: medicationStateSize, borderWidth: 2, overflow: 'hidden', borderColor: '#7eb2bf', backgroundColor: '#8fbfc9' }}>
@@ -77,6 +77,9 @@ const Medication = ({ latestMedication, selectLatestMedication }: MedicationProp
     )
 }
 
-export default Medication
+const styles = StyleSheet.create({
+    
+});
 
-const styles = StyleSheet.create({})
+export default Medication;
+

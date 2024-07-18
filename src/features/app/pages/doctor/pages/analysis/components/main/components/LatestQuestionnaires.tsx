@@ -20,7 +20,7 @@ const LatestQuestionnaires = ({ latestQuestionnaires, selectLatestQuestionnaire}
 
     return (
         <View style={{ flex: 1 }}>
-            <LinearGradient colors={['#4198a6', '#4b2e63']}
+            <LinearGradient colors={['#4198a6', '#286b75']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }} style={{
                     width: '100%', height: screenHeight * 0.17, elevation: 13, backgroundColor: 'white', borderBottomLeftRadius: 35,
@@ -38,7 +38,7 @@ const LatestQuestionnaires = ({ latestQuestionnaires, selectLatestQuestionnaire}
                 {
                     latestQuestionnaires.length !== 0 ?
                         <LatestQuestionnairesList selectLatestQuestionnaire={selectLatestQuestionnaire} latestQuestionnaires={latestQuestionnaires} />
-                        : <DefaultLoading size={loadingSize} color={'#396a80'}/>
+                        : <NoLatestQuestionnaires/>
                 }
             </View>
         </View>

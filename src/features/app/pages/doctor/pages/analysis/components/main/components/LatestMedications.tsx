@@ -20,7 +20,7 @@ const LatestMedications = ({ latestMedications, selectLatestMedication }: Latest
 
     return (
         <View style={{ flex: 1 }}>
-            <LinearGradient colors={['#4195a6', '#4b2e63']}
+            <LinearGradient colors={['#4195a6', '#286b75']}
                 start={{ x: 1, y: 0 }}
                 end={{ x: 0, y: 1 }} style={{ width: '100%', height: screenHeight * 0.17, elevation: 13, backgroundColor: 'white', borderBottomRightRadius: 35, 
                 flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: '7%', zIndex: 2, }}>
@@ -36,7 +36,7 @@ const LatestMedications = ({ latestMedications, selectLatestMedication }: Latest
                 {
                     latestMedications.length !== 0 ?
                         <LatestMedicationsList selectLatestMedication={selectLatestMedication} latestMedications={latestMedications}/>
-                        : <DefaultLoading size={loadingSize} color={'#396a80'}/>
+                        : <NoLatestMedications/>
                 }
             </View>
         </View>

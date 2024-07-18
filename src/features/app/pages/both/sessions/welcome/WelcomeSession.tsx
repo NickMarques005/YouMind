@@ -1,16 +1,13 @@
 import images from '@assets/images';
 import { UseAppNavigation } from '@features/app/hooks/UseAppNavigation';
 import React, { useState } from 'react'
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import WelcomeMenu from './components/WelcomeMenu';
-import TreatmentInstructions from './components/TreatmentInstructions';
-import DoctorInstructions from './components/DoctorInstructions';
-import PatientInstructions from './components/PatientInstructions';
-import NoInstruction from './components/NoInstruction';
+import MainInstructions from './components/MainInstructions';
 
 export type WelcomeMenuSelectOption = 'Tratamento' | 'Paciente' | 'Doutor';
 
-const menuOptions: WelcomeMenuSelectOption[] = [ "Tratamento", "Paciente", "Doutor" ];
+const menuOptions: WelcomeMenuSelectOption[] = ["Tratamento", "Paciente", "Doutor"];
 
 const WelcomeSession = () => {
     const { navigateToAppScreen } = UseAppNavigation();
@@ -21,28 +18,27 @@ const WelcomeSession = () => {
         navigateToAppScreen("main_page");
     }
 
-    const handleSelectOption = (option: WelcomeMenuSelectOption) =>{
+    const goBackToMenu = () => {
+        setSelectedOption(null);
+    }
+
+    const handleSelectOption = (option: WelcomeMenuSelectOption) => {
         setSelectedOption(option);
     }
 
     const renderWelcomeContent = () => {
         if (!selectedOption) {
-            return <WelcomeMenu menuOptions={menuOptions} youMindLogo={youMindLogo} goBackToHome={goBackToHome} handleSelectOption={handleSelectOption} />
+            return <WelcomeMenu
+                menuOptions={menuOptions}
+                youMindLogo={youMindLogo}
+                goBackToHome={goBackToHome}
+                handleSelectOption={handleSelectOption}
+            />
         }
 
-        switch (selectedOption)
-        {
-            case "Tratamento":
-                return <TreatmentInstructions/>;
-            case "Doutor":
-                return <DoctorInstructions/>;
-            case "Paciente":
-                return <PatientInstructions/>;
-            default:
-                return <NoInstruction/>;
-        }
+        return <MainInstructions selectedOption={selectedOption} goBackToMenu={goBackToMenu} />;
     }
-    
+
     return (
         <View style={{ flex: 1 }}>
             {
