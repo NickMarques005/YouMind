@@ -7,6 +7,10 @@ export interface Request_EndTreatmentArgs {
     treatmentId: string;
 }
 
+export interface Request_WelcomeTreatment {
+    treatmentId: string;
+}
+
 export interface NewTreatment {
     _id: string;
     doctorId: string;

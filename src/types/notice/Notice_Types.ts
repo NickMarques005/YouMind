@@ -5,5 +5,8 @@ export type NoticeType = 'welcome' | 'questionary' | 'medicine' | 'update';
 export interface Notice {
     message?: string;
     type?: NoticeType;
-    messageType?: MessageIcon;
+    dontshow?: boolean;
+    icon?: MessageIcon;
+    acceptText?: string;
+    declineText?: string;
 }

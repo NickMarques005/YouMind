@@ -34,7 +34,30 @@ export const UseTreatmentService = (setLoading: SetLoading) => {
         });
     };
 
-    return { performInitializeTreatment, performGetTreatment, performEndTreatment };
+    const performWelcomeTreatment = async (type: string, stopLoading?: boolean) => {
+        return HandleRequest({
+            serviceFunction: TreatmentService.WelcomeTreatment,
+            setLoading,
+            params: [type],
+            stopLoading
+        });
+    };
+
+    const performRemoveWelcomeTreatment = async (type: string) => {
+        return HandleRequest({
+            serviceFunction: TreatmentService.RemoveWelcomeTreatment,
+            setLoading,
+            params: [type]
+        });
+    };
+
+    return { 
+        performInitializeTreatment, 
+        performGetTreatment, 
+        performEndTreatment,
+        performWelcomeTreatment,
+        performRemoveWelcomeTreatment
+    };
 }
 
 

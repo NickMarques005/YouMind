@@ -13,6 +13,7 @@ import { UsePatientHistoryService } from "@hooks/api/UsePatientHistoryService";
 import { useQuestionPerformance } from "../providers/patient/QuestionPerformanceProvider";
 import { useMedicationPending } from "../providers/patient/MedicationPendingProvider";
 import { UserData } from "types/user/User_Types";
+import { useNotice } from "../providers/sub/NoticeProvider";
 
 interface UseGetInitialDataProps {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -61,9 +62,31 @@ export const UseGetNotifications = ({ setLoading, HandleConnectionAppError }: Us
 }
 
 export const UseGetTreatments = ({ setLoading, HandleConnectionAppError }: UseGetInitialDataProps) => {
-    const { performGetTreatment } = UseTreatmentService(setLoading);
+    const { performGetTreatment, performWelcomeTreatment } = UseTreatmentService(setLoading);
     const { setTreatments } = UseTreatment();
+    const { handleSelectedNotice } = useNotice();
     const { uid } = UseAuth();
+
+    const handleWelcomeNotice = async (userData: UserData) => {
+        try {
+
+            const stopLoading = false;
+            const response = await performWelcomeTreatment(userData.type as string, stopLoading);
+            if (response.success) {
+                console.log("Welcome Treatment Notice: ", response);
+                const welcomeNotice = response.data;
+                return welcomeNotice;
+            }
+
+            if (response.error) {
+                console.log(response.error);
+            }
+        } catch (err) {
+            const error = err as Error;
+            console.log("Erro ao buscar welcome notice: ", err);
+            HandleConnectionAppError(error.message);
+        }
+    }
 
     const handleGetTreatments = async (userData: UserData) => {
         try {
@@ -93,6 +116,11 @@ export const UseGetTreatments = ({ setLoading, HandleConnectionAppError }: UseGe
                     setTreatments(treatments);
                 }
             });
+            handleWelcomeNotice(userData).then(notice => {
+                if(notice) {
+                    handleSelectedNotice(notice);
+                }
+            })
         }
     }
 

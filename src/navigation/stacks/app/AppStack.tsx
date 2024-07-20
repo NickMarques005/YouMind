@@ -13,7 +13,7 @@ function AppStack({ type }: AppStackProps) {
     return (
         <>
             {
-                <Stack.Navigator initialRouteName='welcome' screenOptions={{ headerShown: false, animation: 'fade_from_bottom' }}>
+                <Stack.Navigator initialRouteName='main_page' screenOptions={{ headerShown: false, animation: 'fade_from_bottom' }}>
                     <Stack.Screen name="main_page" component={type === 'doctor' ? DoctorSession : PatientSession} />
                     <Stack.Screen name="notifications" component={NotificationSession} />
                     <Stack.Screen name="answer_questionnaire" component={AnswerQuestionnaireSession}/>

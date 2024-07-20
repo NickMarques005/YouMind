@@ -3,3 +3,5 @@ export interface WelcomeInstruction {
     content: string;
     image?: string;
 }
+
+export type WelcomeInstructionsData = Record<'Tratamento' | 'Paciente' | 'Doutor', WelcomeInstruction[]>;

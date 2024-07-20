@@ -13,8 +13,11 @@ import { UsePushNotificationRegistration } from './hooks/UsePushNotificationRegi
 import ErrorModal from '@components/modals/error/ErrorModal';
 import { UserType } from 'types/user/User_Types';
 import MessageModal from '@components/modals/message/MessageModal';
-import { UseGetNotifications, UseGetQuestionnaires, UseGetTreatments } from './hooks/UseGetInitialData';
+import { UseGetNotifications, UseGetTreatments } from './hooks/UseGetInitialData';
 import { UseAuth } from '@features/root/providers/AuthenticationProvider';
+import { useNoticeManager } from './hooks/UseNoticeManager';
+import { useNotice } from './providers/sub/NoticeProvider';
+import NoticeModal from '@components/modals/notice/Notice';
 
 const AppSession = () => {
     console.log("\n(APP SESSION)\n");
@@ -25,9 +28,13 @@ const AppSession = () => {
     const { uid } = UseAuth();
     const { userData, UpdateUserData } = UseForm();
     const { loading, setLoading } = UseLoading();
+    const noticeLoading = UseLoading();
+
     const { HandleConnectionAppError, ClearConnectionAppError,
         ClearResponseAppError, responseAppError, responseAppSuccess,
         ClearResponseAppSuccess, connectionAppError } = UseGlobalResponse();
+    const { selectedNotice, handleSelectedNotice, handleClearSelectedNotice } = useNotice();
+    const { handleNoticeAccept, handleDontShow } = useNoticeManager({setNoticeLoading: noticeLoading.setLoading, userData})
     const { setNotificationListeners, returnNotificationListeners, RegisterPushTokenInFirebase } = UsePushNotificationRegistration({ setLoading, HandleConnectionAppError });
     const { fetchUserData } = UseUserData({ setLoading, HandleConnectionAppError, UpdateUserData, setReloadData });
     const { getNotificationsData } = UseGetNotifications({ setLoading, HandleConnectionAppError });
@@ -46,6 +53,7 @@ const AppSession = () => {
                     await getTreatmentsData(userData);
                 }
             }
+
         } catch (error) {
             console.error("Error initializing app session: ", error);
         }
@@ -112,7 +120,15 @@ const AppSession = () => {
                                 />
                             }
                             {
-
+                                !!selectedNotice &&
+                                <NoticeModal 
+                                    userType={userData.type}
+                                    selectedNotice={selectedNotice}
+                                    noticeLoading={noticeLoading.loading}
+                                    handleClearSelectedNotice={handleClearSelectedNotice}
+                                    handleNoticeAccept={handleNoticeAccept}
+                                    handleDontShow={handleDontShow}
+                                />
                             }
                         </>
                     :

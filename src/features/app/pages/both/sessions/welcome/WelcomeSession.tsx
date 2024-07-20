@@ -14,7 +14,8 @@ const menuOptions: WelcomeMenuSelectOption[] = ["Tratamento", "Paciente", "Douto
 const WelcomeSession = () => {
     const { navigateToAppScreen } = UseAppNavigation();
     const { selectedOption, handleSelectOption, 
-            goBackToHome, goBackToMenu } = useWelcomeBehavior({ navigateToAppScreen });
+            goBackToHome, goBackToMenu, instructions,
+            loadInstructions } = useWelcomeBehavior({ navigateToAppScreen });
     const youMindLogo = images.generic_images.logo.logo_mobile_default;
     const backIconSize = responsiveSize * 0.11;
     const loadingIconSize = responsiveSize * 0.05;
@@ -37,6 +38,8 @@ const WelcomeSession = () => {
             backIconSize={backIconSize}
             instructionNavigationIconSize={instructionNavigationIconSize}
             loadingIconSize={loadingIconSize}
+            instructions={instructions}
+            loadInstructions={loadInstructions}
         />;
     }
 
