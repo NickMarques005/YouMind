@@ -1,8 +1,5 @@
-import { useState, useEffect, useRef, SetStateAction } from 'react';
-import * as Device from 'expo-device';
+import { useRef, SetStateAction } from 'react';
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
-import { Platform } from 'react-native';
 import { UsePushToken } from '@features/root/providers/PushTokenProvider';
 import { UsePushNotificationService } from '@hooks/api/UsePushNotificationService';
 import { UseAuth } from '@features/root/providers/AuthenticationProvider';

@@ -4,12 +4,12 @@
     "slug": "YouMind",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon-youmind.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon-youmind.png",
+        "adaptiveIcon": "./assets/images/adaptive-icon.png",
         "resizeMode": "contain",
         "backgroundColor": "#ffffff"
       },

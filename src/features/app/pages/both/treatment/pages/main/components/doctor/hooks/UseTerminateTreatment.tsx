@@ -5,7 +5,6 @@ import { usePatientHistory } from "@features/app/providers/doctor/PatientHistory
 import { UseTreatmentService } from "@hooks/api/UseTreatmentService";
 import { UseTreatment } from "@providers/TreatmentProvider";
 import { useState } from "react";
-import { SetLoading } from "types/loading/Loading_Types"
 import { Verification } from "types/verification/Verification_Types";
 
 interface UseTerminateTreatment {
@@ -16,8 +15,8 @@ interface UseTerminateTreatment {
 
 
 export const useTerminateTreatment = ({ setLoading, HandleResponseAppError, HandleResponseAppSuccess }: UseTerminateTreatment) => {
-    const { state, dispatch: patientHistoryDispatch } = usePatientHistory();
-    const { treatment_state, removeTreatment } = UseTreatment();
+    const { dispatch: patientHistoryDispatch } = usePatientHistory();
+    const { removeTreatment } = UseTreatment();
     const { navigateToTreatmentScreen } = UseTreatmentNavigation();
     const { performEndTreatment } = UseTreatmentService(setLoading);
     const [closeTreatmentVerification, setCloseTreatmentVerification] = useState<Verification | undefined>(undefined);
@@ -41,24 +40,9 @@ export const useTerminateTreatment = ({ setLoading, HandleResponseAppError, Hand
 
         try {
             const response = await performEndTreatment({ treatmentId }, type);
-            if (response.success && response.data) {
+            if (response.success) {
                 console.log(response);
-                if(response.data)
-                {
-                    const treatment = response.data.treatmentToUpdate;
-                    //Excluir patientHistory e Treatment
-                    if(!treatment.uid) return HandleResponseAppError("Houve um erro ao encerrar tratamento: Uid não especificado");
-                    removeTreatment(treatment);
-                    patientHistoryDispatch({
-                        type: 'DELETE_PATIENT_HISTORY',
-                        payload: treatment.uid
-                    });
-                }
-
                 navigateToTreatmentScreen('main_treatment');
-                if (response.message) {
-                    HandleResponseAppSuccess(response.message, response.type as MessageIcon);
-                }
             } else if (response.error) {
                 HandleResponseAppError(response.error);
             }

@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 import { MessageIcon } from '@components/modals/message/types/type_message_modal';
-import { Notice, NoticeType } from 'types/notice/Notice_Types';
+import { UseLoading } from '@hooks/loading/UseLoading';
 
 interface SuccessMessage {
     message?: string;
@@ -18,6 +18,10 @@ interface ResponseContextType {
     HandleResponseAppError: (value: string) => void;
     HandleConnectionAppError: (value: string) => void;
     HandleResponseAppSuccess: (message: string, messageType?: MessageIcon) => void;
+    stateAppLoading: {
+        loading: boolean;
+        setLoading: Dispatch<SetStateAction<boolean>>;
+    };
 }
 
 const ResponseContext = createContext<ResponseContextType | undefined>(undefined);
@@ -30,6 +34,7 @@ export const ResponseProvider: React.FC<ResponseProviderProps> = ({ children }) 
     const [responseAppError, setResponseAppError] = useState<string | undefined>(undefined);
     const [connectionAppError, setConnectionAppError] = useState<string | undefined>(undefined);
     const [responseAppSuccess, setResponseAppSuccess] = useState<SuccessMessage | undefined>(undefined);
+    const stateAppLoading = UseLoading();
 
     const ClearResponseAppError = () => {
         setResponseAppError(undefined);
@@ -73,6 +78,7 @@ export const ResponseProvider: React.FC<ResponseProviderProps> = ({ children }) 
             HandleResponseAppError,
             HandleConnectionAppError,
             HandleResponseAppSuccess,
+            stateAppLoading
         }}>
             {children}
         </ResponseContext.Provider>

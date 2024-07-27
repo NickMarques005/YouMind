@@ -21,6 +21,8 @@ const PatientTreatment = ({ userType, userData }: PatientTreatmentProps) => {
     const { HandleActiveChat } = UseHandleActiveChat();
     const { modalSearch, handleModalSearch } = UseSearchHandling();
 
+    console.log(treatment_state.treatments)
+
     return (
         <View style={styles.screenTreatment}>
             <Header userType={userType} userData={userData} />

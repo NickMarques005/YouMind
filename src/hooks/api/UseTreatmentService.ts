@@ -51,12 +51,30 @@ export const UseTreatmentService = (setLoading: SetLoading) => {
         });
     };
 
+    const performVerifyTreatmentInitialization = async (treatmentId: string) => {
+        return HandleRequest({
+            serviceFunction: TreatmentService.VerifyTreatmentInitialization,
+            setLoading,
+            params: [treatmentId]
+        });
+    }
+
+    const performVerifyTreatmentCompletion = async (treatmentId: string) => {
+        return HandleRequest({
+            serviceFunction: TreatmentService.VerifyTreatmentCompletion,
+            setLoading,
+            params: [treatmentId]
+        });
+    }
+
     return { 
         performInitializeTreatment, 
         performGetTreatment, 
         performEndTreatment,
         performWelcomeTreatment,
-        performRemoveWelcomeTreatment
+        performRemoveWelcomeTreatment,
+        performVerifyTreatmentInitialization,
+        performVerifyTreatmentCompletion
     };
 }
 

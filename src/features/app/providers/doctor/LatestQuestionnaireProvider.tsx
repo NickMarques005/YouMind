@@ -5,7 +5,8 @@ type LatestQuestionnaireAction =
     | { type: 'SET_LATEST_QUESTIONNAIRES'; payload: LatestQuestionnaire[] }
     | { type: 'ADD_LATEST_QUESTIONNAIRE'; payload: LatestQuestionnaire }
     | { type: 'UPDATE_LATEST_QUESTIONNAIRE'; payload: LatestQuestionnaire }
-    | { type: 'DELETE_LATEST_QUESTIONNAIRE'; payload: string };
+    | { type: 'DELETE_LATEST_QUESTIONNAIRE'; payload: string }
+    | { type: 'DELETE_LATEST_QUESTIONNAIRES'; payload: string };
 
 interface LatestQuestionnaireState {
     latestQuestionnaire: LatestQuestionnaire[];
@@ -22,7 +23,9 @@ const LatestQuestionnaireReducer = (state: LatestQuestionnaireState, action: Lat
         case 'SET_LATEST_QUESTIONNAIRES':
             return { ...state, latestQuestionnaire: action.payload };
         case 'ADD_LATEST_QUESTIONNAIRE':
-            return { ...state, latestQuestionnaire: [...state.latestQuestionnaire, action.payload] };
+            return state.latestQuestionnaire.some(item => item._id === action.payload._id)
+                ? state
+                : { ...state, latestQuestionnaire: [...state.latestQuestionnaire, action.payload] };
         case 'UPDATE_LATEST_QUESTIONNAIRE':
             return {
                 ...state,
@@ -34,6 +37,11 @@ const LatestQuestionnaireReducer = (state: LatestQuestionnaireState, action: Lat
             return {
                 ...state,
                 latestQuestionnaire: state.latestQuestionnaire.filter(item => item._id !== action.payload),
+            };
+        case 'DELETE_LATEST_QUESTIONNAIRES': 
+            return {
+                ...state,
+                latestQuestionnaire: state.latestQuestionnaire.filter(item => item.patientId !== action.payload),
             };
         default:
             return state;

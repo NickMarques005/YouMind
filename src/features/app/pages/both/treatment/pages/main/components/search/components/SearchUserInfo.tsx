@@ -57,12 +57,12 @@ const SearchUserInfo = ({
                 </Text>
             </View>
             {
-                userSearch.total_treatments || userSearch.doctor ?
+                userSearch.total_treatments ?
                     <View style={styles.SearchUserInfoTemplateContainer}>
                         <Image style={{ width: iconInfoSize, height: iconInfoSize }} source={iconTreatments} />
                         <TouchableOpacity activeOpacity={0.6} onPress={handlePress} style={styles.treatmentButton}>
                             <Text style={styles.treatmentName}>
-                                {userSearch.total_treatments ? "Tratamentos" : "Doutor"}
+                                {userSearch.total_treatments && "Tratamentos"}
                             </Text>
                             <View style={styles.treatmentList}>
                                 {
@@ -81,22 +81,6 @@ const SearchUserInfo = ({
                                                 />
                                             </View>
                                         ))
-                                    )
-                                }
-                                {
-                                    userSearch.doctor && (
-                                        <View style={styles.treatmentItem}>
-                                            <Image
-                                                style={{
-                                                    height: iconTreatmentUserSize,
-                                                    width: iconTreatmentUserSize,
-                                                    borderRadius: iconTreatmentUserSize,
-                                                    borderWidth: 2,
-                                                    borderColor: userType === 'patient' ? '#43264a' : '#417c91'
-                                                }}
-                                                source={userSearch.doctor.avatar ? { uri: userSearch.doctor.avatar } : treatmentUserIcon}
-                                            />
-                                        </View>
                                     )
                                 }
                             </View>

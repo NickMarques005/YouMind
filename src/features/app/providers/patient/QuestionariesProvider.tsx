@@ -8,7 +8,8 @@ type QuestionnaireAction =
     | { type: 'REMOVE_QUESTIONNAIRE'; payload: { _id: string } }
     | { type: 'ADD_MANY'; payload: QuestionnaireItem[] }
     | { type: 'UPDATE_QUESTIONNAIRE'; payload: QuestionnaireItem }
-    | { type: 'REMOVE_MANY'; payload: string[] };
+    | { type: 'REMOVE_MANY'; payload: string[] }
+    | { type: 'CLEAR_QUESTIONNAIRES' }
 
 
 type QuestionnaireState = QuestionnaireItem[];
@@ -31,11 +32,17 @@ export const UseQuestionnaire = () => {
 const QuestionnaireReducer = (state: QuestionnaireState, action: QuestionnaireAction): QuestionnaireState => {
     switch (action.type) {
         case "ADD_QUESTIONNAIRE":
+            if (state.some(item => item.currentQuestionnaire._id === action.payload.currentQuestionnaire._id)) {
+                return state; 
+            }
             return [action.payload, ...state];
         case "REMOVE_QUESTIONNAIRE":
             return state.filter((item) => item.currentQuestionnaire._id !== action.payload._id);
         case 'ADD_MANY':
-            return [...action.payload, ...state];
+            const newQuestionnaires = action.payload.filter(q => 
+                !state.some(existing => existing.currentQuestionnaire._id === q.currentQuestionnaire._id)
+            );
+            return [...newQuestionnaires, ...state];
         case 'UPDATE_QUESTIONNAIRE':
             return state.map(item =>
                 item.currentQuestionnaire._id === action.payload.currentQuestionnaire._id
@@ -46,6 +53,8 @@ const QuestionnaireReducer = (state: QuestionnaireState, action: QuestionnaireAc
             return state.filter(item =>
                 !action.payload.includes(item.currentQuestionnaire._id)
             );
+        case 'CLEAR_QUESTIONNAIRES':
+            return []
         default:
             return state;
 

@@ -6,11 +6,12 @@ import { SetLoading } from "types/loading/Loading_Types";
 export const UseMedicationService = (setLoading: SetLoading) => {
     const { HandleRequest } = UseRequest();
 
-    const performGetMedications = async () => {
+    const performGetMedications = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: MedicationService.getMedications,
             setLoading,
-            params: []
+            params: [],
+            stopLoading
         });
     };
 
@@ -46,11 +47,12 @@ export const UseMedicationService = (setLoading: SetLoading) => {
         });
     };
 
-    const performGetMedicationPending = async () => {
+    const performGetMedicationPending = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: MedicationService.getMedicationPending,
             setLoading,
-            params: []
+            params: [],
+            stopLoading
         });
     };
 

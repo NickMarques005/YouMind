@@ -6,11 +6,12 @@ import { Request_SendAnswersArgs } from "types/app/patient/health/Question_Types
 export const UseQuestionnaireService = (setLoading: SetLoading) => {
     const { HandleRequest } = UseRequest();
 
-    const performGetQuestionnaires = async () => {
+    const performGetQuestionnaires = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: QuestionnaireService.GetQuestionnaires,
             setLoading,
-            params: []
+            params: [],
+            stopLoading,
         });
     };
 

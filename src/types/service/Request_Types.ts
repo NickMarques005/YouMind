@@ -16,3 +16,8 @@ export interface RequestData {
     refreshToken?: Token;
 }
 
+export interface UsePerformProps {
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    HandleConnectionAppError: (value: string) => void;
+}
+

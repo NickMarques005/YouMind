@@ -7,11 +7,12 @@ import { GetAccessToken } from "@utils/token/GetAccessToken";
 export const UseNotepadService = (setLoading: SetLoading) => {
     const { HandleRequest } = UseRequest();
 
-    const performReadNotes = async () => {
+    const performReadNotes = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: NotepadService.ReadNotes,
             setLoading,
-            params: []
+            params: [],
+            stopLoading
         });
     }
 

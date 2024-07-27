@@ -1,24 +1,24 @@
 import React from 'react';
 import { NotepadProvider } from '@features/app/providers/doctor/NotepadProvider';
-import { AnalysisProvider } from '@features/app/providers/doctor/AnalysisProvider';
 import { DefaultProviderProps } from 'types/providers/Provider_Types';
 import { PatientHistoryProvider } from './doctor/PatientHistoryProvider';
 import { LatestMedicationProvider } from './doctor/LatestMedicationProvider';
 import { LatestQuestionnaireProvider } from './doctor/LatestQuestionnaireProvider';
+import { PatientProgressProvider } from './doctor/PatientProgressProvider';
 
 const DoctorProvider: React.FC<DefaultProviderProps> = ({ children }) => {
     return (
-        <AnalysisProvider>
-            <PatientHistoryProvider>
-                <LatestMedicationProvider>
-                    <LatestQuestionnaireProvider>
+        <PatientHistoryProvider>
+            <LatestMedicationProvider>
+                <LatestQuestionnaireProvider>
+                    <PatientProgressProvider>
                         <NotepadProvider>
                             {children}
                         </NotepadProvider>
-                    </LatestQuestionnaireProvider>
-                </LatestMedicationProvider>
-            </PatientHistoryProvider>
-        </AnalysisProvider>
+                    </PatientProgressProvider>
+                </LatestQuestionnaireProvider>
+            </LatestMedicationProvider>
+        </PatientHistoryProvider>
     );
 };
 

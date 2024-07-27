@@ -32,9 +32,9 @@ const AppSession = () => {
 
     const { HandleConnectionAppError, ClearConnectionAppError,
         ClearResponseAppError, responseAppError, responseAppSuccess,
-        ClearResponseAppSuccess, connectionAppError } = UseGlobalResponse();
-    const { selectedNotice, handleSelectedNotice, handleClearSelectedNotice } = useNotice();
-    const { handleNoticeAccept, handleDontShow } = useNoticeManager({setNoticeLoading: noticeLoading.setLoading, userData})
+        ClearResponseAppSuccess, connectionAppError, stateAppLoading } = UseGlobalResponse();
+    const { selectedNotice, handleClearSelectedNotice } = useNotice();
+    const { handleNoticeAccept, handleDontShow } = useNoticeManager({ setNoticeLoading: noticeLoading.setLoading, userData })
     const { setNotificationListeners, returnNotificationListeners, RegisterPushTokenInFirebase } = UsePushNotificationRegistration({ setLoading, HandleConnectionAppError });
     const { fetchUserData } = UseUserData({ setLoading, HandleConnectionAppError, UpdateUserData, setReloadData });
     const { getNotificationsData } = UseGetNotifications({ setLoading, HandleConnectionAppError });
@@ -42,13 +42,12 @@ const AppSession = () => {
 
     const initializeAppSession = async () => {
         try {
-            const tokenKey = true//await RegisterPushTokenInFirebase();
+            const tokenKey = await RegisterPushTokenInFirebase();
             if (tokenKey) {
                 console.log("Initialize Session");
-                //setNotificationListeners();
+                setNotificationListeners();
                 const userData = await fetchUserData();
-                if(userData)
-                {
+                if (userData) {
                     await getNotificationsData(userData._id);
                     await getTreatmentsData(userData);
                 }
@@ -57,7 +56,7 @@ const AppSession = () => {
         } catch (error) {
             console.error("Error initializing app session: ", error);
         }
-        finally{
+        finally {
             setLoading(false);
         }
     };
@@ -68,7 +67,6 @@ const AppSession = () => {
     };
 
     useEffect(() => {
-        console.log("App session USE EFFECT FOR initiate App")
         if (uid && tryConnection && !initializedRef.current) {
             initializeAppSession();
             initializedRef.current = true;
@@ -76,7 +74,7 @@ const AppSession = () => {
         }
 
         return () => {
-            //returnNotificationListeners();
+            returnNotificationListeners();
         }
     }, [uid]);
 
@@ -88,6 +86,7 @@ const AppSession = () => {
                         <LoadingScreen />
                         :
                         <>
+
                             {
                                 userData.type === 'patient' ?
                                     <PatientProvider>
@@ -101,34 +100,41 @@ const AppSession = () => {
                                         ""
                             }
                             {
-                                !!responseAppError &&
-                                <ErrorModal
-                                    isVisible={!!responseAppError && typeof responseAppError === 'string'}
-                                    message={responseAppError || "Erro desconhecido"}
-                                    onClose={ClearResponseAppError}
-                                    userType={userData.type as UserType}
-                                />
-                            }
-                            {
-                                !!responseAppSuccess?.message &&
-                                <MessageModal
-                                    userType={userData.type as UserType}
-                                    isVisible={!!responseAppSuccess.message && typeof responseAppSuccess.message === 'string'}
-                                    message={responseAppSuccess.message}
-                                    onClose={ClearResponseAppSuccess}
-                                    messageType={responseAppSuccess.messageType}
-                                />
-                            }
-                            {
-                                !!selectedNotice &&
-                                <NoticeModal 
-                                    userType={userData.type}
-                                    selectedNotice={selectedNotice}
-                                    noticeLoading={noticeLoading.loading}
-                                    handleClearSelectedNotice={handleClearSelectedNotice}
-                                    handleNoticeAccept={handleNoticeAccept}
-                                    handleDontShow={handleDontShow}
-                                />
+                                stateAppLoading.loading ?
+                                    <LoadingScreen isApp={true} />
+                                    :
+                                    <>
+                                        {
+                                            !!responseAppError &&
+                                            <ErrorModal
+                                                isVisible={!!responseAppError && typeof responseAppError === 'string'}
+                                                message={responseAppError || "Erro desconhecido"}
+                                                onClose={ClearResponseAppError}
+                                                userType={userData.type as UserType}
+                                            />
+                                        }
+                                        {
+                                            !!responseAppSuccess?.message &&
+                                            <MessageModal
+                                                userType={userData.type as UserType}
+                                                isVisible={!!responseAppSuccess.message && typeof responseAppSuccess.message === 'string'}
+                                                message={responseAppSuccess.message}
+                                                onClose={ClearResponseAppSuccess}
+                                                messageType={responseAppSuccess.messageType}
+                                            />
+                                        }
+                                        {
+                                            !!selectedNotice &&
+                                            <NoticeModal
+                                                userType={userData.type}
+                                                selectedNotice={selectedNotice}
+                                                noticeLoading={noticeLoading.loading}
+                                                handleClearSelectedNotice={handleClearSelectedNotice}
+                                                handleNoticeAccept={handleNoticeAccept}
+                                                handleDontShow={handleDontShow}
+                                            />
+                                        }
+                                    </>
                             }
                         </>
                     :

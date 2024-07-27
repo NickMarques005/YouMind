@@ -23,6 +23,7 @@ const MainQuestions = () => {
     const { handleFlingDown, handleFlingUp, activeIndex } = useQuestionnaireAnimations({ totalLength: questionnaires.length })
     const backgroundMainQuestions = images.app_patient_images.health.quiz.quiz_background;
     const { treatment_state } = UseTreatment();
+    
     return (
         <SafeAreaView style={styles.healthQuestionaries_mainView}>
 

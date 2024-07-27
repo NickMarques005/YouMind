@@ -49,6 +49,28 @@ export const TreatmentService = {
             { type },
             token
         );
+    },
+    VerifyTreatmentInitialization: async (treatmentId: string) => {
+        const token = await GetAccessToken();
+        return MakeRequest<undefined>(
+            'treatment/verify/initialization',
+            'GET',
+            undefined,
+            token,
+            undefined,
+            treatmentId
+        );
+    },
+    VerifyTreatmentCompletion: async (treatmentId: string) => {
+        const token = await GetAccessToken();
+        return MakeRequest<undefined>(
+            'treatment/verify/completion',
+            'GET',
+            undefined,
+            token,
+            undefined,
+            treatmentId
+        );
     }
 }
 

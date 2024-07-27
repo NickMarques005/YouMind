@@ -1,24 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DoctorTab from '@navigation/tab-navigator/tabs/DoctorTab';
-import { UseGetNotepad, UseGetPatientHistory, UseGetLatestHistory } from './hooks/UseGetDoctorInitialData';
+
 import { UseLoading } from '@hooks/loading/UseLoading';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import UseGlobalSocketHandling from '@api/socket/SocketService';
+import { UseForm } from '@features/app/providers/sub/UserProvider';
+import { UseAuth } from '@features/root/providers/AuthenticationProvider';
+import { useGetDoctorInitialData } from './hooks/UseGetDoctorInitialData';
 
 const DoctorSession: React.FC = () => {
-    
-    const { loading, setLoading } = UseLoading();
-    const { HandleConnectionAppError } = UseGlobalResponse();
-    
-    console.log("Re render")
 
-    UseGetPatientHistory({setLoading, HandleConnectionAppError});
-    UseGetLatestHistory({setLoading, HandleConnectionAppError});
-    UseGetNotepad({ setLoading, HandleConnectionAppError});
-    UseGlobalSocketHandling();
+    const { HandleConnectionAppError, stateAppLoading } = UseGlobalResponse();
+    const { userData } = UseForm();
+    const { uid } = UseAuth();
+    const { getDoctorInitialData } = useGetDoctorInitialData({ setLoading: stateAppLoading.setLoading, HandleConnectionAppError });
+    UseGlobalSocketHandling({ setLoading: stateAppLoading.setLoading, HandleConnectionAppError });
+
+    useEffect(() => {
+        getDoctorInitialData();
+    }, [uid, userData?._id]);
 
     return (
-        <DoctorTab />
+            <DoctorTab />
     );
 };
 

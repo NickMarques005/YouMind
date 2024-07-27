@@ -5,7 +5,8 @@ type PatientHistoryAction =
     | { type: 'SET_PATIENT_HISTORY'; payload: PatientHistory[] }
     | { type: 'ADD_PATIENT_HISTORY'; payload: PatientHistory }
     | { type: 'UPDATE_PATIENT_HISTORY'; payload: PatientHistory }
-    | { type: 'DELETE_PATIENT_HISTORY'; payload: string };
+    | { type: 'DELETE_PATIENT_HISTORY'; payload: string }
+    | { type: 'CLEAR_PATIENT_HISTORY'};
 
 interface PatientHistoryState {
     patientHistory: PatientHistory[];
@@ -22,7 +23,9 @@ const PatientHistoryReducer = (state: PatientHistoryState, action: PatientHistor
         case 'SET_PATIENT_HISTORY':
             return { ...state, patientHistory: action.payload };
         case 'ADD_PATIENT_HISTORY':
-            return { ...state, patientHistory: [...state.patientHistory, action.payload] };
+            return state.patientHistory.some(item => item.patientId === action.payload.patientId)
+                ? state
+                : { ...state, patientHistory: [...state.patientHistory, action.payload] };
         case 'UPDATE_PATIENT_HISTORY':
             return {
                 ...state,
@@ -33,8 +36,10 @@ const PatientHistoryReducer = (state: PatientHistoryState, action: PatientHistor
         case 'DELETE_PATIENT_HISTORY':
             return {
                 ...state,
-                patientHistory: state.patientHistory.filter(item => item.patientId !== action.payload),
+                patientHistory: state.patientHistory.filter(item => item.treatmentId !== action.payload),
             };
+        case 'CLEAR_PATIENT_HISTORY':
+            return { ...state, patientHistory: [] };
         default:
             return state;
     }

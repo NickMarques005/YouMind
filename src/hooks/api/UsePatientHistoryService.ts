@@ -5,27 +5,30 @@ import { PatientHistoryService } from "@api/services/treatment/HistoryService";
 export const UsePatientHistoryService = (setLoading: SetLoading) => {
     const { HandleRequest } = UseRequest();
 
-    const performGetAllHistory = async () => {
+    const performGetAllHistory = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: PatientHistoryService.getAllHistory,
             setLoading,
-            params: []
+            params: [],
+            stopLoading
         });
     };
 
-    const performGetLatestHistory = async () => {
+    const performGetLatestHistory = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: PatientHistoryService.getLatestHistory,
             setLoading,
-            params: []
+            params: [],
+            stopLoading
         });
     };
 
-    const performGetQuestionPerformance = async () => {
+    const performGetQuestionPerformance = async (stopLoading?: boolean) => {
         return HandleRequest({
             serviceFunction: PatientHistoryService.getQuestionPerformance,
             setLoading,
-            params: []
+            params: [],
+            stopLoading
         });
     };
 

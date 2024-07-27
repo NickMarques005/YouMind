@@ -16,7 +16,7 @@ interface TreatmentContextProps {
     setTreatments: (treatments: TreatmentInfoTemplate[]) => void;
     addTreatment: (treatment: TreatmentInfoTemplate) => void;
     addMultipleTreatments: (treatments: TreatmentInfoTemplate[]) => void;
-    removeTreatment: (treatment: TreatmentInfoTemplate) => void;
+    removeTreatment: (treatmentId: string) => void;
 }
 
 interface TreatmentProviderProps {
@@ -48,7 +48,7 @@ const TreatmentReducer = (prevState: TreatmentState, action: Action): TreatmentS
             return { ...prevState, treatments: [...prevState.treatments, action.payload] };
         case actionTypes.REMOVE_TREATMENT:
             console.log("REMOVE DISPATCH!");
-            return { ...prevState, treatments: prevState.treatments.filter(treatment => treatment !== action.payload) };
+            return { ...prevState, treatments: prevState.treatments.filter(treatment => treatment._id !== action.payload) };
         case actionTypes.ADD_MULTIPLE_TREATMENTS:
             console.log("ADD MULTIPLE DISPATCH!");
             return { ...prevState, treatments: [...prevState.treatments, ...action.payload] };
@@ -72,8 +72,8 @@ export const TreatmentProvider: React.FC<TreatmentProviderProps> = ({ children }
         dispatch({ type: actionTypes.ADD_MULTIPLE_TREATMENTS, payload: treatments });
     }
 
-    const removeTreatment = (treatment: TreatmentInfoTemplate) => {
-        dispatch({ type: actionTypes.REMOVE_TREATMENT, payload: treatment });
+    const removeTreatment = (treatmentId: string) => {
+        dispatch({ type: actionTypes.REMOVE_TREATMENT, payload: treatmentId });
     };
 
     return (

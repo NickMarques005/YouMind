@@ -6,13 +6,17 @@ type MedicationAction =
     | { type: 'REMOVE_MEDICATION'; id: string }
     | { type: 'UPDATE_MEDICATION'; id: string; medication: Medication }
     | { type: 'ADD_MULTIPLE_MEDICATIONS'; medications: Medication[] }
-    | { type: 'REMOVE_MULTIPLE_MEDICATIONS'; ids: string[] };
+    | { type: 'REMOVE_MULTIPLE_MEDICATIONS'; ids: string[] }
+    | { type: 'CLEAR_MEDICATIONS' };
 
 const initialState: Medication[] = [];
 
 const MedicationReducer = (state: Medication[], action: MedicationAction): Medication[] => {
     switch (action.type) {
         case 'ADD_MEDICATION':
+            if (state.some(item => item._id === action.medication._id)) {
+                return state;
+            }
             return [...state, action.medication];
         case 'REMOVE_MEDICATION':
             return state.filter((medication) => medication._id !== action.id);
@@ -21,9 +25,14 @@ const MedicationReducer = (state: Medication[], action: MedicationAction): Medic
                 medication._id === action.id ? { ...action.medication, _id: action.id } : medication
             );
         case 'ADD_MULTIPLE_MEDICATIONS':
-            return [...state, ...action.medications];
+            const newMedications = action.medications.filter(m =>
+                !state.some(existing => existing._id === m._id)
+            );
+            return [...state, ...newMedications];
         case 'REMOVE_MULTIPLE_MEDICATIONS':
             return state.filter((medication) => !action.ids.includes(medication._id));
+        case 'CLEAR_MEDICATIONS':
+            return [];
         default:
             return state;
     }

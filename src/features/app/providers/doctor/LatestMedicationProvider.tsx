@@ -5,7 +5,8 @@ type LatestMedicationAction =
     | { type: 'SET_LATEST_MEDICATIONS'; payload: LatestMedication[] }
     | { type: 'ADD_LATEST_MEDICATION'; payload: LatestMedication }
     | { type: 'UPDATE_LATEST_MEDICATION'; payload: LatestMedication }
-    | { type: 'DELETE_LATEST_MEDICATION'; payload: string };
+    | { type: 'DELETE_LATEST_MEDICATION'; payload: string }
+    | { type: 'DELETE_LATEST_MEDICATIONS'; payload: string };
 
 interface LatestMedicationState {
     latestMedication: LatestMedication[];
@@ -22,7 +23,9 @@ const LatestMedicationReducer = (state: LatestMedicationState, action: LatestMed
         case 'SET_LATEST_MEDICATIONS':
             return { ...state, latestMedication: action.payload };
         case 'ADD_LATEST_MEDICATION':
-            return { ...state, latestMedication: [...state.latestMedication, action.payload] };
+            return state.latestMedication.some(item => item._id === action.payload._id)
+                ? state
+                : { ...state, latestMedication: [...state.latestMedication, action.payload] };
         case 'UPDATE_LATEST_MEDICATION':
             return {
                 ...state,
@@ -34,6 +37,11 @@ const LatestMedicationReducer = (state: LatestMedicationState, action: LatestMed
             return {
                 ...state,
                 latestMedication: state.latestMedication.filter(item => item._id !== action.payload),
+            };
+        case 'DELETE_LATEST_MEDICATIONS': 
+            return {
+                ...state,
+                latestMedication: state.latestMedication.filter(item => item.patientId !== action.payload),
             };
         default:
             return state;

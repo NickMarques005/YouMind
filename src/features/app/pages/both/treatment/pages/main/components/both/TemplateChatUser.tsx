@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { UserData } from 'types/user/User_Types';
@@ -9,14 +9,14 @@ import { TreatmentInfoTemplate } from 'types/treatment/Treatment_Types';
 interface UserChat {
     last_text?: string;
     time_last?: string;
-    avatar?: string;
+    msg_count?: number;
 }
 
 interface ChatTemplateUserProps {
     treatment: TreatmentInfoTemplate;
     userChat?: UserChat;
     userData?: UserData;
-    handleActiveChat: (other_members: TreatmentInfoTemplate) => void
+    handleActiveChat: (chat: TreatmentInfoTemplate) => void
 }
 
 const TemplateChatUser = ({ treatment, userChat, userData, handleActiveChat }: ChatTemplateUserProps) => {

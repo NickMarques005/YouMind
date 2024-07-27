@@ -6,6 +6,7 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import images from '@assets/images'
 import { DoctorScreenName } from 'types/navigation/Navigation_Types'
 import { usePatientHistory } from '@features/app/providers/doctor/PatientHistoryProvider'
+import { usePatientProgress } from '@features/app/providers/doctor/PatientProgressProvider'
 
 interface ProgressOverviewProps {
     patientsProgress: number;
@@ -16,21 +17,26 @@ interface ProgressOverviewProps {
 const ProgressOverview = ({ navigateTo, }: ProgressOverviewProps) => {
 
     const { state } = usePatientHistory();
-    const  [patientsProgress, setPatientsProgress] = useState(0);
-    const [missMedications, setMissMedication] = useState(0);
+    const { setPatientsProgress, setMissMedications, missMedications, patientsProgress } = usePatientProgress();
     const homeBg2 = images.app_doctor_images.home.bg_home_content_2;
     const treatmentCareIcon = images.app_doctor_images.home.treatment_care_icon;
     const progressSize = responsiveSize * 0.35;
 
     useEffect(() => {
-        if (state.patientHistory.length > 0) {
-            const totalPerformance = state.patientHistory.reduce((sum, patient) => sum + patient.overallPerformance, 0);
-            const averagePerformance = totalPerformance / state.patientHistory.length;
-            setPatientsProgress(averagePerformance);
-
-            const totalMissMedications = state.patientHistory.reduce((sum, patient) => sum + patient.lastWeekTaken, 0);
-            setMissMedication(totalMissMedications);
+        if(state.patientHistory.length === 0)
+        {
+            setPatientsProgress(0);
+            setMissMedications(0);
+            return;
         }
+
+        const totalPerformance = state.patientHistory.reduce((sum, patient) => sum + patient.overallPerformance, 0);
+        const averagePerformance = totalPerformance / state.patientHistory.length;
+        setPatientsProgress(averagePerformance);
+
+        const totalMissMedications = state.patientHistory.reduce((sum, patient) => sum + patient.lastWeekTaken, 0);
+        setMissMedications(totalMissMedications);
+        
     }, [state.patientHistory]);
 
     return (

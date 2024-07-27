@@ -16,7 +16,7 @@ const UserTypeSolicitationTemplate = ({ userSearch, userData, selectUser }: User
 
     const userIcon = userSearch.type === 'doctor' ? images.app_doctor_images.chat.doctor_icon_chat : images.app_patient_images.chat.user_icon_chat;
 
-    const isTreatmentRunning = userSearch.is_treatment_running || ( userData && userSearch.total_treatments && userSearch.total_treatments.includes(userData.email));
+    const isTreatmentRunning = userSearch.is_treatment_running;
     const iconSize = 65;
 
     return (

@@ -15,18 +15,15 @@ interface UsePerformProps {
     HandleConnectionAppError: (value: string) => void;
 }
 
-export const UseGetNotepad = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
+export const useGetNotepad = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
     const { performReadNotes } = UseNotepadService(setLoading);
     const { dispatch } = useNotepad();
     const { uid } = UseAuth();
     const { userData } = UseForm();
 
-    const handleGetNotepads = async () => {
-        console.log("Get Notepads");
+    const handleGetNotepads = async (stopLoading: boolean) => {
         try {
-            setLoading(true);
-            const response = await performReadNotes();
-            setLoading(false);
+            const response = await performReadNotes(stopLoading);
 
             if (response.success && response.data) {
                 console.log("Read notes: ", response);
@@ -35,35 +32,32 @@ export const UseGetNotepad = ({ setLoading, HandleConnectionAppError }: UsePerfo
                 HandleConnectionAppError(response.error);
             }
         } catch (err) {
-            setLoading(false);
             const error = err as Error;
             console.log("Error ao buscar notas: ", error);
             HandleConnectionAppError(error.message);
         }
     }
 
-    useEffect(() => {
+    const getNotepads = (stopLoading: boolean) => {
         if (uid && userData?._id && userData.type === 'doctor') {
-            handleGetNotepads();
+            handleGetNotepads(stopLoading);
         }
-    }, [uid, userData?._id]);
+    }
 
-    return;
+    return { getNotepads };
 }
 
-export const UseGetPatientHistory = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
+export const useGetAllPatientHistory = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
     const { performGetAllHistory } = UsePatientHistoryService(setLoading);
     const { treatment_state } = UseTreatment();
     const { state, dispatch } = usePatientHistory();
     const { uid } = UseAuth();
     const { userData } = UseForm();
 
-    const handleGetAllHistory = async () => {
+    const handleGetAllHistory = async (stopLoading: boolean) => {
         console.log("Get All Patient History");
         try {
-            setLoading(true);
-            const response = await performGetAllHistory();
-            setLoading(false);
+            const response = await performGetAllHistory(stopLoading);
 
             if (response.success && response.data) {
                 console.log("Patient history: ", response.data);
@@ -71,7 +65,7 @@ export const UseGetPatientHistory = ({ setLoading, HandleConnectionAppError }: U
                 if (!Array.isArray(response.data)) {
                     console.error("Patient History formato inválido: ", response.data);
                     HandleConnectionAppError("Formato inválido de histórico dos pacientes");
-                    return; 
+                    return;
                 }
 
                 const isValidPatientHistory = response.data.every((patient) => {
@@ -104,53 +98,26 @@ export const UseGetPatientHistory = ({ setLoading, HandleConnectionAppError }: U
         }
     };
 
-    useEffect(() => {
+    const getAllPatientHistory = (stopLoading: boolean) => {
         if (uid && userData?._id && userData.type === 'doctor') {
-            handleGetAllHistory();
+            handleGetAllHistory(stopLoading);
         }
-    }, [uid, userData?._id]);
+    }
 
-    useEffect(() => {
-        if (treatment_state.treatments.length !== 0 && state.patientHistory.length !== 0) {
-            const updatedPatients = state.patientHistory.map(patient => {
-                const treatment = treatment_state.treatments.find(treatment => treatment.uid === patient.patientId);
-                if (treatment) {
-                    if (treatment.name !== patient.patientName || treatment.email !== patient.patientEmail || treatment.avatar !== patient.patientAvatar) {
-                        return {
-                            ...patient,
-                            patientName: treatment.name,
-                            patientEmail: treatment.email,
-                            patientAvatar: treatment.avatar
-                        };
-                    }
-                }
-                return patient;
-            });
-
-            const filteredPatients = updatedPatients.filter((patient, index) => patient !== state.patientHistory[index]);
-
-            if (filteredPatients.length > 0) {
-                dispatch({ type: 'SET_PATIENT_HISTORY', payload: updatedPatients });
-            }
-        }
-    }, [treatment_state, state]);
-
-    return;
+    return { getAllPatientHistory };
 }
 
-export const UseGetLatestHistory = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
+export const useGetLatestHistory = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
     const { performGetLatestHistory } = UsePatientHistoryService(setLoading);
     const { dispatch: dispatchLatestMedication } = useLatestMedication();
     const { dispatch: dispatchLatestQuestionnaire } = useLatestQuestionnaire();
     const { uid } = UseAuth();
     const { userData } = UseForm();
 
-    const handleGetLatestHistory = async () => {
+    const handleGetLatestHistory = async (stopLoading: boolean) => {
         console.log("Get Latest History");
         try {
-            setLoading(true);
-            const response = await performGetLatestHistory();
-            setLoading(false);
+            const response = await performGetLatestHistory(stopLoading);
 
             if (response.success && response.data) {
                 console.log("Latest history: ", response.data);
@@ -168,11 +135,51 @@ export const UseGetLatestHistory = ({ setLoading, HandleConnectionAppError }: Us
         }
     };
 
-    useEffect(() => {
+    const getLatestPatientHistory = (stopLoading: boolean) => {
         if (uid && userData?._id && userData.type === 'doctor') {
-            handleGetLatestHistory();
+            handleGetLatestHistory(stopLoading);
         }
-    }, [uid, userData?._id]);
+    }
 
-    return;
+    return { getLatestPatientHistory };
+}
+
+export const useGetDoctorInitialData = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
+    const { getNotepads } = useGetNotepad({ setLoading, HandleConnectionAppError });
+    const { getAllPatientHistory } = useGetAllPatientHistory({ setLoading, HandleConnectionAppError });
+    const { getLatestPatientHistory } = useGetLatestHistory({ setLoading, HandleConnectionAppError });
+
+    const getDoctorInitialData = async (stopLoading?: boolean) => {
+        setLoading(true);
+        try {
+            await getNotepads(stopLoading || false);
+            await getAllPatientHistory(stopLoading || false);
+            await getLatestPatientHistory(stopLoading || false);
+        } catch (error) {
+            console.error("Erro ao buscar dados do médico: ", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return { getDoctorInitialData }
+}
+
+export const useUpdateTreatmentForDoctor = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
+    const { getAllPatientHistory } = useGetAllPatientHistory({ setLoading, HandleConnectionAppError });
+    const { getLatestPatientHistory } = useGetLatestHistory({ setLoading, HandleConnectionAppError });
+
+    const getUpdateDoctorData = async (stopLoading?: boolean) => {
+        setLoading(true);
+        try {
+            await getAllPatientHistory(stopLoading || false);
+            await getLatestPatientHistory(stopLoading || false);
+        } catch (error) {
+            console.error("Erro ao buscar dados do médico: ", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return { getUpdateDoctorData }
 }

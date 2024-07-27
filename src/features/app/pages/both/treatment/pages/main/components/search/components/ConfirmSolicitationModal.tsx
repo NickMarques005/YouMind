@@ -21,6 +21,7 @@ const ConfirmSolicitationModal = ({ userData, userSearch, handleTreatmentSolicit
     const gradientDefault = buttonDefaultGradient(userData.type);
     const genderPronoun = userSearch.gender === 'Feminino' ? "a" : "o";
     const genderPreposition = userSearch.gender === 'Feminino' ? "à" : "ao";
+    const userRole = userSearch.type === 'doctor' ? `doutor${userSearch.gender === 'Feminino' && "a"}` : "paciente";
     const receiverName = userSearch.name;
 
     return (
@@ -28,7 +29,7 @@ const ConfirmSolicitationModal = ({ userData, userSearch, handleTreatmentSolicit
             <View style={styles.messageView}>
                 <Text style={styles.message}>
                     {
-                        `Gostaria de iniciar tratamento com ${genderPronoun} paciente ${receiverName}? Será enviada uma solicitação ${genderPreposition} ${receiverName} para confirmar a ação.`
+                        `Gostaria de iniciar tratamento com ${genderPronoun} ${userRole} ${receiverName}? Será enviada uma solicitação ${genderPreposition} ${receiverName} para confirmar a ação.`
                     }
                 </Text>
             </View>

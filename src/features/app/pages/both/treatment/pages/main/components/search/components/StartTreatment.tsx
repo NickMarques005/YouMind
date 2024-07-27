@@ -29,13 +29,14 @@ const StartTreatment = ({ userSearch, userData, userType, handleBackSearch }: St
     const { handleShowDoctorTreatments, showDoctorTreatments } = useSearchUserBehavior();
     const isDoctorTreatment = (userData && userSearch.total_treatments && userSearch.total_treatments.some(treatment => treatment.email === userData.email));
     const userIcon = userSearch.type === 'doctor' ? images.app_doctor_images.profile.doctor_profile_icon : images.app_patient_images.profile.user_profile_icon;
-    const treatmentUserIcon = userType === 'patient' ? images.app_patient_images.chat.doctor_icon_chat : images.app_doctor_images.chat.user_icon_chat;
+    const treatmentUserIcon = userSearch.type === 'patient' ? images.app_patient_images.chat.doctor_icon_chat : images.app_doctor_images.chat.user_icon_chat;
     const backIcon = images.generic_images.back.arrow_back_white;
     const backIconSize = responsiveSize * 0.08;
     const iconUserSize = responsiveSize * 0.4;
+    const iconIsTreatmentRunningSize = responsiveSize * 0.12;
     const iconInfoSize = responsiveSize * 0.1;
     const iconTreatmentUserSize = responsiveSize * 0.1;
-
+    const iconInTreatmentSize = responsiveSize * 0.2;
 
     const iconInTreatment = images.app_doctor_images.treatment.in_treatment;
     const iconSearchEmail = images.generic_images.search.email_icon;
@@ -111,8 +112,53 @@ const StartTreatment = ({ userSearch, userData, userType, handleBackSearch }: St
                                             <LinearGradient colors={userSearch.type === 'patient' ? ["transparent", "#43264a"] : ["#417c91", 'rgba(64, 76, 168, 0.7)']}
                                                 start={{ x: 0, y: 0 }}
                                                 end={{ x: 0, y: 1 }} style={styles.alreadyInTreatment_View}>
-                                                <Text style={[styles.initTreatment_Text, { width: '60%', textAlign: 'center' }]}>{isDoctorTreatment ? "Esse médico já está executando tratamento com você" : `Usuário já está em tratamento no momento`}</Text>
-                                                <Image style={{ width: 80, height: 80, }} source={iconInTreatment} />
+                                                <View style={{ width: '100%', alignItems: 'center' }}>
+                                                    <Text style={[styles.initTreatment_Text, { width: '70%', textAlign: 'center' }]}>{`O paciente já está em tratamento no momento com:`}</Text>
+                                                </View>
+                                                <View style={{
+                                                    width: '100%',
+                                                    flexDirection: 'row',
+                                                    paddingHorizontal: '5%',
+                                                    paddingVertical: '2%',
+                                                    borderRadius: 10,
+                                                    backgroundColor: 'rgba(40, 26, 46, 0.3)',
+                                                    gap: 20,
+                                                }}>
+                                                    {
+                                                        userSearch.doctor &&
+                                                        <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
+                                                            <View style={{ paddingRight: '3%' }}>
+                                                                <Image
+                                                                    style={{
+                                                                        height: iconIsTreatmentRunningSize,
+                                                                        width: iconIsTreatmentRunningSize,
+                                                                        borderRadius: iconIsTreatmentRunningSize,
+                                                                        borderWidth: 2,
+                                                                        borderColor: userSearch.type === 'patient' ? '#b780c4' : '#417c91'
+                                                                    }}
+                                                                    source={userSearch.doctor.avatar ? { uri: userSearch.doctor.avatar } : treatmentUserIcon}
+                                                                />
+                                                            </View>
+                                                            <View style={{ flex: 1, }}>
+                                                                <Text style={{ color: 'white' }}>
+                                                                    {
+                                                                        userSearch.doctor.name
+                                                                    }
+                                                                </Text>
+                                                                <Text style={{ color: 'white', opacity: 0.6, fontSize: 12 }}>
+                                                                    {
+                                                                        userSearch.doctor.email
+                                                                    }
+                                                                </Text>
+                                                            </View>
+                                                        </View>
+                                                    }
+                                                    <View style={{ width: iconInTreatmentSize, height: iconInTreatmentSize, padding: '2.5%' }}>
+                                                        <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={iconInTreatment} />
+                                                    </View>
+
+                                                </View>
+
                                             </LinearGradient>
                                     }
                                 </>
@@ -246,16 +292,17 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
     initTreatment_Text: {
-        fontSize: 20,
+        fontSize: 18,
         color: 'white'
     },
     alreadyInTreatment_View: {
         display: 'flex',
         gap: 15,
         width: '100%',
-        height: screenHeight * 0.35,
+        height: 'auto',
         alignItems: 'center',
-
+        paddingVertical: '3.5%',
+        paddingHorizontal: '4%',
     },
     alreadyInTreatment_Text: {
         fontSize: 20,
