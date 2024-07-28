@@ -64,7 +64,7 @@ const NotificationList = ({ filteredNotifications, userType, handleNotificationP
 
 const NotificationItem = ({ item, index, userType, setLoading, HandleResponseAppError, HandleResponseAppSuccess, handleNotificationPress }: NotificationItemProps) => {
     const { handleRemove } = UseNotificationConfig({ setLoading, HandleResponseAppError, HandleResponseAppSuccess });
-    const {translateX, translateY, opacity, height, animatedStyles, notificationAnimateIn, notificationAnimateOut } = useNotificationAnimations({ index, screenWidth: screenWidth, removeNotification: () => handleRemove(item._id)})
+    const { translateX, translateY, opacity, height, animatedStyles, notificationAnimateIn, notificationAnimateOut } = useNotificationAnimations({ index, screenWidth: screenWidth, removeNotification: () => handleRemove(item._id) })
     const { handleNotificationIcon } = UseNotificationIcon();
 
     const swipeGesture = Gesture.Pan()
@@ -99,12 +99,15 @@ const NotificationItem = ({ item, index, userType, setLoading, HandleResponseApp
                             <View style={styles.notificationMessageContent_view}>
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.notificationMessage_titleText, { color: `${userType === "patient" ? "#5f2b6e" : "#2b516e"}` }]}>{item.title}</Text>
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.notificationMessage_bodyText, { color: `${userType === "patient" ? '#9a72ab' : "#72a8ab"}` }]}>{item.body}</Text>
-                                <Text style={{ fontSize: 13, color: userType === 'patient' ? `#a192ad` : "#929dad" }}>{formatRelativeTime(item.updatedAt)}</Text>
+                                <Text style={{ fontSize: 13, color: userType === 'patient' ? `#a192ad` : "#929dad" }}>{
+                                    item.savePushDate ? formatRelativeTime(item.savePushDate) :
+                                        item.data?.updatedAt ? formatRelativeTime(item.data.updatedAt) : ""
+                                }</Text>
                             </View>
                             {
-                                item.group?.count &&
+                                item.data?.group?.count &&
                                 <View style={[styles.countView, { backgroundColor: userType === 'patient' ? '#754299' : '#428b99' }]}>
-                                    <Text style={styles.countText}>{item.group.count}</Text>
+                                    <Text style={styles.countText}>{item.data.group.count}</Text>
                                 </View>
                             }
                         </View>

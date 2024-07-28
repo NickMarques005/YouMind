@@ -22,10 +22,10 @@ const Solicitation: React.FC<SolicitationProps> = ({ userData, selectedNotificat
         >
             <VerificationModalContent
                 message={selectedNotification.notification.body}
-                titleCancel={selectedNotification.notification.titleCancel || 'Cancelar'}
-                titleConfirm={selectedNotification.notification.titleAccept || 'Aceitar'}
+                titleCancel={selectedNotification.notification.data?.buttons?.button_decline || 'Cancelar'}
+                titleConfirm={selectedNotification.notification.data?.buttons?.button_accept || 'Aceitar'}
                 handleConfirm={() => handleNotificationAccept(selectedNotification.notification, selectedNotification.removeNotification)}
-                icon={selectedNotification.notification.icon}
+                icon={selectedNotification.notification.data?.icon}
                 userType={userData.type}
                 closeModal={handleClearSelectedNotification}
             />

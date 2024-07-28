@@ -39,6 +39,7 @@ const AppSession = () => {
     const { fetchUserData } = UseUserData({ setLoading, HandleConnectionAppError, UpdateUserData, setReloadData });
     const { getNotificationsData } = UseGetNotifications({ setLoading, HandleConnectionAppError });
     const { getTreatmentsData } = UseGetTreatments({ setLoading, HandleConnectionAppError });
+    UseSaveNotifications();
 
     const initializeAppSession = async () => {
         try {

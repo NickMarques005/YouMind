@@ -10,7 +10,7 @@ export const UseSaveNotifications = () => {
 
     useEffect(() => {
 
-        const subscription = Notifications.addNotificationReceivedListener(async (notification) => {
+        const subscription = Notifications.addNotificationReceivedListener(async (notification: Notifications.Notification) => {
             console.log("Notificação Recebida: ", notification);
 
             const isoDateNotify = new Date(notification.date).toISOString();
@@ -28,7 +28,7 @@ export const UseSaveNotifications = () => {
                 title: notification.request.content.title ?? "",
                 body: notification.request.content.body ?? "",
                 data: restOfData ?? undefined,
-                updatedAt: isoDateNotify,
+                savePushDate: isoDateNotify,
             }
 
             console.log("(USE SAVE NOTIFICATIONS) newMsg to add: ", newNotification);
@@ -47,4 +47,5 @@ export const UseSaveNotifications = () => {
 
     }, []);
 
+    return null;
 }

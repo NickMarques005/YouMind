@@ -23,6 +23,10 @@ export interface NotificationContentData {
         menu_option: string;
         page?: string;
     };
+    icon?: string;
+    group?: GroupNotification;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface GroupNotification {
@@ -35,13 +39,7 @@ export interface NotificationData {
     title: string;
     body: string;
     data?: NotificationContentData;
-    createdAt?: string;
-    updatedAt: string;
-    titleCancel?: string;
-    titleAccept?: string;
-    icon?: string;
-    group?: GroupNotification
-    
+    savePushDate?: string;
 }
 
 export interface TypeNotification {

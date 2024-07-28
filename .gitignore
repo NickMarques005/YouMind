@@ -30,12 +30,11 @@ yarn-error.*
 
 # local env files
 .env*.local
-
 .env
 
-google-services.json
 eas.json
 
+google-services.json
 debug.keystore
 
 # typescript

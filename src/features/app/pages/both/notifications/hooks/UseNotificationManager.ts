@@ -29,7 +29,7 @@ export interface UseNotificationManager {
 
 export interface HandlePageDirectionParams {
     tab: DoctorScreenName | PatientScreenName,
-    sender?: TreatmentInfoTemplate, 
+    sender?: TreatmentInfoTemplate,
     healthPage?: HealthPage,
 }
 
@@ -41,14 +41,13 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
     const { handleRedirectChat } = UseChat();
     const { navigateToDoctorScreen, navigateToPatientScreen } = useTabNavigation();
     let handleCurrentHealthPage: (page: HealthPage) => void;
-    
-    if(userData?.type === 'patient')
-    {
+
+    if (userData?.type === 'patient') {
         const healthPage = UseHealthPage();
         handleCurrentHealthPage = healthPage.handleCurrentHealthPage;
     }
-    
-    const handlePageRedirection = ({tab, sender, healthPage}: HandlePageDirectionParams) => {
+
+    const handlePageRedirection = ({ tab, sender, healthPage }: HandlePageDirectionParams) => {
         if (sender) {
             console.log("HANDLE REDIRECT CHAT!!");
             handleRedirectChat(sender);
@@ -57,8 +56,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
             navigateToDoctorScreen(tab as DoctorScreenName);
         }
         else {
-            if(healthPage)
-            {
+            if (healthPage) {
                 handleCurrentHealthPage(healthPage);
             }
             navigateToPatientScreen(tab as PatientScreenName);
@@ -79,9 +77,9 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
                     case "Tratamento":
                         console.log("TREATMENT SCREEN REDIRECT!");
                         const senderParams = notificationData.sender_params;
-                        
-                        if ( senderParams && senderParams.name && 
-                            senderParams.email && senderParams._id ) {
+
+                        if (senderParams && senderParams.name &&
+                            senderParams.email && senderParams._id) {
                             const screen = redirectParams.screen;
                             const menuOption = redirectParams.menu_option;
                             const sender: TreatmentInfoTemplate = {
@@ -96,22 +94,22 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
                             console.log("Current Chat: ", sender);
                             if (screen === 'chat_treatment') {
                                 console.log("Chat with user");
-                                handlePageRedirection({tab: menuOption, sender});
+                                handlePageRedirection({ tab: menuOption, sender });
                             }
                             else {
-                                handlePageRedirection({tab: menuOption});
+                                handlePageRedirection({ tab: menuOption });
                             }
 
                         }
                         break;
                     case "Saúde":
                         console.log("HEALTH SCREEN REDIRECT!");
-                            const screen = redirectParams.screen;
-                            const menuOption = redirectParams.menu_option;
-                            const healthPage = redirectParams.page as HealthPage;
-                            
-                            handlePageRedirection({tab: menuOption, healthPage })
-                            console.log(notification);
+                        const screen = redirectParams.screen;
+                        const menuOption = redirectParams.menu_option;
+                        const healthPage = redirectParams.page as HealthPage;
+
+                        handlePageRedirection({ tab: menuOption, healthPage })
+                        console.log(notification);
                         break;
                     case "Bluetooth":
                         break;
@@ -123,8 +121,8 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
                 }
 
                 if (removeNotification) {
-                    if (notification.group) {
-                        const groupNotifications = notification.group;
+                    if (notificationData.group) {
+                        const groupNotifications = notificationData.group;
                         handleRemove(groupNotifications._ids);
                         return;
                     }
@@ -187,49 +185,59 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
 
         notifications.forEach(notification => {
             const notifyType = notification.data?.notify_type;
+            const senderId = notification.data?.sender_params?._id;
 
-            if (notifyType === 'chat') {
-                const senderId = notification.data?.sender_params?._id;
-                
-                if (senderId) {
-                    if (!notificationMap[senderId]) {
+            if (notifyType === 'chat' && senderId) {
+                if (!notificationMap[senderId]) {
+                    if (notification.data?.notify_type === undefined) return;
 
-                        notificationMap[senderId] = {
-                            ...notification,
+                    notificationMap[senderId] = {
+                        ...notification,
+                        data: {
+                            ...notification.data,
                             group: {
                                 _ids: [notification._id],
                                 count: 1
                             }
-                        };
-                    }
-                    else {
-
-                        const existingGroup = notificationMap[senderId].group;
-
-                        if (existingGroup && existingGroup.count) {
-                            const updatedGroup = {
-                                ...existingGroup,
-                                _ids: [...existingGroup._ids, notification._id],
-                                count: existingGroup.count + 1
-                            };
-
-                            if (new Date(notification.updatedAt) > new Date(notificationMap[senderId].updatedAt)) {
-                                notificationMap[senderId] = {
-                                    ...notification,
-                                    group: updatedGroup
-                                };
-                            } else {
-                                // Apenas atualiza os IDs do grupo, mantém a notificação mais antiga.
-                                notificationMap[senderId] = {
-                                    ...notificationMap[senderId],
-                                    group: updatedGroup
-                                };
-                            }
                         }
-
-                    }
+                    };
                 }
+                else {
 
+                    const existingGroup = notificationMap[senderId].data?.group;
+                    if (existingGroup && existingGroup.count) {
+                        const updatedGroup = {
+                            ...existingGroup,
+                            _ids: [...existingGroup._ids, notification._id],
+                            count: existingGroup.count + 1
+                        };
+
+                        if (new Date(notification.data?.updatedAt ?? '') > new Date(notificationMap[senderId].data?.updatedAt ?? '')) {
+
+                            if (notificationMap[senderId].data?.notify_type === undefined) return;
+
+                            notificationMap[senderId] = {
+                                ...notification,
+                                data: {
+                                    ...notificationMap[senderId].data,
+                                    group: updatedGroup
+                                }
+                            };
+                        } else {
+                            if (notificationMap[senderId].data?.notify_type === undefined) return;
+
+                            // Apenas atualiza os IDs do grupo, mantém a notificação mais antiga.
+                            notificationMap[senderId] = {
+                                ...notificationMap[senderId],
+                                data: {
+                                    ...notificationMap[senderId].data,
+                                    group: updatedGroup
+                                }
+                            };
+                        }
+                    }
+
+                }
             } else {
 
                 groupedNotifications.push(notification);
