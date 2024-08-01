@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode, useState } from 'react';
+import { UpdatedInitialChat } from 'types/chat/Chat_Types';
 import { TreatmentInfoTemplate } from 'types/treatment/Treatment_Types';
 
 
@@ -17,6 +18,8 @@ interface TreatmentContextProps {
     addTreatment: (treatment: TreatmentInfoTemplate) => void;
     addMultipleTreatments: (treatments: TreatmentInfoTemplate[]) => void;
     removeTreatment: (treatmentId: string) => void;
+    updateInitialChat: (updatedInitialChat: UpdatedInitialChat) => void;
+    decrementMessageNotRead: (chatId: string) => void;
 }
 
 interface TreatmentProviderProps {
@@ -34,6 +37,8 @@ const actionTypes = {
     ADD_TREATMENT: 'ADD_TREATMENT',
     REMOVE_TREATMENT: 'REMOVE_TREATMENT',
     ADD_MULTIPLE_TREATMENTS: 'ADD_MULTIPLE_TREATMENTS',
+    UPDATE_INITIAL_CHAT: 'UPDATE_INITIAL_CHAT',
+    DECREMENT_MSG_COUNT: 'DECREMENT_MSG_COUNT',
 };
 
 const TreatmentContext = createContext<TreatmentContextProps | undefined>(undefined);
@@ -52,6 +57,31 @@ const TreatmentReducer = (prevState: TreatmentState, action: Action): TreatmentS
         case actionTypes.ADD_MULTIPLE_TREATMENTS:
             console.log("ADD MULTIPLE DISPATCH!");
             return { ...prevState, treatments: [...prevState.treatments, ...action.payload] };
+        case actionTypes.UPDATE_INITIAL_CHAT:
+            console.log("UPDATE INITIAL CHAT DISPATCH!");
+            return {
+                ...prevState,
+                treatments: prevState.treatments.map(treatment =>
+                    treatment._id === action.payload.treatmentId
+                        ? { ...treatment, chat: action.payload.chat }
+                        : treatment
+                )
+            };
+        case actionTypes.DECREMENT_MSG_COUNT:
+            return {
+                ...prevState,
+                treatments: prevState.treatments.map(treatment =>
+                    treatment._id === action.payload.chatId && treatment.chat?.msg_count 
+                        ? {
+                            ...treatment,
+                            chat: {
+                                ...treatment.chat,
+                                msg_count: Math.max(treatment.chat.msg_count - 1, 0)
+                            }
+                        }
+                        : treatment
+                )
+            };
         default:
             return prevState;
     }
@@ -59,7 +89,7 @@ const TreatmentReducer = (prevState: TreatmentState, action: Action): TreatmentS
 
 export const TreatmentProvider: React.FC<TreatmentProviderProps> = ({ children }) => {
     const [treatment_state, dispatch] = useReducer(TreatmentReducer, { treatments: initialTreatments });
-    
+
     const setTreatments = (treatments: TreatmentInfoTemplate[]) => {
         dispatch({ type: actionTypes.SET_TREATMENTS, payload: treatments });
     }
@@ -76,8 +106,16 @@ export const TreatmentProvider: React.FC<TreatmentProviderProps> = ({ children }
         dispatch({ type: actionTypes.REMOVE_TREATMENT, payload: treatmentId });
     };
 
+    const updateInitialChat = (updatedInitialChat: UpdatedInitialChat) => {
+        dispatch({ type: actionTypes.UPDATE_INITIAL_CHAT, payload: updatedInitialChat });
+    };
+
+    const decrementMessageNotRead = (chatId: string) => {
+        dispatch({ type: actionTypes.DECREMENT_MSG_COUNT, payload: { chatId } });
+    };
+
     return (
-        <TreatmentContext.Provider value={{ treatment_state, setTreatments, addTreatment, addMultipleTreatments, removeTreatment }}>
+        <TreatmentContext.Provider value={{ treatment_state, setTreatments, addTreatment, addMultipleTreatments, removeTreatment, updateInitialChat, decrementMessageNotRead }}>
             {children}
         </TreatmentContext.Provider>
     );

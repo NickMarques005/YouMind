@@ -45,7 +45,7 @@ const LatestHistory = ({ selectLatestMedication, selectLatestQuestionnaire, load
     )
 }
 
-export default LatestHistory
+export default LatestHistory;
 
 const styles = StyleSheet.create({
 

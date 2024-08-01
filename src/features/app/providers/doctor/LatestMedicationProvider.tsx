@@ -23,14 +23,20 @@ const LatestMedicationReducer = (state: LatestMedicationState, action: LatestMed
         case 'SET_LATEST_MEDICATIONS':
             return { ...state, latestMedication: action.payload };
         case 'ADD_LATEST_MEDICATION':
-            return state.latestMedication.some(item => item._id === action.payload._id)
+            return state.latestMedication.some(item => {
+                console.log(`${item._id} // ${action.payload._id}`)
+                return item._id === action.payload._id;
+            })
                 ? state
                 : { ...state, latestMedication: [...state.latestMedication, action.payload] };
         case 'UPDATE_LATEST_MEDICATION':
             return {
                 ...state,
                 latestMedication: state.latestMedication.map(item =>
-                    item._id === action.payload._id ? action.payload : item
+                {
+                    console.log(`${item._id} // ${action.payload._id}`);
+                    return item._id === action.payload._id ? action.payload : item;
+                }
                 ),
             };
         case 'DELETE_LATEST_MEDICATION':

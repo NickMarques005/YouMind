@@ -13,8 +13,8 @@ interface UseBLEBehaviorProps {
     setBluetoothConnected: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const useBLEBehavior = ({ 
-    setCurrentDevice, setIsScanning, 
+export const useBLEBehavior = ({
+    setCurrentDevice, setIsScanning,
     setDeviceState, setDiscoveredPeripherals,
     setBluetoothConnected
 }: UseBLEBehaviorProps) => {
@@ -28,32 +28,33 @@ export const useBLEBehavior = ({
                     resolve(peripherals as Peripheral[]);
                 })
                 .catch((error) => {
+                    console.log("Houve um erro ao buscar os perifericos: ", error);
                     reject(error);
                 })
         });
     }, []);
 
-    const handleStopScan = () => {
-        handleDiscoverPeripherals().then((peripheralsArray) => {
+    const handleStopScan = async () => {
+        try {
+            const peripheralsArray = await handleDiscoverPeripherals();
             console.log("***Escaneamento parou***");
             const peripherals = new Map(peripheralsArray.map(peripheral => [peripheral.id, peripheral]));
             if (peripherals.size > 0) {
                 console.log('Dispositivos encontrados:', peripherals);
                 setDiscoveredPeripherals(peripherals as Map<string, BleDeviceData>);
             } else {
-                console.log('Nenhum dispositivo encontrado');
+                console.log('Nenhum dispositivo encontrado: ', peripherals);
                 HandleResponseAppError("Nenhum dispositivo T-Watch encontrado");
                 setDiscoveredPeripherals(undefined);
             }
             setDeviceState('deviceOff');
-        }).catch((error) => {
+        } catch (error) {
             console.error('Error getting discovered peripherals:', error);
             setDiscoveredPeripherals(undefined);
             setDeviceState('deviceOff');
-        })
-            .finally(() => {
-                setIsScanning(false);
-            })
+        } finally {
+            setIsScanning(false);
+        }
     }
 
     const handleConnectDevice = () => {

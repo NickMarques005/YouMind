@@ -1,6 +1,16 @@
 import { TreatmentInfoTemplate } from "types/treatment/Treatment_Types";
 import { UserData } from "types/user/User_Types";
 
+export interface UserChat {
+    last_msg?: LastMsg;
+    msg_count?: number;
+}
+
+export interface LastMsg {
+    content: string;
+    date: string;
+}
+
 export interface Request_GetConversationTreatmentArgs {
     email_1?: string;
     email_2?: string;
@@ -18,8 +28,8 @@ export interface Request_GetMessagesArgs {
 }
 
 export type ProcessedMessageItem =
-| { type: 'dateLabel'; date: string }
-| { type: 'message'; data: MessageTemplate };
+    | { type: 'dateLabel'; date: string }
+    | { type: 'message'; data: MessageTemplate };
 
 export interface MessageTemplate {
     conversationId: string;
@@ -55,3 +65,11 @@ export type ChatParamList = {
     };
 };
 
+export interface UpdatedInitialChat {
+    chat: UserChat;
+    treatmentId: string;
+}
+
+export interface SocketInitialChat {
+    updatedChat: UpdatedInitialChat;
+}

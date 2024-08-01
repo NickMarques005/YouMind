@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TreatmentState } from '@providers/TreatmentProvider';
-import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
+import { screenHeight } from '@utils/layout/Screen_Size';
 import TemplateChatUser from '../both/TemplateChatUser';
 import { UserData } from 'types/user/User_Types';
 import images from '@assets/images';

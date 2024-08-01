@@ -9,6 +9,7 @@ import { UsePerformProps } from 'types/service/Request_Types';
 import { UseTreatmentService } from '@hooks/api/UseTreatmentService';
 import { useUpdatePatientState } from '@features/app/pages/patient/hooks/UpdatePatientState';
 import { useUpdateDoctorState } from '@features/app/pages/doctor/hooks/UpdateDoctorState';
+import { SocketInitialChat } from 'types/chat/Chat_Types';
 
 interface UpdateStatus {
     userId: string;
@@ -22,7 +23,7 @@ interface UseTreatmentSocketProps {
 
 const UseTreatmentSocket = ({ perform, userType }: UseTreatmentSocketProps) => {
     const { setLoading, HandleConnectionAppError } = perform;
-    const { addTreatment, removeTreatment, treatment_state, setTreatments } = UseTreatment();
+    const { addTreatment, removeTreatment, treatment_state, setTreatments, updateInitialChat } = UseTreatment();
     const { performVerifyTreatmentInitialization, performVerifyTreatmentCompletion } = UseTreatmentService(setLoading);
     let handleInitiateTreatmentData: () => Promise<void>, handleRemoveTreatmentData: (treatmentId?: string) => Promise<void>;
     if (userType === 'patient') {
@@ -103,7 +104,21 @@ const UseTreatmentSocket = ({ perform, userType }: UseTreatmentSocketProps) => {
 
     }, [treatment_state, currentChat, setCurrentChat]);
 
-    return { handleTreatmentAdd, handleTreatmentEnd, handleNoticeMessage, handleTreatmentUpdateStatus };
+    const handleUpdateInitialChat = useCallback((data: SocketInitialChat) => {
+        console.log("Initial Chat Update: ", data);
+
+        const { updatedChat } = data;
+        updateInitialChat(updatedChat);
+        
+    }, [treatment_state]);
+
+    return { 
+        handleTreatmentAdd, 
+        handleTreatmentEnd, 
+        handleNoticeMessage, 
+        handleTreatmentUpdateStatus,
+        handleUpdateInitialChat
+    };
 };
 
 export default UseTreatmentSocket;

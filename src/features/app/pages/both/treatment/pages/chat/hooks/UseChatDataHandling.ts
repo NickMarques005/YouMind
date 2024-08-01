@@ -2,6 +2,7 @@ import USE_ENV from "@api/constants/server_url/ServerUrl";
 import UseSocketService from "@api/socket/SocketService";
 import { UseSocket } from "@features/app/providers/sub/SocketProvider";
 import { UseChatService } from "@hooks/api/UseChatService";
+import { UseTreatment } from "@providers/TreatmentProvider";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatUser, MessageTemplate } from "types/chat/Chat_Types";
 import { UserData } from "types/user/User_Types";
@@ -14,6 +15,7 @@ interface UseGetMessagesProps {
 
 export const UseChatDataHandling = ({ setLoading, chat, user }: UseGetMessagesProps) => {
     const { socket } = UseSocket();
+    const { decrementMessageNotRead } = UseTreatment();
     const [messages, setMessages] = useState<MessageTemplate[]>([]);
     const [page, setPage] = useState<number>(0);
 
@@ -83,6 +85,7 @@ export const UseChatDataHandling = ({ setLoading, chat, user }: UseGetMessagesPr
     const handleReadMessage = (message: MessageTemplate, user?: UserData) => {
         if (user && !message.readBy?.includes(user._id)) {
             socket?.emit('messageRead', { message, userId: user._id });
+            chat && chat._id && decrementMessageNotRead(chat._id);
         }
     }
 
@@ -95,7 +98,6 @@ export const UseChatDataHandling = ({ setLoading, chat, user }: UseGetMessagesPr
         catch (err) {
             const error = err as Error;
             console.log("Houve um erro ao entrar na conversa: ", error);
-
         }
         finally{
             setLoading(false);

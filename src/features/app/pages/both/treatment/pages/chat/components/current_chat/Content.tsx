@@ -14,8 +14,7 @@ import Animated from 'react-native-reanimated';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { UseChatAnimation } from '../../hooks/UseChatAnimation';
 import AudioTimer from './AudioTimer';
-import { ViewToken, ViewabilityConfigCallbackPairs } from 'react-native';
-import { UseLoading } from '@hooks/loading/UseLoading';
+import { ViewToken } from 'react-native';
 
 interface ContentHeaderProps {
     userType: string | undefined;

@@ -59,6 +59,7 @@ export const useBleManager = ({
                 console.log('Bluetooth is ON');
 
                 const subscriptions = setupListeners();
+                console.log("Listeners adicionados");
 
                 const state = await BleManager.checkState();
                 if (state === 'on') {
@@ -78,6 +79,11 @@ export const useBleManager = ({
 
     useEffect(() => {
         handleRequestBluetoothPermissions();
+
+        return () => {
+            const subscriptions = setupListeners();
+            cleanupListeners(subscriptions);
+        };
     }, []);
 
     return { handleRequestBluetoothPermissions };

@@ -1,5 +1,3 @@
-/* eslint-disable no-bitwise */
-import {useState} from 'react';
 import {PermissionsAndroid, Platform} from 'react-native';
 
 import {PERMISSIONS, requestMultiple} from 'react-native-permissions';
@@ -37,6 +35,7 @@ function useBLE(): BluetoothLowEnergyApi {
               PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
               PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
               PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+              PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION
             ]);
     
             const isAllPermissionsGranted =
@@ -45,6 +44,8 @@ function useBLE(): BluetoothLowEnergyApi {
               result['android.permission.BLUETOOTH_SCAN'] ===
                 PermissionsAndroid.RESULTS.GRANTED &&
               result['android.permission.ACCESS_FINE_LOCATION'] ===
+                PermissionsAndroid.RESULTS.GRANTED &&
+              result['android.permission.ACCESS_COARSE_LOCATION'] ===
                 PermissionsAndroid.RESULTS.GRANTED;
     
             cb(isAllPermissionsGranted);

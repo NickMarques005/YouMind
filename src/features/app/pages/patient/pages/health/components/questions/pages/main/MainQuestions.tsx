@@ -23,7 +23,7 @@ const MainQuestions = () => {
     const { handleFlingDown, handleFlingUp, activeIndex } = useQuestionnaireAnimations({ totalLength: questionnaires.length })
     const backgroundMainQuestions = images.app_patient_images.health.quiz.quiz_background;
     const { treatment_state } = UseTreatment();
-    
+
     return (
         <SafeAreaView style={styles.healthQuestionaries_mainView}>
 
@@ -38,35 +38,37 @@ const MainQuestions = () => {
                     </View>
                     <GestureHandlerRootView style={styles.questionaire_listContainer}>
                         {
-                            treatment_state.treatments.length === 0 ? 
-                            <View style={{flex: 1, justifyContent: 'center'}}>
-                                <Text style={{ fontSize: 19, fontWeight: 'bold', color: 'white', textAlign: 'center'}}>
-                                    Você não está em tratamento no momento. Os questionários ficarão indisponíveis.
-                                </Text>
-                            </View>
-                            :
-                            questionnaires.length !== 0 ?
-                            <GestureDetector
-                                gesture={Gesture.Exclusive(handleFlingUp, handleFlingDown)}
-                            >
-                                <View style={styles.questionaire_listView}>
-                                    <QuestionnaireList
-                                        handleGetQuestionnaireTemplate={handleGetQuestionnaireTemplate}
-                                        activeIndex={activeIndex}
-                                        questionnaires={questionnaires}
-                                        answerLoading={answerLoading.loading}
-                                        visualizeLoading={visualizeLoading.loading}
-                                        handleAnswerQuestionnaire={handleAnswerQuestionnaire}
-                                        handleVisualizeCurrentQuestionnaire={handleVisualizeCurrentQuestionnaire}
-                                    />
+                            treatment_state.treatments.length === 0 ?
+                                <View style={{ flex: 1, justifyContent: 'center' }}>
+                                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: 'white', textAlign: 'center' }}>
+                                        Você não está em tratamento no momento. Os questionários ficarão indisponíveis.
+                                    </Text>
                                 </View>
-                            </GestureDetector>
-                            : 
-                            <View style={{width: '60%',}}>
-                                <Text style={{fontSize: 17, fontWeight: 'bold', color: 'white',}}>
-                                    Nenhum questionário disponível
-                                </Text>
-                            </View>
+                                :
+                                questionnaires.length !== 0 ?
+                                    <GestureDetector
+                                        gesture={Gesture.Exclusive(handleFlingUp, handleFlingDown)}
+                                    >
+                                        <View style={styles.questionaire_listView}>
+                                            <QuestionnaireList
+                                                handleGetQuestionnaireTemplate={handleGetQuestionnaireTemplate}
+                                                activeIndex={activeIndex}
+                                                questionnaires={questionnaires}
+                                                answerLoading={answerLoading.loading}
+                                                visualizeLoading={visualizeLoading.loading}
+                                                handleAnswerQuestionnaire={handleAnswerQuestionnaire}
+                                                handleVisualizeCurrentQuestionnaire={handleVisualizeCurrentQuestionnaire}
+                                            />
+                                        </View>
+                                    </GestureDetector>
+                                    :
+                                    <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', padding: '2%' }}>
+                                        <View style={{width: '100%', height: '100%', backgroundColor: 'rgba(63, 28, 84, 0.4)', borderRadius: 20, justifyContent: 'center', padding: '4%'}}>
+                                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white', textAlign: 'center' }}>
+                                                Oops! Nenhum questionário disponível...
+                                            </Text>
+                                        </View>
+                                    </View>
                         }
                     </GestureHandlerRootView>
                 </View>

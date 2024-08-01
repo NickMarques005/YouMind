@@ -1,3 +1,5 @@
+import { UserChat } from "types/chat/Chat_Types";
+
 export interface Request_InitializeTreatmentArgs {
     email_1: string;
     email_2: string;
@@ -27,6 +29,7 @@ export interface TreatmentInfoTemplate {
     birth?: string;
     avatar?: string;
     online?: boolean;
+    chat?: UserChat;
 }
 
 export interface EndTreatmentResponse {

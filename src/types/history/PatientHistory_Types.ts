@@ -1,5 +1,5 @@
 import { Medication } from "types/app/patient/health/Medicine_Types";
-import { Questionnaire, QuestionnaireTemplate } from "types/app/patient/health/Question_Types";
+import { Questionnaire, QuestionnaireItem, QuestionnaireTemplate } from "types/app/patient/health/Question_Types";
 
 export interface MedicationHistory {
     total: number;
@@ -62,9 +62,20 @@ export interface HistoryMedication {
     updatedAt: string;
 }
 
+export interface SocketPatientHistory {
+    history: PatientHistory;
+}
+
 export type LatestQuestionnaire = HistoryQuestionnaire;
 
 export type LatestMedication = HistoryMedication;
+
+export interface SocketLatestQuestionnaire {
+    latestQuestionnaire: LatestQuestionnaire
+}
+export interface SocketLatestMedication {
+    latestMedication: LatestMedication
+}
 
 export interface LatestHistoryResponse {
     latestQuestionnaires: LatestQuestionnaire[];

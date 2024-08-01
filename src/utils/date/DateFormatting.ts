@@ -73,6 +73,21 @@ export const formatDateMessage = (isoDate: string) => {
 
 }
 
+
+export const formatDateForChat = (isoDate: string): string => {
+    const date = DateTime.fromISO(isoDate);
+    const today = DateTime.now().startOf('day');
+    const yesterday = today.minus({ days: 1 });
+
+    if (date >= today) {
+        return date.toFormat('HH:mm');
+    } else if (date >= yesterday) {
+        return "Ontem";
+    } else {
+        return date.toFormat('dd/MM/yyyy');
+    }
+};
+
 export const formatRelativeTime = (isoDate: string) => {
     const date = DateTime.fromISO(isoDate);
     if (!date.isValid) return "Data inválida";
