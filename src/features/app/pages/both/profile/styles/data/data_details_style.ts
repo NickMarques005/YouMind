@@ -52,7 +52,6 @@ export const data_details_style = (userType: string | undefined) => {
             flex: 1,
             fontSize: 16,
             color: userType === 'doctor' ? '#1a586e' : '#5b1869',
-            
         },
         iconCalendar: {
             height: 25,
@@ -60,8 +59,8 @@ export const data_details_style = (userType: string | undefined) => {
         },
         button: {
             backgroundColor: userType === 'doctor' ? '#5ba4ba' : '#9f5bba',
-            paddingHorizontal: 10,
-            paddingVertical: 20,
+            height: screenHeight * 0.07,
+            justifyContent: 'center',
             borderRadius: 5,
         },
         buttonText: {

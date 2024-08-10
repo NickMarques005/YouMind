@@ -42,7 +42,7 @@ const TemplateChatUser = ({ treatment, userData, handleActiveChat }: ChatTemplat
                                     ellipsizeMode={'tail'}
                                 >{userChat && userChat.last_msg?.content}</Text>
                             </View>
-                            <View style={{ width: '20%', alignItems: 'flex-end', paddingHorizontal: '3%' }}>
+                            <View style={{ width: '30%', alignItems: 'flex-end', paddingHorizontal: '3%' }}>
 
                                 <View style={{ alignItems: 'center', justifyContent: 'center', paddingBottom: '7%', }}>
                                     <Text style={{

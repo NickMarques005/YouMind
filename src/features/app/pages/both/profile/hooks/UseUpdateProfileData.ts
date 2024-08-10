@@ -3,13 +3,14 @@ import { UseUserService } from "@hooks/api/UseUserService";
 import { FormatISOToStringDate, FormatStringToISODate } from "@utils/date/DateFormatting";
 import { FormatDate, FormatPhone } from "@utils/user/DataFormatting";
 import { useEffect, useState } from "react";
-import { UserData, UserDoctor, UserGender, UserPatient } from "types/user/User_Types";
+import { GenderType, UserData, UserDoctor, UserGender, UserPatient } from "types/user/User_Types";
 
 export interface UserDataToUpdate {
     name?: string;
     birth?: string;
     phone?: number;
     gender?: UserGender;
+    genderType?: GenderType;
 }
 
 interface UseUpdateProfileDataProps {
@@ -24,17 +25,18 @@ interface UseUpdateProfileDataProps {
 export const UseUpdateProfileData = ({ userData, setLoading, closeModal, HandleResponseAppError, updateProfileData, HandleResponseAppSuccess }: UseUpdateProfileDataProps) => {
     const { performUpdateUserDetails } = UseUserService(setLoading);
     const [prevPhone, setPrevPhone] = useState('');
-    const [isButtonEnabled, setIsButtonEnabled] = useState(false);
     const [userDataToUpdate, setUserDataToUpdate] = useState<UserDataToUpdate>({
         name: userData?.name,
         birth: userData?.birth,
         phone: userData?.phone,
-        gender: userData?.gender
+        gender: userData?.gender,
+        genderType: (userData?.gender && ["Masculino", "Feminino", "Prefiro não informar"].includes(userData.gender))
+            ? userData.gender as GenderType
+            : "Outro",
     });
 
     const hasChanges = () => {
-        console.log(userData);
-        console.log(userDataToUpdate);
+        console.log("Verify updateUserData Changes");
         return userData ? (
             userDataToUpdate.name !== userData.name ||
             userDataToUpdate.birth !== userData.birth ||
@@ -44,7 +46,7 @@ export const UseUpdateProfileData = ({ userData, setLoading, closeModal, HandleR
     }
 
     const handleChangeText = (field: keyof UserDataToUpdate, value: string) => {
-        
+
         let formattedValue = value;
 
         switch (field) {
@@ -58,21 +60,45 @@ export const UseUpdateProfileData = ({ userData, setLoading, closeModal, HandleR
             default:
                 break;
         }
-        
+
         setUserDataToUpdate(prevState => ({
             ...prevState,
             [field]: formattedValue
         }));
     };
 
+    const handleVerifyUpdatedData = (updateData: UserDataToUpdate) => {
+        const dataToUpdate: Partial<UserDataToUpdate> = {};
+
+        // Verifica cada campo e, se for diferente, adiciona ao objeto dataToUpdate
+        if (updateData.name !== userData?.name) {
+            dataToUpdate.name = updateData.name;
+        }
+        if (updateData.phone !== userData?.phone) {
+            dataToUpdate.phone = updateData.phone;
+        }
+        if (updateData.gender !== userData?.gender) {
+            dataToUpdate.gender = updateData.gender;
+        }
+        if (updateData.birth !== userData?.birth) {
+            dataToUpdate.birth = FormatStringToISODate(updateData.birth);
+        }
+
+        if (Object.keys(dataToUpdate).length === 0) {
+            console.log("Nenhuma alteração foi detectada.");
+            return undefined;
+        }
+
+        return dataToUpdate;
+    }
+
     const handleUpdateProfileData = async (updateData: UserDataToUpdate) => {
-        const dataToUpdate = {
-            ...updateData,
-            birth: updateData.birth ? FormatStringToISODate(updateData.birth) : undefined
-        };
-        
+        const dataToUpdate = handleVerifyUpdatedData(updateData);
+        if(!dataToUpdate) return;
+
+        console.log("Dados a serem atualizados: ", dataToUpdate);
+
         try {
-            console.log("Dados a serem atualizados: ", updateData);
             const response = await performUpdateUserDetails(dataToUpdate);
             if (response.success) {
                 console.log(response);
@@ -83,7 +109,7 @@ export const UseUpdateProfileData = ({ userData, setLoading, closeModal, HandleR
                         phone: response.data.phone ? response.data.phone : undefined,
                     });
                     console.log("\nProfile atualizado!!!\n");
-                    if(response.message) HandleResponseAppSuccess(response.message, response.type as MessageIcon);
+                    if (response.message) HandleResponseAppSuccess(response.message, response.type as MessageIcon);
                 }
             }
 
@@ -106,9 +132,14 @@ export const UseUpdateProfileData = ({ userData, setLoading, closeModal, HandleR
         }));
     }
 
-    useEffect(() => {
-        setIsButtonEnabled(hasChanges());
-    }, [userDataToUpdate, userData]);
+    const handleChangeGenderType = (value: GenderType) => {
+        setUserDataToUpdate(prevState => ({
+            ...prevState,
+            genderType: value
+        }));
+    }
 
-    return { userDataToUpdate, handleChangeText, handleUpdateProfileData, isButtonEnabled, prevPhone, handleChangeGender }
+    const isButtonEnabled = hasChanges();
+
+    return { userDataToUpdate, handleChangeText, handleUpdateProfileData, isButtonEnabled, prevPhone, handleChangeGender, handleChangeGenderType }
 }

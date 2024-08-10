@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
-import { View, Image, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingView, } from 'react-native';
-import { Directions, Gesture, GestureDetector, GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, withTiming, Easing, withSpring } from 'react-native-reanimated';
+import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import NoteConfig from './components/NoteConfig';
-import { SharedValue, runOnJS } from 'react-native-reanimated';
-import { UseForm } from '@features/app/providers/sub/UserProvider';
 import images from '@assets/images';
 import NotePages from './components/NotePages';
+import Header from './components/Header';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { UseNotepadNavigation } from '../../hooks/UseNotepadNavigation';
 import { NoteTemplate } from 'types/app/doctor/notepad/Notepad_Types';
@@ -16,10 +14,15 @@ import { NotepadStackNavigation } from 'types/navigation/Navigation_Types';
 import { UseCurrentNote } from './hooks/UseCurrentNote';
 import { useCurrentNoteData } from './hooks/UseCurrentNoteData';
 import { useHeaderGestures } from './hooks/UseHeaderAnimations';
-import Header from './components/Header';
 import { usePageHandling } from './hooks/UsePageHandling';
 import { usePageGestures } from './hooks/UsePageGestures';
 import { screenHeight } from '@utils/layout/Screen_Size';
+import { UseCurrentNoteHandling } from './hooks/UseCurrentNoteHandling';
+import useCurrentNoteBehavior from './hooks/UseCurrentNoteBehavior';
+import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
+import { UseLoading } from '@hooks/loading/UseLoading';
+import NoteVerification from './components/NoteVerification';
+import { UseForm } from '@features/app/providers/sub/UserProvider';
 
 export interface CurrentNoteParams {
     currentNote?: NoteTemplate;
@@ -34,34 +37,25 @@ const CurrentNote = () => {
         navigateToNotepadScreen('main_notepad');
         return null;
     }
+    const { userData } = UseForm();
+    const updateLoading = UseLoading();
+    const deleteLoading = UseLoading();
+    const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
     const { note } = UseCurrentNote({ params: currentNoteParams });
-    const [currentNote, setCurrentNote] = useState<NoteTemplate>(note);
-    const [configNoteVisible, setConfigNoteVisible] = useState(false);
-    const { updateCurrentNoteData } = useCurrentNoteData({ setCurrentNote });
+    const currentNoteBehavior = useCurrentNoteBehavior({ note, navigateToNotepadScreen });
+    const { handleUpdateCurrentNote, handleUpdateNewContent } = useCurrentNoteData({ setCurrentNote: currentNoteBehavior.setCurrentNote, setNewNote: currentNoteBehavior.setNewNote });
     const { headerHeight, handleHeaderDragging } = useHeaderGestures();
-    const { activeIndex, editContent, addPage, deletePage, setEditContent } = usePageHandling({ initialContent: currentNote.content });
+    const { activeIndex, editContent, addPage, deletePage, setEditContent } = usePageHandling({ initialContent: currentNoteBehavior.currentNote.content, handleUpdateNewContent, newNote: currentNoteBehavior.newNote });
     const { handlePageFlingDown, handlePageFlingLeft, handlePageFlingRight, handlePageFlingUp } = usePageGestures({ editContent, addPage, deletePage, activeIndex });
-
-    const handleBackNotePress = () => {
-        console.log("Back to main notepad");
-        navigateToNotepadScreen('main_notepad');
-    }
-
-    const closeHandleNote = (type: 'delete' | 'update' | undefined) => {
-        if (type) {
-            handleBackNotePress();
-        }
-        else {
-            setConfigNoteVisible(!configNoteVisible);
-        }
-    }
+    const currentNoteHandling = UseCurrentNoteHandling({
+        updateSetLoading: updateLoading.setLoading, deleteSetLoading: deleteLoading.setLoading,
+        HandleResponseAppError, HandleResponseAppSuccess, handleUpdateCurrentNote, handleBackToMainNote: currentNoteBehavior.handleBackToMainNote
+    });
 
     const backIcon = images.generic_images.back.default_back_white;
     const noteConfig = images.app_doctor_images.notepad.note_configuration;
 
     return (
-
-
         <GestureHandlerRootView style={{ flex: 1 }}>
             <KeyboardAwareScrollView onKeyboardWillShow={(frames: Object) => {
                 console.log('Keyboard event', frames)
@@ -70,9 +64,11 @@ const CurrentNote = () => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0.2, y: 1 }} style={styles.outerGradient}>
                     <Header
-                        currentNote={currentNote}
+                        currentNote={currentNoteBehavior.currentNote}
+                        newNote={currentNoteBehavior.newNote}
                         headerHeight={headerHeight}
-                        handleBackNotePress={handleBackNotePress}
+                        handleBackNotePress={currentNoteBehavior.handleBackNotePress}
+                        handleUpdateVerification={currentNoteHandling.handleUpdateVerification}
                         handleHeaderDragging={handleHeaderDragging}
                         backIcon={backIcon}
                     />
@@ -88,22 +84,49 @@ const CurrentNote = () => {
                             />
                         </View>
                     </GestureDetector>
-                    <TouchableOpacity onPress={() => setConfigNoteVisible(true)} style={styles.configButton}>
+                    <TouchableOpacity onPress={() => currentNoteBehavior.setConfigNoteVisible(true)} style={styles.configButton}>
                         <Image style={styles.configIcon} source={noteConfig} />
                     </TouchableOpacity>
                     {
-                        configNoteVisible &&
+                        currentNoteBehavior.configNoteVisible &&
                         <NoteConfig
-                            newContent={editContent}
-                            visible={configNoteVisible}
-                            handleUpdateCurrentNote={updateCurrentNoteData}
-                            currentNote={currentNote}
-                            onClose={closeHandleNote}
+                            visible={currentNoteBehavior.configNoteVisible}
+                            currentNote={currentNoteBehavior.currentNote}
+                            onClose={currentNoteBehavior.closeHandleNoteConfig}
+                            updateLoading={updateLoading}
+                            deleteLoading={deleteLoading}
+                            noteVerification={currentNoteHandling.noteVerification}
+                            noteBehavior={currentNoteHandling.noteBehavior}
+                            handleNoteVerification={currentNoteHandling.handleNoteVerification}
+                            handleDeleteNote={currentNoteHandling.handleDeleteNote}
+                            handleUpdateNote={currentNoteHandling.handleUpdateNote}
+                            clearNoteVerification={currentNoteHandling.clearNoteVerification}
+                            newNote={currentNoteBehavior.newNote}
+                            setNewNote={currentNoteBehavior.setNewNote}
+                            updatedNoteVerification={currentNoteBehavior.updatedNoteVerification}
+                        />
+                    }
+                    {
+                        userData && currentNoteHandling.exitNoteVerification &&
+                        <NoteVerification
+                            userData={userData}
+                            handleVerificationDecline={() => {
+                                currentNoteHandling.clearExitNoteVerification();
+                                navigateToNotepadScreen('main_notepad');
+                            }}
+                            handleVerificationAccept={currentNoteHandling.exitNoteVerification.handleAccept}
+                            handleCloseVerification={currentNoteHandling.clearExitNoteVerification}
+                            verificationMessage={currentNoteHandling.exitNoteVerification.message || "Deseja confirmar essa ação?"}
+                            acceptText={currentNoteHandling.exitNoteVerification.acceptText}
+                            declineText={currentNoteHandling.exitNoteVerification.declineText}
+                            behavior={currentNoteHandling.noteBehavior}
+                            loading={updateLoading.loading}
+                            notClose={true}
                         />
                     }
                 </LinearGradient>
             </KeyboardAwareScrollView>
-        </GestureHandlerRootView >
+        </GestureHandlerRootView>
 
     )
 }

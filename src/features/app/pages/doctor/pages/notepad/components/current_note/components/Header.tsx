@@ -4,22 +4,28 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { SharedValue } from 'react-native-reanimated';
 import { NoteTemplate } from 'types/app/doctor/notepad/Notepad_Types';
 import { GestureDetector, PanGesture } from 'react-native-gesture-handler';
+import { NoteBehavior } from './NoteVerification';
 
 interface HeaderProps {
     currentNote: NoteTemplate;
+    newNote: NoteTemplate;
     headerHeight: SharedValue<number>;
-    handleBackNotePress: () => void;
+    handleBackNotePress: (verification?: () => void) => void;
     handleHeaderDragging: PanGesture;
     backIcon: any;
+    handleUpdateVerification: (currentNote: NoteTemplate, newNote: NoteTemplate) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
     currentNote,
+    newNote,
     headerHeight,
     handleBackNotePress,
     handleHeaderDragging,
-    backIcon
+    backIcon,
+    handleUpdateVerification
 }) => {
+
     return (
         <GestureDetector gesture={handleHeaderDragging}>
             <LinearGradient colors={['#246e6d', '#429aa6', '#87b9cc']}
@@ -31,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({
                             {currentNote.title}
                         </Text>
                     </View>
-                    <TouchableOpacity onPress={handleBackNotePress} style={styles.backButton}>
+                    <TouchableOpacity onPress={() => handleBackNotePress(() => handleUpdateVerification(currentNote, newNote))} style={styles.backButton}>
                         <Image style={styles.backIcon} source={backIcon} />
                     </TouchableOpacity>
                 </View>

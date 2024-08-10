@@ -26,7 +26,7 @@ interface DataDetailsModalProps {
 
 const DataDetailsModal: React.FC<DataDetailsModalProps> = ({ loading, setLoading, closeModal, userData, HandleResponseAppError, HandleResponseAppSuccess }) => {
     const { UpdateSpecificDataInUser } = UseForm();
-    const { userDataToUpdate, handleChangeText, handleUpdateProfileData, isButtonEnabled, prevPhone, handleChangeGender } = UseUpdateProfileData({ userData, setLoading, closeModal, HandleResponseAppError, updateProfileData: UpdateSpecificDataInUser, HandleResponseAppSuccess });
+    const { userDataToUpdate, handleChangeText, handleUpdateProfileData, isButtonEnabled, prevPhone, handleChangeGender, handleChangeGenderType } = UseUpdateProfileData({ userData, setLoading, closeModal, HandleResponseAppError, updateProfileData: UpdateSpecificDataInUser, HandleResponseAppSuccess });
     const { showGenderOptions, handleGenderOptions } = UseHandleProfileDetails({ userDataToUpdate });
     const styles = data_details_style(userData?.type);
     const genderIcon = userData?.type === 'doctor' ? images.app_doctor_images.profile.icon_gender : images.app_patient_images.profile.icon_gender;
@@ -35,7 +35,12 @@ const DataDetailsModal: React.FC<DataDetailsModalProps> = ({ loading, setLoading
         <View style={styles.container}>
             {
                 showGenderOptions ?
-                    <ChooseGender userType={userData?.type} goBack={() => handleGenderOptions(false)} setGender={handleChangeGender} userDataToUpdate={userDataToUpdate} />
+                    <ChooseGender 
+                    userType={userData?.type} 
+                    goBack={() => handleGenderOptions(false)} 
+                    setUserGender={handleChangeGender} 
+                    setGenderType={handleChangeGenderType}
+                    userDataToUpdate={userDataToUpdate} />
                     :
                     <>
                         <View style={styles.header}>

@@ -2,7 +2,9 @@ import { SearchUserTreatmentInfo } from "types/treatment/Search_Types";
 
 export type UserType = 'patient' | 'doctor' | undefined;
 
-export type UserGender = 'Masculino' | 'Feminino' | 'Prefiro não informar';
+export type GenderType = 'Masculino' | 'Feminino' | 'Prefiro não informar' | 'Outro';
+
+export type UserGender = 'Masculino' | 'Feminino' | 'Prefiro não informar' | string;
 
 export interface FilterUserPatient {
     _id: string;

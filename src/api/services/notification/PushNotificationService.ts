@@ -8,7 +8,7 @@ export const PushNotificationService = {
     RegisterPushToken: async (expoToken: ExpoPushToken | undefined) => {
         const token = await GetAccessToken();
         return MakeRequest<PushNotificationDataResponse>(
-            '/notifications/push/register',
+            'notifications/push/register',
             'POST',
             { pushToken: expoToken?.data },
             token

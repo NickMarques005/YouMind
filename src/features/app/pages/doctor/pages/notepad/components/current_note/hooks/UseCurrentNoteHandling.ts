@@ -13,22 +13,25 @@ interface UseCurrentNoteHandlingProps {
     HandleResponseAppError: (value: string) => void;
     HandleResponseAppSuccess: (message: string, messageType?: MessageIcon) => void;
     handleUpdateCurrentNote: ({ updatedTitle, updatedDescription, updatedContent }: UpdateCurrentNote) => void;
+    handleBackToMainNote: () => void;
 }
 
 export const UseCurrentNoteHandling = ({ 
     HandleResponseAppError, HandleResponseAppSuccess, 
-    updateSetLoading, deleteSetLoading, handleUpdateCurrentNote }: UseCurrentNoteHandlingProps) => {
+    updateSetLoading, deleteSetLoading, handleUpdateCurrentNote,
+    handleBackToMainNote }: UseCurrentNoteHandlingProps) => {
     const { performDeleteNote } = UseNotepadService(deleteSetLoading);
     const { performUpdateNote } = UseNotepadService(updateSetLoading);
-    const { navigateToNotepadScreen } = UseNotepadNavigation();
     const { dispatch } = useNotepad();
     const [noteVerification, setNoteVerification] = useState<Verification | undefined>(undefined);
+    const [exitNoteVerification, setExitNoteVerification] = useState<Verification | undefined>(undefined);
     const [noteBehavior, setNoteBehavior] = useState<NoteBehavior | undefined>(undefined);
 
-    const handleNoteVerification = (handleAccept: () => void, message?: string, acceptMessage?: string, behavior?: NoteBehavior) => {
-        const verification = {
+    const handleNoteVerification = (handleAccept: () => void, message?: string, acceptText?: string, declineText?: string, behavior?: NoteBehavior) => {
+        const verification: Verification = {
             message,
-            acceptMessage,
+            acceptText,
+            declineText,
             handleAccept
         }
 
@@ -36,12 +39,29 @@ export const UseCurrentNoteHandling = ({
         setNoteVerification(verification);
     }
 
+    const handleExitNoteVerification = (handleAccept: () => void, message?: string, acceptText?: string, declineText?: string, behavior?: NoteBehavior) => {
+        const verification: Verification = {
+            message,
+            acceptText,
+            declineText,
+            handleAccept
+        }
+
+        setNoteBehavior(behavior);
+        setExitNoteVerification(verification);
+    }
+
     const clearNoteVerification = () => {
         setNoteVerification(undefined);
     }
 
+    const clearExitNoteVerification = () => {
+        setExitNoteVerification(undefined);
+    }
+
     const handleDeleteNote = async (noteId: string, onSuccess?: () => void) => {
         if(noteVerification) clearNoteVerification();
+        
 
         console.log(noteId);
         try {
@@ -53,7 +73,7 @@ export const UseCurrentNoteHandling = ({
                 }
                 if (response.message) {
                     console.log(response);
-                    navigateToNotepadScreen('main_notepad');
+                    handleBackToMainNote();
                     HandleResponseAppSuccess(response.message, response.type as MessageIcon)
                 }
                 if (onSuccess) {
@@ -79,7 +99,10 @@ export const UseCurrentNoteHandling = ({
                 if (response.data) {
                     const updatedNote = response.data.updatedNote;
                     dispatch({ type: 'UPDATE_NOTE', payload: updatedNote });
-                    handleUpdateCurrentNote({updatedTitle: updatedNote.title, updatedDescription: updatedNote.description, updatedContent: updatedNote.content})
+                    handleUpdateCurrentNote({
+                        updatedTitle: updatedNote.title, 
+                        updatedDescription: updatedNote.description, 
+                        updatedContent: updatedNote.content});
                 }
                 if (response.message) {
                     console.log(response);
@@ -97,11 +120,21 @@ export const UseCurrentNoteHandling = ({
             console.error(error);
             HandleResponseAppError(error.message);
         }
+    }
 
+    const handleExitNote = () => {
+        if(exitNoteVerification) clearExitNoteVerification();
+        handleBackToMainNote();
+    }
 
+    const handleUpdateVerification = (currentNote: NoteTemplate, newNote: NoteTemplate) => {
+        handleExitNoteVerification(() => handleUpdateNote(currentNote._id, newNote, handleExitNote), 'Deseja salvar sua anotação antes de sair?', 'Salvar', 'Não', 'update_exit');
     }
 
     return { handleDeleteNote, handleUpdateNote, 
         noteVerification, noteBehavior,
-        handleNoteVerification, clearNoteVerification }
+        exitNoteVerification, handleExitNoteVerification,
+        handleNoteVerification, clearNoteVerification,
+        clearExitNoteVerification, handleUpdateVerification
+    }
 }

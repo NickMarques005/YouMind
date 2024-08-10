@@ -1,9 +1,5 @@
-import { useState } from "react"
-import { UpdateUserData } from "types/user/User_Types";
+import { useState } from "react";
 import { UserDataToUpdate } from "./UseUpdateProfileData";
-import { FormatStringToISODate } from "@utils/date/DateFormatting";
-import { FormatDate } from "@utils/user/DataFormatting";
-
 
 interface UseHandleProfileDetailsProps {
     userDataToUpdate: UserDataToUpdate;

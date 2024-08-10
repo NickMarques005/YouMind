@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
 import images from '@assets/images';
 import { UseForm } from '@features/app/providers/sub/UserProvider';
@@ -10,7 +10,6 @@ import UploadImageModal from './UploadImageModal';
 import DataDetailsModal from './DataDetailsModal';
 import { UseLoading } from '@hooks/loading/UseLoading';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
-import { FormatISOToStringDate } from '@utils/date/DateFormatting';
 
 const ProfileData = () => {
     const { userData } = UseForm();

@@ -33,7 +33,6 @@ yarn-error.*
 .env
 
 eas.json
-
 google-services.json
 debug.keystore
 

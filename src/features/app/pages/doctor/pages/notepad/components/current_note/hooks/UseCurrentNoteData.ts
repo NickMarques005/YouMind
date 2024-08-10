@@ -2,16 +2,19 @@ import { NoteTemplate, UpdateCurrentNote } from "types/app/doctor/notepad/Notepa
 
 interface UseCurrentNoteDataProps {
     setCurrentNote: React.Dispatch<React.SetStateAction<NoteTemplate>>;
-}   
+    setNewNote: React.Dispatch<React.SetStateAction<NoteTemplate>>;
+}
 
-export const useCurrentNoteData = ({ setCurrentNote }: UseCurrentNoteDataProps) => {
+export const useCurrentNoteData = ({ setCurrentNote, setNewNote }: UseCurrentNoteDataProps) => {
 
-    const updatePage = (index: number) => setCurrentNote(prev => ({
-        ...prev,
-        content: prev.content.map((item, idx) => idx === index ? item : item)
-    }));
+    const handleUpdateNewContent = (updatedContent: string[]) => {
+        setNewNote(prev => ({
+            ...prev,
+            content: updatedContent
+        }));
+    };
 
-    const updateCurrentNoteData = ({ updatedTitle, updatedDescription, updatedContent }: UpdateCurrentNote) => {
+    const handleUpdateCurrentNote = ({ updatedTitle, updatedDescription, updatedContent }: UpdateCurrentNote) => {
         setCurrentNote(prev => ({
             ...prev,
             title: updatedTitle || prev.title,
@@ -20,5 +23,5 @@ export const useCurrentNoteData = ({ setCurrentNote }: UseCurrentNoteDataProps) 
         }));
     }
 
-    return { updatePage, updateCurrentNoteData }
+    return { handleUpdateNewContent, handleUpdateCurrentNote }
 }

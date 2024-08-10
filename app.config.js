@@ -28,7 +28,8 @@ export default {
             package: "com.marquesnicolas.YouMind",
             googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
             permissions: [
-                "android.permission.RECORD_AUDIO"
+                "android.permission.RECORD_AUDIO",
+                "android.permission.CALL_PHONE"
             ]
         },
         web: {

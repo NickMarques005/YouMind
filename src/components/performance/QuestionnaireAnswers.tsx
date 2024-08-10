@@ -1,6 +1,6 @@
 import { screenWidth } from '@utils/layout/Screen_Size';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import Animated, { Easing, Extrapolation, SharedValue, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { Questionnaire, QuestionnaireTemplate, FormattedAnswer, Question, Answer } from 'types/app/patient/health/Question_Types';
@@ -14,7 +14,12 @@ interface QuestionnaireAnswersProps {
     setGestureActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const QuestionnaireAnswers: React.FC<QuestionnaireAnswersProps> = ({ questionnaire, template, type, setGestureActive }) => {
+const QuestionnaireAnswers: React.FC<QuestionnaireAnswersProps> = ({
+    questionnaire,
+    template,
+    type,
+    setGestureActive,
+}) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const questionTranslateX = useSharedValue(0);
     const questionOpacity = useSharedValue(1);
@@ -109,17 +114,29 @@ const QuestionnaireAnswers: React.FC<QuestionnaireAnswersProps> = ({ questionnai
 
                     <Text style={styles.questionTitle}>{question.title}</Text>
                     <View style={styles.answersContainer}>
-                        {question.sub_questions && question.sub_questions.length > 0 ? (
-                            question.sub_questions.map((subQuestion, subQuestionIndex) => (
-                                <View key={subQuestionIndex} style={styles.subQuestionContainer}>
-                                    <Text style={styles.subQuestionText}>{subQuestion}</Text>
-                                    {renderAnswers(question.answers, questionnaire.answers?.[currentQuestionIndex]?.subAnswers?.[subQuestionIndex])}
-                                </View>
-                            ))
-                        ) : (
-                            renderAnswers(question.answers, questionnaire.answers?.[currentQuestionIndex])
-                        )}
+                        {
+                            question.sub_questions && question.sub_questions.length > 0 ? (
+                                question.sub_questions.map((subQuestion, subQuestionIndex) => (
+                                    <View key={subQuestionIndex} style={styles.subQuestionContainer}>
+                                        <Text style={styles.subQuestionText}>{subQuestion}</Text>
+                                        {
+                                            questionnaire.answers?.[currentQuestionIndex]?.subAnswers?.[subQuestionIndex] && renderAnswers(question.answers, questionnaire.answers?.[currentQuestionIndex]?.subAnswers?.[subQuestionIndex])
+                                        }
+                                    </View>
+                                ))
+                            ) : (
+                                questionnaire.answers?.[currentQuestionIndex] && renderAnswers(question.answers, questionnaire.answers?.[currentQuestionIndex])
+                            )}
                     </View>
+                    {
+                        <View style={{ flex: 1, }}>
+                            <View style={{ height: '30%', width: '100%', borderWidth: 1.5, borderColor: '#502d5c' }}>
+                                <Text>
+                                    
+                                </Text>
+                            </View>
+                        </View>
+                    }
                 </View>
             </Animated.View>
         );
@@ -129,7 +146,9 @@ const QuestionnaireAnswers: React.FC<QuestionnaireAnswersProps> = ({ questionnai
         <GestureHandlerRootView style={styles.root}>
             <GestureDetector gesture={gestureHandler}>
                 <View style={styles.gestureContainer}>
-                    {template.questions.map((question, index) => renderQuestion(question, index))}
+                    {
+                        template.questions.map((question, index) => renderQuestion(question, index))
+                    }
                 </View>
             </GestureDetector>
         </GestureHandlerRootView>
@@ -197,4 +216,10 @@ const styles = StyleSheet.create({
         fontSize: 19,
         fontWeight: '500',
     },
+    metadataTextInput: {
+        flex: 1,
+        fontSize: 16,
+        color: 'white',
+        overflow: 'scroll',
+    }
 });

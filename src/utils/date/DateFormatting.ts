@@ -22,7 +22,13 @@ export const FormatISOToStringDate = (isoDate?: string) => {
 export const FormatStringToISODate = (strDate?: string) => {
     if (!strDate) return '';
     const [day, month, year] = strDate.split("/");
-    return `${year}-${month}-${day}`;
+    const date = DateTime.fromObject({
+        day: parseInt(day),
+        month: parseInt(month),
+        year: parseInt(year),
+    }, { zone: 'UTC-3' }); 
+    
+    return date.toISO() || undefined;
 }
 
 export const FormatRelativeDate = (date: DateTime) => {
@@ -135,7 +141,7 @@ export const formatAudioDuration = (milliseconds: number) => {
 
 export const formatMedicationDateString = (text: string) => {
     const cleanedText = text.replace(/[^0-9]/g, '').slice(0, 8);
-    
+
     let day = '';
     let month = '';
     let year = '';
@@ -189,7 +195,7 @@ export const formatStringToDate = (strDate: string): Date | null => {
     if (!day || !month || !year) {
         return null;
     }
-    return new Date(year, month - 1, day); 
+    return new Date(year, month - 1, day);
 };
 
 export const formatDateToJustADay = (date: Date): string => {

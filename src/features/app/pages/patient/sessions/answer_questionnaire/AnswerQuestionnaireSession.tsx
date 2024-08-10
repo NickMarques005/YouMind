@@ -1,7 +1,7 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { FormattedAnswer, QuestionnaireTemplate } from 'types/app/patient/health/Question_Types';
+import { FormattedAnswer, Question_Metadata, QuestionnaireTemplate } from 'types/app/patient/health/Question_Types';
 import { AppStackNavigation } from 'types/navigation/Navigation_Types';
 import { UseAppNavigation } from '@features/app/hooks/UseAppNavigation';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
@@ -19,7 +19,10 @@ import DefaultModal from '@components/modals/default/DefaultModal';
 import images from '@assets/images';
 import BackModal from './components/BackModal';
 import IntroductionModal from './components/IntroductionModal';
-import DefaultLoading from '@components/loading/DefaultLoading';
+import ProgressQuestions from './components/ProgressQuestions';
+import QuestionsContainer from './components/QuestionsContainer';
+import SendButton from './components/SendButtom';
+import QuestionsNavigation from './components/QuestionsNavigation';
 
 export interface AnswerQuestionnaireParams {
     template?: QuestionnaireTemplate;
@@ -38,26 +41,14 @@ const AnswerQuestionnaireSession = () => {
         return null;
     }
 
-    const { template, questionnaireId } = useAnswerQuestionnaire({ params: questionnaireParams });
-    const initialAnswers: FormattedAnswer[] = template.questions.map(question => {
-        const subAnswers = question.sub_questions
-            ? Array(question.sub_questions.length).fill({ answer: '', type: 'bom' })
-            : undefined;
-        return {
-            answer: '',
-            type: 'bom',
-            subAnswers: subAnswers
-        };
-    });
-
-
-    const [answers, setAnswers] = useState<FormattedAnswer[]>(initialAnswers);
+    const { template, questionnaireId, answers, setAnswers } = useAnswerQuestionnaire({ params: questionnaireParams });
+    
     const [questions, setQuestions] = useState(template.questions);
     const sendLoading = UseLoading();
 
     const { currentQuestionIndex, handleNextQuestion, handlePreviousQuestion, HandleSpecificQuestion, questionnaireAnimatedStyle } = useAnswerQuestionnaireAnimations({ questions });
     const { isEveryQuestionAnswered, isQuestionAnswered, isEverySubQuestionAnswered } = useAnswerVerification({ answers });
-    const { handleAnswerChange, handleSendAnswers } = useAnswerQuestionnaireHandling({
+    const { handleAnswerChange, handleSendAnswers, handleMetadataChange } = useAnswerQuestionnaireHandling({
         answers,
         setAnswers,
         currentQuestionIndex,
@@ -65,7 +56,10 @@ const AnswerQuestionnaireSession = () => {
         HandleResponseAppError,
         HandleResponseAppSuccess
     });
-    const { handleNavigateBackToApp, handleConfirmBackToAppModal, confirmBackToApp, introduction, handleIntroduction } = useAnswerQuestionnaireBehavior();
+    const {
+        handleNavigateBackToApp,
+        handleConfirmBackToAppModal,
+        confirmBackToApp, introduction, handleIntroduction } = useAnswerQuestionnaireBehavior();
     const backIcon = images.generic_images.back.arrow_back_white;
     const readyToSend = isEveryQuestionAnswered(questions.length);
 
@@ -78,135 +72,44 @@ const AnswerQuestionnaireSession = () => {
                 colors={['#6b2a6b', '#c2927a']}
                 start={{ x: 1, y: 0 }}
                 end={{ x: 0, y: 1 }} style={styles.gradient}>
-                <View style={{ height: screenHeight * 0.1, width: '100%', justifyContent: 'space-between', flexDirection: 'row', }}>
-                    <TouchableOpacity style={{ width: '10%', height: '50%' }} onPress={handleConfirmBackToAppModal}>
-                        <Image source={backIcon} style={{ height: '100%', width: '100%', resizeMode: 'contain' }} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{ width: '10%', height: '50%', alignItems: 'center', justifyContent: 'center' }} onPress={handleIntroduction}>
-                        <MaterialIcons
-                            name="help-outline"
-                            color="white"
-                            size={35}
-                            style={styles.icon} />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.progressView}>
-                    {questions.map((_, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={[
-                                styles.progressBar,
-                                currentQuestionIndex === index
-                                    ? styles.activeProgressBar :
-                                    answers[index].answer || isEverySubQuestionAnswered(index) ? styles.answeredProgressBar : {}
-                            ]}
-                            onPress={() => HandleSpecificQuestion(index)}
-                        />
-                    ))}
-                </View>
+                <ProgressQuestions
+                    questions={questions}
+                    currentQuestionIndex={currentQuestionIndex}
+                    answers={answers}
+                    backIcon={backIcon}
+                    handleConfirmBackToAppModal={handleConfirmBackToAppModal}
+                    handleIntroduction={handleIntroduction}
+                    HandleSpecificQuestion={HandleSpecificQuestion}
+                    isEverySubQuestionAnswered={isEverySubQuestionAnswered}
+                />
 
-                <Animated.View style={[styles.questionContainer, questionnaireAnimatedStyle]}>
-                    <View style={styles.headerQuestion}>
-                        <Text style={styles.headerText}>{`Questão ${currentQuestionIndex + 1}`}</Text>
-                    </View>
-                    <Text style={styles.questionTitle}>{questions[currentQuestionIndex].title || "Titulo"}</Text>
-                    <View style={styles.answersContainer}>
-                        {
-                            questions[currentQuestionIndex].sub_questions?.length !== 0 ?
-                                questions[currentQuestionIndex].sub_questions?.map((subQuestion, SubQuestionindex) => (
-                                    <View key={SubQuestionindex} style={styles.subQuestionContainer}>
-                                        <Text style={styles.subQuestionText}>{subQuestion}</Text>
-                                        <View style={{}}>
-                                            {
-                                                questions[currentQuestionIndex].answers.map((answerOption, index) => (
-                                                    <TouchableOpacity
-                                                        disabled={sendLoading.loading}
-                                                        key={index}
-                                                        onPress={() => answerOption.answer && answerOption.type && handleAnswerChange(undefined, undefined, { answer: answerOption.answer, type: answerOption.type }, SubQuestionindex)}
-                                                        style={[styles.answerButton, { backgroundColor: answerOption.answer === answers[currentQuestionIndex].answer ? "rgba(201, 163, 190, 0.5)" : "transparent" }]}
-                                                    >
-                                                        <MaterialIcons
-                                                            name={
+                <QuestionsContainer
+                    template={template}
+                    questions={questions}
+                    questionnaireAnimatedStyle={questionnaireAnimatedStyle}
+                    currentQuestionIndex={currentQuestionIndex}
+                    isEverySubQuestionAnswered={isEverySubQuestionAnswered}
+                    answers={answers}
+                    handleAnswerChange={handleAnswerChange}
+                    handleMetadataChange={handleMetadataChange}
+                    sendLoading={sendLoading}
+                />
 
-                                                                answers[currentQuestionIndex].subAnswers &&
-                                                                    answers[currentQuestionIndex].subAnswers[SubQuestionindex] &&
-                                                                    answerOption.answer === answers[currentQuestionIndex].subAnswers[SubQuestionindex].answer
-                                                                    ? 'radio-button-checked'
-                                                                    : 'radio-button-unchecked'}
-                                                            size={24}
-                                                            color="#75416b"
-                                                            style={{ marginRight: '3%' }}
-                                                        />
-                                                        <Text style={styles.answerText}>
-                                                            {answerOption.answer}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                ))
-                                            }
-                                        </View>
-                                    </View>
-                                ))
+                <QuestionsNavigation
+                    template={template}
+                    currentQuestionIndex={currentQuestionIndex}
+                    handleNextQuestion={handleNextQuestion}
+                    handlePreviousQuestion={handlePreviousQuestion}
+                />
 
-                                : (questions[currentQuestionIndex].answers.map((answerOption, index) => (
-                                    <TouchableOpacity
-                                        key={index}
-                                        disabled={sendLoading.loading}
-                                        onPress={() => answerOption.answer && answerOption.type && handleAnswerChange(answerOption.answer, answerOption.type)}
-                                        style={[styles.answerButton, { backgroundColor: answerOption.answer === answers[currentQuestionIndex].answer ? "rgba(201, 163, 190, 0.5)" : "transparent" }]}
-                                    >
-                                        <MaterialIcons
-                                            name={answerOption.answer === answers[currentQuestionIndex].answer ? 'radio-button-checked' : 'radio-button-unchecked'}
-                                            size={24}
-                                            color="#75416b"
-                                            style={{ marginRight: '3%' }}
-                                        />
-                                        <Text style={styles.answerText}>
-                                            {answerOption.answer}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))
-                                )}
-                    </View>
-                </Animated.View>
-                <View style={styles.navigationContainer}>
-                    {currentQuestionIndex > 0 && (
-                        <TouchableOpacity style={styles.previousButton} onPress={handlePreviousQuestion}>
-                            <LinearGradient
-                                colors={['#78445b', 'transparent']}
-                                start={{ x: 0.4, y: 0 }}
-                                end={{ x: 0, y: 0 }} style={styles.gradientButton} >
-                                <MaterialIcons name="arrow-back" size={24} color="white" />
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    )}
-                    {
-                        currentQuestionIndex < template.questions.length - 1 && (
-                            <TouchableOpacity style={styles.nextButton} onPress={handleNextQuestion}>
-                                <LinearGradient
-                                    colors={currentQuestionIndex === 0 ? ['#873a6c', 'transparent'] : ['transparent', '#873a6c']}
-                                    start={{ x: currentQuestionIndex === 0 ? 0.4 : 1, y: 0 }}
-                                    end={{ x: currentQuestionIndex === 0 ? 0 : 0.4, y: 0 }} style={styles.gradientButton}>
-                                    <MaterialIcons name="arrow-forward" size={24} color="white" />
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        )
-                    }
-                </View>
-                <View style={styles.sendView}>
-                    <TouchableOpacity onPress={() => handleSendAnswers(answers, questionnaireId, handleNavigateBackToApp)} disabled={!readyToSend || sendLoading.loading} style={[styles.sendButton, { opacity: !readyToSend || sendLoading.loading ? 0.5 : 1 }]}>
-                        <LinearGradient
-                            colors={['#8f3ea3', '#523a50']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0, y: 1 }} style={styles.gradientButton}>
-                            {
-                                sendLoading.loading ? 
-                                <DefaultLoading size={30} color={'white'}/>
-                                :
-                                <Text style={styles.sendText}>Enviar</Text>
-                            }
-                        </LinearGradient>
-                    </TouchableOpacity>
-                </View>
+                <SendButton
+                    questionnaireId={questionnaireId}
+                    answers={answers}
+                    sendLoading={sendLoading}
+                    handleNavigateBackToApp={handleNavigateBackToApp}
+                    handleSendAnswers={handleSendAnswers}
+                    readyToSend={readyToSend}
+                />
             </LinearGradient>
             {
                 confirmBackToApp &&

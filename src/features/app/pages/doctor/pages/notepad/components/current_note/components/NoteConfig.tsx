@@ -12,52 +12,49 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import images from '@assets/images';
-import { NoteTemplate, UpdateCurrentNote } from 'types/app/doctor/notepad/Notepad_Types';
-import { UseLoading } from '@hooks/loading/UseLoading';
+import { NoteTemplate, UpdateNote } from 'types/app/doctor/notepad/Notepad_Types';
 import DefaultLoading from '@components/loading/DefaultLoading';
-import { UseCurrentNoteHandling } from '../hooks/UseCurrentNoteHandling';
-import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import { UseForm } from '@features/app/providers/sub/UserProvider';
-import NoteVerification from './NoteVerification';
-
-
-interface NewCurrentNote {
-    title: string;
-    description: string;
-    content?: string[];
-}
+import NoteVerification, { NoteBehavior } from './NoteVerification';
+import { LoadingStructure } from 'types/loading/Loading_Types';
+import { Verification } from 'types/verification/Verification_Types';
 
 interface NoteConfigProps {
     visible: boolean;
-    onClose: (typeConfig: 'delete' | 'update' | undefined) => void;
+    deleteLoading: LoadingStructure;
+    updateLoading: LoadingStructure;
+    onClose: () => void;
     currentNote: NoteTemplate;
-    handleUpdateCurrentNote: ({ updatedTitle, updatedDescription, updatedContent }: UpdateCurrentNote) => void;
-    newContent: string[];
+    handleDeleteNote: (noteId: string, onSuccess?: () => void) => Promise<void>;
+    handleUpdateNote: (noteId: string, updated_note: UpdateNote, onSuccess?: () => void) => Promise<void>;
+    noteVerification: Verification | undefined;
+    noteBehavior: NoteBehavior | undefined;
+    handleNoteVerification: (handleAccept: () => void, message?: string, acceptText?: string, declineText?: string, behavior?: NoteBehavior) => void;
+    clearNoteVerification: () => void;
+    setNewNote: React.Dispatch<React.SetStateAction<NoteTemplate>>;
+    newNote: NoteTemplate;
+    updatedNoteVerification: () => boolean;
 }
 
 const NoteConfig: React.FC<NoteConfigProps> = ({
-    newContent,
+    deleteLoading,
+    updateLoading,
     visible,
     onClose,
     currentNote,
-    handleUpdateCurrentNote }) => {
+    handleDeleteNote,
+    handleUpdateNote,
+    noteVerification,
+    noteBehavior,
+    handleNoteVerification,
+    clearNoteVerification,
+    setNewNote,
+    newNote,
+    updatedNoteVerification
+}) => {
     const { userData } = UseForm();
-    const updateLoading = UseLoading();
-    const deleteLoading = UseLoading();
-    const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
-    const { handleDeleteNote, handleUpdateNote, 
-        noteVerification, handleNoteVerification, 
-        clearNoteVerification, noteBehavior } = UseCurrentNoteHandling({ 
-            updateSetLoading: updateLoading.setLoading, deleteSetLoading: deleteLoading.setLoading, 
-            HandleResponseAppError, HandleResponseAppSuccess, handleUpdateCurrentNote });
     const translateY = useSharedValue(400);
     const opacity = useSharedValue(0);
-    const [NewCurrentNote, setNewCurrentNote] = useState<NewCurrentNote>({
-        title: currentNote.title,
-        description: currentNote.description,
-        content: newContent
-    });
-    const [typeRequestResponse, setTypeRequestResponse] = useState<'delete' | 'update'>();
     const isAnimating = useSharedValue(false);
 
     useEffect(() => {
@@ -81,11 +78,6 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
         };
     });
 
-    const finishAddingNote = () => {
-        setNewCurrentNote({ title: '', description: '', content: [] });
-        handleCloseAddNote();
-    };
-
     const handleCloseAddNote = () => {
         if (!isAnimating.value) {
             isAnimating.value = true;
@@ -94,7 +86,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
                     opacity.value = withTiming(0, { duration: 700, easing: Easing.ease }, (isFinished) => {
                         if (isFinished) {
                             isAnimating.value = false;
-                            runOnJS(onClose)(typeRequestResponse);
+                            runOnJS(onClose)();
                         }
                     });
                 }
@@ -129,29 +121,29 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
                                             editable={!deleteLoading.loading && !updateLoading.loading}
                                             style={[styleAddNote.input, { opacity: deleteLoading.loading || updateLoading.loading ? 0.5 : 1 }]}
                                             placeholder="Título"
-                                            value={NewCurrentNote.title}
-                                            onChangeText={(e) => setNewCurrentNote({ ...NewCurrentNote, title: e })}
+                                            value={newNote.title}
+                                            onChangeText={(e) => setNewNote({ ...newNote, title: e })}
                                             placeholderTextColor={'#ddeded'}
                                         />
                                         <TextInput
                                             editable={!deleteLoading.loading && !updateLoading.loading}
                                             style={[styleAddNote.input, { opacity: deleteLoading.loading || updateLoading.loading ? 0.5 : 1 }]}
                                             placeholder="Descrição"
-                                            value={NewCurrentNote.description}
-                                            onChangeText={(e) => setNewCurrentNote({ ...NewCurrentNote, description: e })}
+                                            value={newNote.description}
+                                            onChangeText={(e) => setNewNote({ ...newNote, description: e })}
                                             placeholderTextColor={'#577980'}
                                         />
                                     </View>
                                     <View style={{ width: '100%', alignItems: 'center', marginBottom: 15, }}>
-                                        <Text style={{ fontSize: 18, color: '#dff0f0' }}>{`Possui o total de ${newContent.length} páginas`}</Text>
+                                        <Text style={{ fontSize: 18, color: '#dff0f0' }}>{`Possui o total de ${newNote.content.length} páginas`}</Text>
                                     </View>
                                 </LinearGradient>
 
                                 <View style={styleAddNote.eventView}>
                                     <TouchableOpacity
-                                        disabled={deleteLoading.loading || updateLoading.loading}
-                                        onPress={() => handleNoteVerification(() => handleUpdateNote(currentNote._id, NewCurrentNote), 'Gostaria de salvar esta anotação?', 'Salvar', 'update')}
-                                        style={[styleAddNote.eventButton, { backgroundColor: '#356d75', opacity: deleteLoading.loading || updateLoading.loading ? 0.5 : 1 }]}
+                                        disabled={deleteLoading.loading || updateLoading.loading || !updatedNoteVerification()}
+                                        onPress={() => updatedNoteVerification() && handleNoteVerification(() => handleUpdateNote(currentNote._id, newNote), 'Gostaria de salvar esta anotação?', 'Salvar', undefined, 'update')}
+                                        style={[styleAddNote.eventButton, { backgroundColor: '#356d75', opacity: deleteLoading.loading || updateLoading.loading || !updatedNoteVerification() ? 0.5 : 1 }]}
                                     >
                                         {
                                             updateLoading.loading ?
@@ -163,7 +155,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
 
                                     <TouchableOpacity
                                         disabled={deleteLoading.loading || updateLoading.loading}
-                                        onPress={() => handleNoteVerification(() => handleDeleteNote(currentNote._id, handleCloseAddNote), 'Deseja realmente deletar esta anotação?', 'Deletar', 'delete')}
+                                        onPress={() => handleNoteVerification(() => handleDeleteNote(currentNote._id, handleCloseAddNote), 'Deseja realmente deletar esta anotação?', 'Deletar', undefined, 'delete')}
                                         style={[styleAddNote.eventButton, { backgroundColor: '#2f5a66', opacity: deleteLoading.loading || updateLoading.loading ? 0.5 : 1 }]}
                                     >
                                         {
@@ -185,7 +177,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
                     userData={userData}
                     verificationMessage={noteVerification.message || "Deseja confirmar essa ação?"}
                     handleVerificationAccept={noteVerification.handleAccept}
-                    acceptText={noteVerification.acceptMessage}
+                    acceptText={noteVerification.acceptText}
                     handleCloseVerification={clearNoteVerification}
                     behavior={noteBehavior}
                 />

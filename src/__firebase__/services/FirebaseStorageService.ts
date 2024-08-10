@@ -2,7 +2,6 @@ import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebas
 import { FIREBASE_STORAGE } from '../FirebaseConfig';
 import { Platform } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
-import { Response } from 'types/service/Request_Types';
 
 const uploadAudio = async (filePath: string): Promise<string> => {
     try {

@@ -1,18 +1,26 @@
 
 export type AnswerType = "precisa_melhorar" | "ruim"| "bom" | "ótimo" | "excelente";
-
 export interface Answer {
     answer?: string;
     type?: AnswerType;
+    hasMetadata?: boolean;
 }
 
 export interface FormattedAnswer {
+    questionId: string;
     answer?: string;
     type?: AnswerType;
     subAnswers?: Answer[];
+    metadata?: string;
+}
+
+export interface Question_Metadata {
+    questionId: string;
+    metadata: string;
 }
 
 export interface Question {
+    _id: string;
     title: string;
     answers: Answer[];
     sub_questions?: string[];

@@ -19,14 +19,7 @@ export const calculatePerformanceMessage = (performance: number) => {
 export const calculateProductivityLevel = (history: PatientHistory) => {
     if (!history) return 'Não definido';
 
-    const questionnaireAnswered = history.questionnaireHistory.answered;
-    const questionnaireTotal = history.questionnaireHistory.total;
-    const medicationTaken = history.medicationHistory.taken;
-    const medicationTotal = history.medicationHistory.total;
-
-    const questionnaireProductivity = (questionnaireAnswered / questionnaireTotal) * 100;
-    const medicationProductivity = (medicationTaken / medicationTotal) * 100;
-    const overallProductivity = (questionnaireProductivity + medicationProductivity) / 2;
+    const overallProductivity = getProductivityLevel(history);
 
     if (overallProductivity < 50) {
         return 'Abaixo da média';
@@ -36,3 +29,16 @@ export const calculateProductivityLevel = (history: PatientHistory) => {
         return 'Acima da média';
     }
 };
+
+export const getProductivityLevel = (history: PatientHistory) => {
+    const questionnaireAnswered = history.questionnaireHistory.answered;
+    const questionnaireTotal = history.questionnaireHistory.total;
+    const medicationTaken = history.medicationHistory.taken;
+    const medicationTotal = history.medicationHistory.total;
+
+    const questionnaireProductivity = (questionnaireAnswered / questionnaireTotal) * 100;
+    const medicationProductivity = (medicationTaken / medicationTotal) * 100;
+    const overallProductivity = (questionnaireProductivity + medicationProductivity) / 2;
+
+    return overallProductivity;
+}

@@ -3,6 +3,7 @@ import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomButton from '@components/button/CustomButton';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import DefaultLoading from '@components/loading/DefaultLoading';
 
 interface VerificationModalProps {
     message: string;
@@ -10,11 +11,18 @@ interface VerificationModalProps {
     titleCancel: string;
     titleConfirm: string;
     handleConfirm: () => void;
+    handleDecline?: () => void;
     icon?: string;
     userType?: string;
+    loading?: boolean;
+    notClose?: boolean;
 }
 
-const VerificationModalContent = ({ message, closeModal, titleCancel, titleConfirm, handleConfirm, icon, userType }: VerificationModalProps) => {
+const VerificationModalContent = ({
+    message, closeModal,
+    titleCancel, titleConfirm,
+    handleConfirm, handleDecline,
+    icon, userType, loading, notClose }: VerificationModalProps) => {
     const styles = verificationStyles(userType);
     const gradientCancel = buttonCancelGradient(userType);
     const gradientDefault = buttonDefaultGradient(userType);
@@ -37,7 +45,15 @@ const VerificationModalContent = ({ message, closeModal, titleCancel, titleConfi
                     style={styles.buttonGradient}>
                     <CustomButton
                         title={titleCancel}
-                        onPress={closeModal}
+                        onPress={() => {
+                            if (handleDecline) {
+                                handleDecline();
+                            }
+                            else {
+                                closeModal();
+                            }
+                        }}
+                        disabled={loading}
                         buttonStyle={styles.button}
                         textStyle={styles.buttonText}
                     />
@@ -47,15 +63,20 @@ const VerificationModalContent = ({ message, closeModal, titleCancel, titleConfi
                     colors={gradientDefault.colors}
                     start={gradientDefault.start}
                     end={gradientDefault.end}
-                    style={styles.buttonGradient}>
+                    style={[styles.buttonGradient, { opacity: loading ? 0.5 : 1 }]}>
                     <CustomButton
                         title={titleConfirm}
                         onPress={() => {
                             handleConfirm();
-                            closeModal();
+                            if (!notClose) {
+                                closeModal();
+                            }
+
                         }}
+                        disabled={loading}
                         buttonStyle={styles.button}
                         textStyle={styles.buttonText}
+                        loading={loading ? <DefaultLoading size={24} color={'white'} /> : undefined}
                     />
                 </LinearGradient>
             </View>

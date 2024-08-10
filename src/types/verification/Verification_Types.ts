@@ -1,5 +1,6 @@
 export interface Verification {
     handleAccept: () => void;
     message?: string; 
-    acceptMessage?: string;
+    acceptText?: string;
+    declineText?: string;
 }

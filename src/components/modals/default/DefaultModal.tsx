@@ -7,7 +7,7 @@ import { default_modal_styles } from './styles/DefaultModal';
 import { UserType } from 'types/user/User_Types';
 
 interface DefaultModalProps {
-    disableGestures: boolean;
+    disableGestures?: boolean;
     isVisible: boolean;
     onClose: () => void;
     children: React.ReactNode;
