@@ -240,7 +240,7 @@ const styleAddNote = StyleSheet.create({
     eventButton: {
         width: '100%',
         borderRadius: 10,
-        paddingVertical: 30,
+        justifyContent: 'center',
         alignItems: 'center',
         height: screenHeight * 0.1
     },

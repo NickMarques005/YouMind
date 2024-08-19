@@ -1,41 +1,39 @@
+import { UseMedicationService } from '@hooks/api/UseMedicationService';
 import { useEffect, useState } from 'react';
-import { Medication } from 'types/app/patient/health/Medicine_Types';
+import { Medication, MedicationToConsume } from 'types/app/patient/health/Medicine_Types';
 
 interface UseHandlingMedicationsToConsumeProps{
     medications: Medication[];
     selectedDate: Date;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const useHandlingMedicationsToConsume = ({medications, selectedDate}: UseHandlingMedicationsToConsumeProps) => {
-    const [medicationsToConsume, setMedicationsToConsume] = useState<Medication[] | undefined>([]);
+const useHandlingMedicationsToConsume = ({medications, selectedDate, setLoading}: UseHandlingMedicationsToConsumeProps) => {
+    const [medicationsToConsume, setMedicationsToConsume] = useState<MedicationToConsume[] | undefined>([]);
+    const { performGetMedicationsToConsumeOnDate } = UseMedicationService(setLoading);
+
+    const fetchTakenMedications = async (selectedDate: Date) => {
+        const response = await performGetMedicationsToConsumeOnDate(selectedDate.toISOString());
+        if(response.success)
+        {
+            if(response.data)
+            {   
+                let medications = undefined;
+                if(response.data.length !== 0) {
+                    medications = response.data;
+                }
+                
+                setMedicationsToConsume(medications);
+            }
+            else{
+                setMedicationsToConsume(undefined);
+            }
+        }
+    };
+
 
     useEffect(() => {
-        const filterMedications = () => {
-            console.log("Filter Medications");
-            const filteredMedications = medications.filter(medication => {
-                const startDate = new Date(medication.start);
-                const expiresAt = new Date(medication.expiresAt);
-                const frequency = medication.frequency;
-
-                if (selectedDate >= startDate && selectedDate <= expiresAt) {
-                    const differenceInMilliseconds = selectedDate.getTime() - startDate.getTime();
-                    const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 3600 * 24));
-
-                    return differenceInDays % frequency === 0;
-                }
-
-                return false;
-            });
-
-            if (filteredMedications.length === 0) {
-                setMedicationsToConsume(undefined);
-                return;
-            }
-
-            setMedicationsToConsume(filteredMedications);
-        };
-
-        filterMedications();
+        fetchTakenMedications(selectedDate);
     }, [selectedDate, medications]);
 
     return { medicationsToConsume };

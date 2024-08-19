@@ -1,16 +1,14 @@
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
 import React, { useState } from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { FormattedAnswer, Question_Metadata, QuestionnaireTemplate } from 'types/app/patient/health/Question_Types';
+import { QuestionnaireTemplate } from 'types/app/patient/health/Question_Types';
 import { AppStackNavigation } from 'types/navigation/Navigation_Types';
 import { UseAppNavigation } from '@features/app/hooks/UseAppNavigation';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
-import Animated from 'react-native-reanimated';
 import { useAnswerQuestionnaire } from './hooks/UseAnswerQuestionnaire';
 import LinearGradient from 'react-native-linear-gradient';
 import { screenHeight } from '@utils/layout/Screen_Size';
 import { UseLoading } from '@hooks/loading/UseLoading';
-import { MaterialIcons } from '@expo/vector-icons';
 import { useAnswerQuestionnaireAnimations } from './hooks/UseAnswerQuestionnaireAnimations';
 import { useAnswerVerification } from './hooks/UseAnswerVerifications';
 import { useAnswerQuestionnaireHandling } from './hooks/UseAnswerHandling';
@@ -21,7 +19,7 @@ import BackModal from './components/BackModal';
 import IntroductionModal from './components/IntroductionModal';
 import ProgressQuestions from './components/ProgressQuestions';
 import QuestionsContainer from './components/QuestionsContainer';
-import SendButton from './components/SendButtom';
+import SendButton from './components/SendButton';
 import QuestionsNavigation from './components/QuestionsNavigation';
 
 export interface AnswerQuestionnaireParams {

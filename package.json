@@ -33,6 +33,7 @@
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-ble-manager": "^10.1.5",
+    "react-native-calendars": "^1.1306.0",
     "react-native-circular-progress": "^1.4.0",
     "react-native-device-info": "^10.13.2",
     "react-native-dotenv": "^3.4.11",

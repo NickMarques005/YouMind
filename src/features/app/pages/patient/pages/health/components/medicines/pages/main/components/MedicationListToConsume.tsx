@@ -1,25 +1,20 @@
 import { StyleSheet } from 'react-native';
 import React from 'react';
-import { Medication, TakenMedication } from 'types/app/patient/health/Medicine_Types'
 import { FlatList } from 'react-native';
 import MedicationToConsume from './MedicationToConsume';
+import { HistoryMedication } from 'types/history/PatientHistory_Types';
 
 interface MedicationListToConsumeProps {
-    medications: Medication[];
+    currentDateMedications: HistoryMedication[];
     selectedDate: Date;
-    takenMedications: TakenMedication[] | undefined;
 }
 
-const MedicationListToConsume: React.FC<MedicationListToConsumeProps> = ({ medications, takenMedications }) => {
-    const sortedMedications = medications
-        .map(medication => medication.schedules.map(schedule => ({ ...medication, schedule })))
-        .flat()
-        .sort((a, b) => a.schedule.localeCompare(b.schedule));
+const MedicationListToConsume: React.FC<MedicationListToConsumeProps> = ({ currentDateMedications }) => {
 
     return (
         <FlatList
-            data={sortedMedications}
-            renderItem={({ item }) => <MedicationToConsume item={item} takenMedications={takenMedications} />}
+            data={currentDateMedications}
+            renderItem={({ item }) => <MedicationToConsume item={item} />}
             keyExtractor={(item, index) => `${item._id}-${index}`}
             contentContainerStyle={styles.medicationList}
         />
@@ -32,6 +27,6 @@ const styles = StyleSheet.create({
     medicationList: {
         paddingVertical: '10%',
         paddingHorizontal: '5%',
-        gap: 35
+        gap: 30
     },
 });

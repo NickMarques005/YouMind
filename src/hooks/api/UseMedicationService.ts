@@ -64,9 +64,9 @@ export const UseMedicationService = (setLoading: SetLoading) => {
         });
     };
 
-    const performGetMedicationsTakenOnDate = async (selectedDate: string) => {
+    const performGetMedicationsToConsumeOnDate = async (selectedDate: string) => {
         return HandleRequest({
-            serviceFunction: MedicationService.getMedicationsTakenOnDate,
+            serviceFunction: MedicationService.getMedicationsToConsumeOnDate,
             setLoading,
             params: [selectedDate]
         });
@@ -80,6 +80,6 @@ export const UseMedicationService = (setLoading: SetLoading) => {
         performDeleteManyMedications,
         performGetMedicationPending,
         performConfirmMedicationAlert,
-        performGetMedicationsTakenOnDate
+        performGetMedicationsToConsumeOnDate
     };
 };

@@ -1,3 +1,5 @@
+import { HistoryMedication } from "types/history/PatientHistory_Types";
+
 export type MedicationType = "Comprimido" | "Cápsula" | "Líquido" | '';
 
 export interface Medication {
@@ -22,20 +24,17 @@ export interface MedicationPending {
     medicationHistoryId: string;
 }
 
-export interface TakenMedication {
-    currentSchedule: string;
-    medicationId: string;
-}
+export type MedicationToConsume = HistoryMedication;
 
-export type MedicationFrequency = 'Dias' | 'Semanas' | 'Meses';
-export type MedicationDuration = string;
+export type MedicationFrequencyType = 'Dias' | 'Semanas' | 'Meses';
+export type MedicationDurationType = 'Hoje' | 'Dias' | 'Semanas' | 'Meses';
 
 export interface MedicationFormType {
     name: string;
     type: MedicationType;
     dosage: string;
-    expiresAt: string;
-    frequency: number;
+    expiresAt?: string;
+    frequency: string;
     schedules: string[];
     start: string;
     alarmDuration: number;

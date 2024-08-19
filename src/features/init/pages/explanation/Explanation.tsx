@@ -14,37 +14,40 @@ const Explanation = () => {
     const { HandleInitStatus } = UseInit();
 
     return (
-        <ScrollView style={{flex: 1}}>
-            <View style={explanation_style.mainContainer}>
-                <Header />
-                <ExplanationContent />
-                <NextButton showModal={ShowDisableInitModal} />
-                {
-                    showDisableInitModal &&
-                    <EnableInitModal
-                        isVisible={showDisableInitModal}
-                        onClose={HideDisableInitModal}
-                        message="Deseja desabilitar a mensagem de boas-vindas ao aplicativo YouMind?"
-                        buttonTextLeft="Sim"
-                        ButtonActionLeft={() => HandleInitStatus(true)}
-                        buttonTextRight="Não"
-                        ButtonActionRight={() => HandleInitStatus()}
-                        iconSize={60}
-                        iconName="help-circle-outline"
-                    />
-                }
-            </View>
-        </ScrollView>
+        <View style={explanation_style.mainContainer}>
+
+            <Header />
+            <ScrollView style={{ flex: 1 }}>
+                <View style={{ paddingTop: '25%' }}>
+                    <ExplanationContent />
+                    <NextButton showModal={ShowDisableInitModal} />
+                </View>
+
+            </ScrollView>
+            {
+                showDisableInitModal &&
+                <EnableInitModal
+                    isVisible={showDisableInitModal}
+                    onClose={HideDisableInitModal}
+                    message="Deseja desabilitar a mensagem de boas-vindas ao aplicativo YouMind?"
+                    buttonTextLeft="Sim"
+                    ButtonActionLeft={() => HandleInitStatus(true)}
+                    buttonTextRight="Não"
+                    ButtonActionRight={() => HandleInitStatus()}
+                    iconSize={60}
+                    iconName="help-circle-outline"
+                />
+            }
+
+        </View >
+
     );
 };
 
 const explanation_style = StyleSheet.create({
     mainContainer: {
-        minHeight: screenHeight,
-        alignItems: 'center',
-        paddingTop: '26%',
-        paddingBottom: '13%',
-        justifyContent: 'space-between',
+        height: screenHeight,
+        flex: 1
     }
 });
 

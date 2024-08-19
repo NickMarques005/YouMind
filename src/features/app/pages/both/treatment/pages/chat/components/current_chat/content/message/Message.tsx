@@ -2,12 +2,11 @@ import { View, Text, Image } from 'react-native'
 import React, { memo } from 'react'
 import images from '@assets/images';
 import LinearGradient from 'react-native-linear-gradient';
-import { responsiveSize, screenHeight, screenWidth } from '@utils/layout/Screen_Size';
+import { responsiveSize, screenWidth } from '@utils/layout/Screen_Size';
 import { ConvertFromISOToTimeHours } from '@utils/date/DateConversions';
 import { MessageTemplate } from 'types/chat/Chat_Types';
-import AudioPlayer from './AudioPlayer';
+import AudioPlayer from '../audio/AudioPlayer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { UserData } from 'types/user/User_Types';
 
 type MessageProps = {
     avatar?: string;

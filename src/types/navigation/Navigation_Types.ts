@@ -48,6 +48,7 @@ export type TreatmentStackNavigation = {
     main_treatment: NavigationWithParams;
     chat_treatment: NavigationWithParams;
     selected_treatment: NavigationWithParams;
+    status: NavigationWithParams;
 }
 
 export type NotepadStackNavigation = {

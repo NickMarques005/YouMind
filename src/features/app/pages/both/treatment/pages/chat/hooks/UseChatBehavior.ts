@@ -11,6 +11,11 @@ interface UseChatHandlingProps {
 export const UseChatBehavior = ({ currentChat, redirectChat }: UseChatHandlingProps) => {
 
     const [chat, setChat] = useState<ChatUser | undefined>(undefined);
+    const [chatMenu, setChatMenu] = useState<boolean>(false);
+
+    const handleChatMenu = () => {
+        setChatMenu(prev => !prev);
+    }
 
     useEffect(() => {
         console.log("SETAR CHAT BEHAVIOR");
@@ -27,5 +32,5 @@ export const UseChatBehavior = ({ currentChat, redirectChat }: UseChatHandlingPr
         }
     }, [currentChat, redirectChat]);
 
-    return { chat }
+    return { chat, chatMenu, handleChatMenu }
 }

@@ -6,8 +6,11 @@ export const explanation_nextbutton_style = () => {
     return StyleSheet.create({
         containerbuttonNext: {
             width: screenWidth * 0.8,
-            flex: 1,
+            height: screenHeight * 0.1,
             borderRadius: 15,
+            elevation: 5,
+            alignSelf: 'center',
+            marginVertical: '10%'
         },
         buttonNext: {
             width: '100%',

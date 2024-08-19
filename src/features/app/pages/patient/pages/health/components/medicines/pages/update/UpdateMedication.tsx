@@ -1,5 +1,5 @@
-import { Image, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect } from 'react'
+import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React from 'react'
 import { useMedicationForm } from '../../hooks/useMedicationForm'
 import { useMedicationFormBehavior } from '../../hooks/useMedicationFormBehavior';
 import { useScheduleHandling } from '../schedule/hooks/UseScheduleHandling';
@@ -14,8 +14,10 @@ import { UseCurrentMedication } from './hooks/useCurrentMedication';
 import images from '@assets/images';
 import { screenHeight } from '@utils/layout/Screen_Size';
 import LinearGradient from 'react-native-linear-gradient';
-import { FormatISOToStringDate, formatDateToString, formatMedicationDateString } from '@utils/date/DateFormatting';
-import { calculateDaysBetweenDates } from '@utils/date/DateConversions';
+import { formatDateToISO, validateAndFormatISODate } from '@utils/date/DateFormatting';
+import { UseForm } from '@features/app/providers/sub/UserProvider';
+import { UserType } from 'types/user/User_Types';
+import { formatExpiresAt } from '@utils/health/HandlingMedication';
 
 interface UpdateMedicationParams {
     currentMedication: Medication;
@@ -30,15 +32,14 @@ const UpdateMedication = () => {
         navigateToMedicationScreen('schedule_medication');
         return;
     }
+    const { userData } = UseForm();
     const { currentMedication } = UseCurrentMedication({ params: currentMedicationParams });
     const updateLoading = UseLoading();
     const fetchLoading = UseLoading();
     const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
     const { activeModal, clearActiveModal, showFormModal,
-        suggestions, setSuggestions, formatFrequency,
-        formatExpiresAt, frequencyType, handleFrequency, currentSchedule, currentScheduleIndex,
-        setCurrentSchedule, setCurrentScheduleIndex, startDateText, handleStartDateSelect,
-        durationType, handleDuration, } = useMedicationFormBehavior({ currentMedication });
+        suggestions, setSuggestions, frequencyType, handleFrequency, currentSchedule, currentScheduleIndex,
+        setCurrentSchedule, setCurrentScheduleIndex, durationType, handleDurationType, duration, handleDurationChange, showCalendar, handleShowCalendar } = useMedicationFormBehavior({ currentMedication });
 
     const { fetchMedications, handleUpdateMedication } = useScheduleHandling({
         setLoading: updateLoading.setLoading,
@@ -46,24 +47,30 @@ const UpdateMedication = () => {
         HandleResponseAppError,
         HandleResponseAppSuccess,
         formatExpiresAt,
-        formatFrequency,
         frequencyType,
-        durationType
+        durationType,
+        duration
     });
 
     const initialState: MedicationFormType = {
         name: currentMedication ? currentMedication.name : '',
         dosage: currentMedication ? currentMedication.dosage : '',
-        expiresAt: currentMedication ? calculateDaysBetweenDates(currentMedication.start, currentMedication.expiresAt).toString() : '',
-        frequency: currentMedication ? currentMedication.frequency : 0,
+        expiresAt: undefined,
+        frequency: currentMedication ? currentMedication.frequency.toString() : '1',
         type: currentMedication ? currentMedication.type : '',
         schedules: currentMedication ? currentMedication.schedules : [],
-        start: currentMedication ? FormatISOToStringDate(currentMedication.start) : formatDateToString(new Date()),
+        start: currentMedication ? (currentMedication.start.split('T')[0]) : validateAndFormatISODate(formatDateToISO(new Date())) ,
         alarmDuration: currentMedication ? currentMedication.alarmDuration : 120,
         reminderTimes: currentMedication ? currentMedication.reminderTimes : 1
     };
 
-    const { form, handleInputChange, dosageUnits, setForm, addScheduleToForm, deleteScheduleForm, updateScheduleForm, handleAlarmDurationForm, handleReminderTimesForm, handleStartDate, handleExpiresAtForm, handleSuggestionSelection } = useMedicationForm({ initialState, fetchMedications });
+    const { form, handleInputChange, dosageUnits, setForm, 
+        addScheduleToForm, deleteScheduleForm, updateScheduleForm, 
+        handleAlarmDurationForm, handleReminderTimesForm, 
+        handleSuggestionSelection, hasSchedulePeriodCompleted, scheduleMarkedDates,
+        scheduleMarkingType } = useMedicationForm({ 
+            initialState, fetchMedications, frequencyType, 
+            duration, durationType, formatExpiresAt, handleDurationChange });
     const backIcon = images.generic_images.back.arrow_back_white;
 
     return (
@@ -87,36 +94,39 @@ const UpdateMedication = () => {
                 <View style={styles.form}>
                     <MedicationForm
                         form={form}
-                        handleInputChange={handleInputChange}
                         activeModal={activeModal}
-                        showFormModal={showFormModal}
                         suggestions={suggestions}
-                        setSuggestions={setSuggestions}
-                        handleFrequencyType={handleFrequency}
                         frequencyType={frequencyType}
-                        updateMedication={handleUpdateMedication}
+                        durationType={durationType}
+                        duration={duration}
+                        currentMedication={currentMedication}
+                        currentSchedule={currentSchedule}
+                        userType={userData?.type as UserType}
+                        showCalendar={showCalendar}
                         buttonText="Atualizar"
                         loading={updateLoading.loading}
                         dosageUnits={dosageUnits}
-                        onSuccess={() => navigateToMedicationScreen('schedule_medication')}
+                        currentScheduleIndex={currentScheduleIndex}
+                        hasSchedulePeriodCompleted={hasSchedulePeriodCompleted}
+                        scheduleMarkedDates={scheduleMarkedDates}
+                        scheduleMarkingType={scheduleMarkingType}
+                        setSuggestions={setSuggestions}
+                        handleFrequencyType={handleFrequency}
+                        updateMedication={handleUpdateMedication}
                         clearActiveModal={clearActiveModal}
                         addScheduleToForm={addScheduleToForm}
-                        currentScheduleIndex={currentScheduleIndex}
+                        handleInputChange={handleInputChange}
                         setCurrentScheduleIndex={setCurrentScheduleIndex}
                         updateScheduleForm={updateScheduleForm}
                         deleteScheduleForm={deleteScheduleForm}
                         handleReminderTimesForm={handleReminderTimesForm}
                         handleAlarmDurationForm={handleAlarmDurationForm}
-                        handleStartDate={handleStartDate}
-                        startDateText={startDateText}
-                        handleStartDateSelect={handleStartDateSelect}
-                        durationType={durationType}
-                        handleExpiresAtForm={handleExpiresAtForm}
-                        handleDuration={handleDuration}
-                        currentMedication={currentMedication}
-                        currentSchedule={currentSchedule}
+                        handleDurationType={handleDurationType}
+                        handleDurationChange={handleDurationChange}
                         setCurrentSchedule={setCurrentSchedule}
                         handleSuggestionSelection={handleSuggestionSelection}
+                        handleShowCalendar={handleShowCalendar}
+                        showFormModal={showFormModal}
                     />
                 </View>
             </ScrollView>

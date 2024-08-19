@@ -10,7 +10,6 @@ import images from '@assets/images';
 import { UseForm } from '@features/app/providers/sub/UserProvider';
 import { UserType } from 'types/user/User_Types';
 import QuestionnaireAnswers from '@components/performance/QuestionnaireAnswers';
-import { useSharedValue } from 'react-native-reanimated';
 import QuestionnairePerformance from '@components/performance/QuestionnairePerformance';
 
 interface VisualizeQuestionParams {

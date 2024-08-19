@@ -22,7 +22,6 @@ interface SearchUsersProps {
 }
 
 const SearchUsers = ({ visible, onClose, userData, userType }: SearchUsersProps) => {
-
     const { loading, setLoading } = UseLoading();
     const { performFilterUsers } = UseUserService(setLoading);
     const { HandleResponseAppError } = UseGlobalResponse();

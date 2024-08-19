@@ -1,18 +1,17 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { MedicationDuration, MedicationFrequency } from 'types/app/patient/health/Medicine_Types';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { MedicationDurationType } from 'types/app/patient/health/Medicine_Types';
 
 interface DurationModalProps {
     closeModal: () => void;
-    duration: MedicationDuration;
-    onSelect: (expiresAt: MedicationDuration) => void;
+    duration: MedicationDurationType;
+    onSelect: (expiresAt: MedicationDurationType) => void;
 }
 
 const DurationModal: React.FC<DurationModalProps> = ({ closeModal, onSelect, duration }) => {
-    const medDurations: MedicationDuration[] = ['Dias', 'Semanas', 'Meses'];
+    const medDurations: MedicationDurationType[] = ['Hoje', 'Dias', 'Semanas', 'Meses'];
     
-    const handleSelectFrequency = (duration: MedicationDuration) => {
-        
+    const handleSelectFrequency = (duration: MedicationDurationType) => {
         onSelect(duration);
         closeModal();
     }
@@ -21,7 +20,7 @@ const DurationModal: React.FC<DurationModalProps> = ({ closeModal, onSelect, dur
             <View style={styles.modalContent}>
                 <View style={{width: '100%', marginBottom: '10%', marginTop: '3%'}}>
                     <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '700', color: '#6b2061' }}>
-                        Com que frequência seu medicamento será tomado?
+                        Qual a duração do agendamento do medicamento a ser tomado?
                     </Text>
                 </View>
                 {medDurations.map((item) => (

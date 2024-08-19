@@ -1,5 +1,6 @@
-import { DateTime } from 'luxon';
-import { MedicationDuration, MedicationFrequency } from 'types/app/patient/health/Medicine_Types';
+import { DateTime, Settings } from 'luxon';
+import { MedicationDurationType, MedicationFrequencyType } from 'types/app/patient/health/Medicine_Types';
+Settings.defaultLocale = 'pt-BR';
 const timeZone = 'America/Sao_Paulo';
 
 export const ConvertFromISOToNormalDate = (isoDateString: string): string => {
@@ -56,7 +57,7 @@ export const ConvertDaysToDateForm = (days: number) => {
 }
 
 
-export const convertFrequencies = (hours: number): MedicationFrequency => {
+export const convertFrequencies = (hours: number): MedicationFrequencyType => {
     if (hours >= 24 * 30) {
         return 'Meses';
     } else if (hours >= 24 * 7) {
@@ -66,13 +67,21 @@ export const convertFrequencies = (hours: number): MedicationFrequency => {
     }
 }
 
-export const convertDurationToDays = (duration: string, durationType: MedicationDuration): number => {
-    const durationValue = parseInt(duration, 10);
+export const convertDurationToDays = (durationType: MedicationDurationType, duration?: string): number => {
+    let durationToConvert = duration
+    if(durationToConvert === undefined || durationToConvert === "")
+    {
+        durationToConvert = "0";
+    }
+
+    const durationValue = parseInt(durationToConvert, 10);
     if (isNaN(durationValue)) {
         return 0;
     }
 
     switch (durationType) {
+        case 'Hoje':
+            return 0;
         case 'Dias':
             return durationValue;
         case 'Semanas':
@@ -85,9 +94,11 @@ export const convertDurationToDays = (duration: string, durationType: Medication
 };
 
 export const calculateDaysBetweenDates = (start: string, end: string): number => {
-    const startDate = new Date(start).getTime();
-    const endDate = new Date(end).getTime();
-    const differenceInTime = endDate - startDate;
-    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-    return differenceInDays;
+    const startDate = DateTime.fromISO(start, { zone: 'America/Sao_Paulo' }).endOf('day');
+    const endDate = DateTime.fromISO(end, { zone: 'America/Sao_Paulo' }).startOf('day');
+    
+    const differenceInDays = endDate.diff(startDate, 'days').days;
+    const formattedDays = Math.floor(differenceInDays);
+    
+    return formattedDays;
 };

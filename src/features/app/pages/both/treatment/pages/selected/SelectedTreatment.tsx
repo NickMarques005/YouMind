@@ -82,7 +82,7 @@ const SelectedTreatment = () => {
                     verificationMessage={closeTreatmentVerification.message || "Deseja confirmar essa ação?"}
                     handleVerificationAccept={closeTreatmentVerification.handleAccept}
                     handleCloseVerification={clearCloseTreatmentVerification}
-                    acceptText={closeTreatmentVerification.acceptMessage}
+                    acceptText={closeTreatmentVerification.acceptText}
                 />
             }
         </View>

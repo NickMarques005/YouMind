@@ -1,39 +1,28 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import NoMedications from './components/NoMedications';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import { UseMedications } from '@features/app/providers/patient/MedicationProvider';
-import { Medication, TakenMedication } from 'types/app/patient/health/Medicine_Types';
 import { UseMedicationNavigation } from '../../hooks/UseMedicationNavigation';
-import { FormatDateToSpeakDate, formatDateToJustADay, formatDateToString, getDayweekInitial } from '@utils/date/DateFormatting';
+import { FormatDateToSpeakDate, formatDateToInitialDate, formatDateToJustADay, formatDateToString, getDayweekInitial } from '@utils/date/DateFormatting';
 import MedicationListToConsume from './components/MedicationListToConsume';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { UseLoading } from '@hooks/loading/UseLoading';
 import useHandlingMedicationsToConsume from './hooks/useHandlingMedicationToConsume';
-import useTakenMedications from './hooks/useTakenMedications';
 import DefaultLoading from '@components/loading/DefaultLoading';
+import DateSelector from '@components/date/DateSelector';
+import useDateSelectionBehavior from './hooks/useDateSelectionBehavior';
 
 const MainMedications = () => {
     const { medications } = UseMedications();
     const { loading, setLoading } = UseLoading();
     const { navigateToMedicationScreen } = UseMedicationNavigation();
-    const [selectedDate, setSelectedDate] = useState(new Date());
 
-    const { medicationsToConsume } = useHandlingMedicationsToConsume({ medications, selectedDate });
-    const { takenMedications } = useTakenMedications({ selectedDate, setLoading });
+    const { selectedDate, handleSelectDate } = useDateSelectionBehavior();
+    const { medicationsToConsume } = useHandlingMedicationsToConsume({ medications, selectedDate, setLoading });
 
     const loadingIconSize = Math.min(screenHeight, screenWidth) * 0.1;
-
-    const getNextSevenDays = (): Date[] => {
-        const days = [];
-        for (let i = 0; i < 7; i++) {
-            const nextDay = new Date();
-            nextDay.setDate(nextDay.getDate() + i);
-            days.push(nextDay);
-        }
-        return days;
-    };
 
     return (
         <SafeAreaView style={styles.Medicine_mainView}>
@@ -58,24 +47,10 @@ const MainMedications = () => {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.currentDateInfoDiv}>
-                            {
-                                getNextSevenDays().map((day, index) => (
-                                    <TouchableOpacity
-                                        key={index}
-                                        style={[styles.dayButton, selectedDate.getDate() === day.getDate() && styles.selectedDay]}
-                                        onPress={() => setSelectedDate(day)}
-                                    >
-                                        <View style={[styles.dayTopView, { backgroundColor: selectedDate.getDate() === day.getDate() ? '#9c2c87' : 'transparent' }]}>
-                                            <Text style={{ fontSize: 16, color: 'white', fontWeight: 'bold' }}>{getDayweekInitial(day)}</Text>
-                                        </View>
-                                        <View style={[styles.dayBottomView, { backgroundColor: selectedDate.getDate() === day.getDate() ? 'white' : 'transparent' }]}>
-                                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#66364d' }}>{formatDateToJustADay(day)}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                ))
-                            }
-                        </View>
+                        <DateSelector
+                            selectedDate={selectedDate}
+                            handleSelectedDate={handleSelectDate}
+                        />
                     </LinearGradient>
                     <View style={styles.currentSchedulesDiv}>
                         {
@@ -86,11 +61,13 @@ const MainMedications = () => {
                                     medicationsToConsume !== undefined ?
                                         <View style={styles.SchedulesContent_View}>
                                             {
-                                                <MedicationListToConsume takenMedications={takenMedications} medications={medicationsToConsume} selectedDate={selectedDate} />
+                                                <MedicationListToConsume currentDateMedications={medicationsToConsume} selectedDate={selectedDate} />
                                             }
                                         </View>
                                         :
-                                        <NoMedications.NoMedicationsToday />
+                                        <NoMedications.NoMedicationsToday
+                                            selectedDate={selectedDate}
+                                        />
                                     :
                                     <NoMedications.NoMedicationsRegistered />
                         }

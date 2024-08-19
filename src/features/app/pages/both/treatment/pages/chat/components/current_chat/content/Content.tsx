@@ -3,17 +3,17 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import { ChatUser, MessageTemplate, ProcessedMessageItem } from 'types/chat/Chat_Types';
-import Message from './Message';
+import Message from './message/Message';
 import { UserData } from 'types/user/User_Types';
-import { UseMessageHandling } from '../../hooks/UseMessageHandling';
+import { UseMessageHandling } from '../../../hooks/UseMessageHandling';
 import images from '@assets/images';
-import MessageDate from './MessageDate';
+import MessageDate from './message/MessageDate';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
-import useAudioHandling from '../../hooks/UseAudioHandling';
+import useAudioHandling from '../../../hooks/UseAudioHandling';
 import Animated from 'react-native-reanimated';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { UseChatAnimation } from '../../hooks/UseChatAnimation';
-import AudioTimer from './AudioTimer';
+import { UseChatAnimation } from '../../../hooks/UseChatAnimation';
+import AudioTimer from './audio/AudioTimer';
 import { ViewToken } from 'react-native';
 
 interface ContentHeaderProps {

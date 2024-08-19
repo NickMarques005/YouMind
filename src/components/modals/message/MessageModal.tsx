@@ -1,6 +1,6 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { screenWidth, screenHeight } from '@utils/layout/Screen_Size';
+import { Modal, View, Text, Image, TouchableOpacity } from 'react-native';
+import { screenWidth } from '@utils/layout/Screen_Size';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import images from '@assets/images';
 import LinearGradient from 'react-native-linear-gradient';

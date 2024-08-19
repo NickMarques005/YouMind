@@ -7,7 +7,6 @@ export const action_button_style = () => {
         buttonViewStart: {
             width: screenWidth * 0.8,
             height: screenHeight * 0.1,
-            padding: 20,
             borderRadius: 15,
             backgroundColor: 'white',
             elevation: 5,
@@ -23,6 +22,5 @@ export const action_button_style = () => {
             fontSize: 22,
             fontWeight: 'bold',
         }
-
     });
 }

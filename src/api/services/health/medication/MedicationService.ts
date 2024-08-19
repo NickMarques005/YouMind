@@ -1,7 +1,7 @@
 import { MakeRequest } from "@api/services/Request";
 import { GetAccessToken } from "@utils/token/GetAccessToken";
-import { DeleteMedicationResponse, FormattedMedicationForm, MedicationPending } from "types/app/patient/health/Medicine_Types";
-import { Medication, TakenMedication } from "types/app/patient/health/Medicine_Types";
+import { DeleteMedicationResponse, FormattedMedicationForm, MedicationPending, MedicationToConsume } from "types/app/patient/health/Medicine_Types";
+import { Medication } from "types/app/patient/health/Medicine_Types";
 
 export const MedicationService = {
     getMedications: async () => {
@@ -67,10 +67,10 @@ export const MedicationService = {
             token
         );
     },
-    getMedicationsTakenOnDate: async (selectedDate: string) => {
+    getMedicationsToConsumeOnDate: async (selectedDate: string) => {
         const token = await GetAccessToken();
-        return MakeRequest<TakenMedication[]>(
-            'health/medication/taken',
+        return MakeRequest<MedicationToConsume[]>(
+            'health/medication/consume',
             'GET',
             undefined,
             token,

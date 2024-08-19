@@ -4,32 +4,41 @@ import { StyleSheet } from "react-native";
 export const explanation_content_style = () => {
     return StyleSheet.create({
         containerFuncionamento: {
-            width: screenWidth * 0.8,
-            height: '10%',
+            width: screenWidth,
+            height: screenHeight * 0.22,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
-            elevation: 15,
             borderTopEndRadius: 5,
             borderTopStartRadius: 5,
             overflow:'hidden',
-            marginVertical: '6%'
+            top: '-2%'
         },
         textFuncionamento: {
-            fontSize: 20,
-            color: '#fce3fb'
+            fontSize: 22,
+            color: '#fce3fb',
+            fontWeight: '800'
+        },
+        containerExplanation: {
+            width: '100%',
         },
         containerLongText: {
-            maxWidth: screenWidth * 0.9,
+            maxWidth: '100%',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: 40,
+            marginVertical: '3%',
+            marginHorizontal: '6%',
             flexWrap: 'wrap',
         },
-        longText: {
-            fontSize: 14,
+        titleWelcomeText: {
+            fontSize: 22,
             textAlign: 'center',
-            padding: 5,
+            paddingVertical: '5%',
+        },
+        longText: {
+            fontSize: 17,
+            textAlign: 'center',
+            paddingVertical: 10,
         },
     });
 }

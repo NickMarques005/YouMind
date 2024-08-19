@@ -1,39 +1,41 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { MedicationFrequency } from 'types/app/patient/health/Medicine_Types';
+import { MedicationFrequencyType } from 'types/app/patient/health/Medicine_Types';
 
 interface FrequencyModalProps {
     closeModal: () => void;
-    frequency: MedicationFrequency;
-    onSelect: (frequency: MedicationFrequency) => void;
+    frequency: MedicationFrequencyType;
+    onSelect: (frequency: MedicationFrequencyType) => void;
 }
 
 const FrequencyModal: React.FC<FrequencyModalProps> = ({ closeModal, onSelect, frequency }) => {
-    const frequencies: MedicationFrequency[] = ['Dias', 'Semanas', 'Meses'];
-    
-    const handleSelectFrequency = (frequency: MedicationFrequency) => {
+    const frequencies: MedicationFrequencyType[] = ['Dias', 'Semanas', 'Meses'];
+
+    const handleSelectFrequency = (frequency: MedicationFrequencyType) => {
         onSelect(frequency);
         closeModal();
     }
 
     return (
-            <View style={styles.modalContent}>
-                <View style={{width: '100%', marginBottom: '10%', marginTop: '3%'}}>
-                    <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '700', color: '#6b2061' }}>
-                        Com que frequência seu medicamento será tomado?
-                    </Text>
-                </View>
-                {frequencies.map((item) => (
+        <View style={styles.modalContent}>
+            <View style={{ width: '100%', marginBottom: '10%', marginTop: '3%' }}>
+                <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '700', color: '#6b2061' }}>
+                    Com que frequência seu medicamento será tomado?
+                </Text>
+            </View>
+            {
+                frequencies.map((item) => (
                     <TouchableOpacity
                         key={item}
                         onPress={() => handleSelectFrequency(item)}
-                        
-                        style={[styles.optionButton, {opacity: frequency === item ? 1 : 0.7}]}
+
+                        style={[styles.optionButton, { opacity: frequency === item ? 1 : 0.7 }]}
                     >
                         <Text style={styles.optionText}>{item}</Text>
                     </TouchableOpacity>
-                ))}
-            </View>
+                ))
+            }
+        </View>
     );
 };
 

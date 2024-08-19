@@ -1,191 +1,162 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
+import { responsiveSize, screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import DefaultModal from '@components/modals/default/DefaultModal';
 import DefaultLoading from '@components/loading/DefaultLoading';
-import { Medication, MedicationDuration, MedicationFormType, MedicationFrequency } from 'types/app/patient/health/Medicine_Types';
-import { calculateDaysBetweenDates } from '@utils/date/DateConversions';
-import { FormatISOToStringDate } from '@utils/date/DateFormatting';
+import { Medication, MedicationDurationType, MedicationFormType, MedicationFrequencyType } from 'types/app/patient/health/Medicine_Types';
 import { MedicationFormModal } from '../hooks/useMedicationFormBehavior';
 import ScheduleModal from './modals/ScheduleModal';
 import FrequencyModal from './modals/FrequencyModal';
-import StartMedicationModal from './modals/StartMedicationModal';
 import AlarmDurationModal from './modals/AlarmDurationModal';
 import ReminderTimesModal from './modals/ReminderTimesModal';
 import MedicationInfo from './components/MedicationInfo';
 import MedicationSchedules from './components/MedicationSchedules';
 import MedicationAlarms from './components/MedicationAlarms';
 import DurationModal from './modals/DurationModal';
+import { UserType } from 'types/user/User_Types';
+import useMedicationInfoModal from '../hooks/useInfoModal';
+import useMedicationFormHandling from '../hooks/useMedicationFormHandling';
+import { MarkedDates, MarkingTypes } from 'react-native-calendars/src/types';
 
 interface MedicationFormProps {
     form: MedicationFormType;
+    suggestions?: string[];
     activeModal: MedicationFormModal | null;
+    frequencyType: MedicationFrequencyType;
+    buttonText: string;
+    loading: boolean;
+    dosageUnits: Record<string, string>;
+    currentMedication?: Medication;
+    currentScheduleIndex?: number;
+    durationType: MedicationDurationType;
+    currentSchedule: string | undefined;
+    userType: UserType;
+    showCalendar: boolean;
+    duration: string;
+    scheduleMarkedDates?: MarkedDates;
     showFormModal: (modalType: MedicationFormModal) => void;
     handleInputChange: (field: keyof MedicationFormType, value: string) => void;
-    suggestions?: string[];
     setSuggestions: (suggestions: string[] | undefined) => void;
-    handleFrequencyType: (frequency: MedicationFrequency) => void;
-    frequencyType: MedicationFrequency;
+    handleFrequencyType: (frequency: MedicationFrequencyType) => void;
     addScheduleToForm: (schedule: string) => void;
     updateScheduleForm: (schedule: string, index: number) => void;
     deleteScheduleForm: (index: number) => void;
     updateMedication?: (form: MedicationFormType, id: string, onSuccess?: () => void) => void;
     addMedication?: (form: MedicationFormType, onSuccess?: () => void) => void;
-    buttonText: string;
-    loading: boolean;
-    dosageUnits: Record<string, string>;
-    onSuccess?: () => void;
-    currentMedication?: Medication;
     clearActiveModal: () => void;
-    currentScheduleIndex?: number;
     setCurrentScheduleIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
-    currentSchedule: string | undefined;
     setCurrentSchedule: React.Dispatch<React.SetStateAction<string | undefined>>;
     handleReminderTimesForm: (reminderTimes: number) => void;
     handleAlarmDurationForm: (duration: number) => void;
-    handleStartDate: (start: string) => void;
-    handleStartDateSelect: (date: string) => void;
-    startDateText: string;
-    handleExpiresAtForm: (duration: string) => void;
-    durationType: MedicationDuration;
-    handleDuration: (duration: MedicationDuration) => void;
+    handleDurationType: (duration: MedicationDurationType) => void;
     handleSuggestionSelection: (value: string) => void;
+    handleShowCalendar: () => void;
+    handleDurationChange: (value: string) => void;
+    hasSchedulePeriodCompleted: boolean;
+    scheduleMarkingType: MarkingTypes | undefined;
 }
 
-const MedicationForm: React.FC<MedicationFormProps> = ({
-    form,
-    handleInputChange,
-    activeModal,
-    showFormModal,
-    suggestions,
-    setSuggestions,
-    handleFrequencyType,
-    frequencyType,
-    addScheduleToForm,
-    updateScheduleForm,
-    deleteScheduleForm,
-    currentScheduleIndex,
-    setCurrentScheduleIndex,
-    updateMedication,
-    addMedication,
-    buttonText,
-    loading,
-    dosageUnits,
-    onSuccess,
-    currentMedication,
-    clearActiveModal,
-    currentSchedule,
-    setCurrentSchedule,
-    handleAlarmDurationForm,
-    handleReminderTimesForm,
-    handleStartDate,
-    startDateText,
-    handleStartDateSelect,
-    handleExpiresAtForm,
-    durationType,
-    handleDuration,
-    handleSuggestionSelection
-}) => {
-
-
-
-    const formValidation = (form: MedicationFormType, currentMedication?: Medication) => {
-        let result: boolean;
-
-        const isFormValid =
-            form.name &&
-                form.type &&
-                form.dosage &&
-                form.frequency &&
-                form.start &&
-                form.alarmDuration &&
-                form.reminderTimes &&
-                form.schedules.length !== 0 &&
-                form.expiresAt
-                ? true
-                : false;
-
-        if (currentMedication) {
-            const formIsDifferentFromCurrentMedication = form.name !== currentMedication.name ||
-                form.type !== currentMedication.type ||
-                form.dosage !== currentMedication.dosage ||
-                form.expiresAt !== String(calculateDaysBetweenDates(currentMedication.start, currentMedication.expiresAt)) ||
-                form.frequency !== currentMedication.frequency ||
-                JSON.stringify(form.schedules) !== JSON.stringify(currentMedication.schedules) ||
-                form.start !== FormatISOToStringDate(currentMedication.start)  ||
-                form.alarmDuration !== currentMedication.alarmDuration ||
-                form.reminderTimes !== currentMedication.reminderTimes;
-
-            result = formIsDifferentFromCurrentMedication && isFormValid;
-        } else {
-            result = isFormValid;
-        }
-
-        return result;
-    }
-
-    const onSubmit = () => {
-        console.log("SUBMIT: ", form);
-        currentMedication ?
-            updateMedication ?
-                updateMedication(form, currentMedication._id, onSuccess)
-                : console.log("Houve algum erro ")
-            : addMedication && addMedication(form, onSuccess)
-    }
+const MedicationForm: React.FC<MedicationFormProps> = (medicationForm) => {
+    
+    const sessionIconSize = responsiveSize * 0.13;
+    const { handleInfoModalPress,
+        isFrequencyModalVisible, modalFrequencyInfo, clearInfoModalType,
+        isStartModalVisible, modalStartInfo
+    } = useMedicationInfoModal();
+    const { formValidation, onSubmit } = useMedicationFormHandling({
+        updateMedication: medicationForm.updateMedication,
+        addMedication: medicationForm.addMedication
+    });
 
     return (
         <>
             <View style={{ minHeight: screenHeight, flex: 1, paddingVertical: '7%', paddingHorizontal: '4%' }}>
                 <View style={styles.medicationInfo}>
                     <MedicationInfo
-                        form={form}
-                        handleInputChange={handleInputChange}
-                        suggestions={suggestions}
-                        setSuggestions={setSuggestions}
-                        loading={loading}
-                        dosageUnits={dosageUnits}
-                        handleSuggestionSelection={handleSuggestionSelection}
+                        form={medicationForm.form}
+                        sessionIconSize={sessionIconSize}
+                        suggestions={medicationForm.suggestions}
+                        loading={medicationForm.loading}
+                        dosageUnits={medicationForm.dosageUnits}
+                        handleInputChange={medicationForm.handleInputChange}
+                        setSuggestions={medicationForm.setSuggestions}
+                        handleSuggestionSelection={medicationForm.handleSuggestionSelection}
                     />
                     <MedicationSchedules
-                        form={form}
-                        showFormModal={showFormModal}
-                        loading={loading}
-                        setCurrentSchedule={setCurrentSchedule}
-                        setCurrentScheduleIndex={setCurrentScheduleIndex}
-                        handleInputChange={handleInputChange}
-                        frequencyType={frequencyType}
-                        startDateText={startDateText}
-                        durationType={durationType}
+                        form={medicationForm.form}
+                        loading={medicationForm.loading}
+                        frequencyType={medicationForm.frequencyType}
+                        durationType={medicationForm.durationType}
+                        sessionIconSize={sessionIconSize}
+                        userType={medicationForm.userType}
+                        isFrequencyModalVisible={isFrequencyModalVisible}
+                        isStartModalVisible={isStartModalVisible}
+                        modalStartInfo={modalStartInfo}
+                        modalFrequencyInfo={modalFrequencyInfo}
+                        showCalendar={medicationForm.showCalendar}
+                        duration={medicationForm.duration}
+                        scheduleMarkingType={medicationForm.scheduleMarkingType}
+                        setCurrentSchedule={medicationForm.setCurrentSchedule}
+                        setCurrentScheduleIndex={medicationForm.setCurrentScheduleIndex}
+                        handleInputChange={medicationForm.handleInputChange}
+                        handleInfoModalPress={handleInfoModalPress}
+                        clearInfoModalType={clearInfoModalType}
+                        handleShowCalendar={medicationForm.handleShowCalendar}
+                        handleDurationChange={medicationForm.handleDurationChange}
+                        showFormModal={medicationForm.showFormModal}
+                        scheduleMarkedDates={medicationForm.scheduleMarkedDates}
+                        hasSchedulePeriodCompleted={medicationForm.hasSchedulePeriodCompleted}
                     />
                     <MedicationAlarms
-                        form={form}
-                        showFormModal={showFormModal}
-                        loading={loading}
-                        handleAlarmDurationForm={handleAlarmDurationForm}
-                        handleReminderTimesForm={handleReminderTimesForm}
+                        form={medicationForm.form}
+                        loading={medicationForm.loading}
+                        sessionIconSize={sessionIconSize}
+                        showFormModal={medicationForm.showFormModal}
+                        handleAlarmDurationForm={medicationForm.handleAlarmDurationForm}
+                        handleReminderTimesForm={medicationForm.handleReminderTimesForm}
                     />
                 </View>
-                <LinearGradient colors={['#7f3b8f', '#ad52bf']} start={{ x: 1, y: 0 }} end={{ x: 0, y: 0 }} style={[styles.buttonGradientForm, { opacity: !formValidation(form, currentMedication) ? 0.6 : 1 }]}>
-                    <TouchableOpacity disabled={loading || !formValidation(form, currentMedication)} onPress={onSubmit} style={[styles.button]}>
-                        {loading ? <DefaultLoading size={30} color={'white'} /> : <Text style={styles.buttonText}>{buttonText}</Text>}
+                <LinearGradient colors={['#7f3b8f', '#ad52bf']} start={{ x: 1, y: 0 }} end={{ x: 0, y: 0 }} style={[styles.buttonGradientForm, { opacity: !formValidation(medicationForm.form, medicationForm.currentMedication) ? 0.6 : 1 }]}>
+                    <TouchableOpacity disabled={medicationForm.loading || !formValidation(medicationForm.form, medicationForm.currentMedication)} onPress={() => onSubmit(medicationForm.form, medicationForm.currentMedication)} style={[styles.button]}>
+                        {medicationForm.loading ? <DefaultLoading size={30} color={'white'} /> : <Text style={styles.buttonText}>{medicationForm.buttonText}</Text>}
                     </TouchableOpacity>
                 </LinearGradient>
             </View>
-            {activeModal && (
-                <DefaultModal disableGestures={false} isVisible={!!activeModal} onClose={clearActiveModal}>
-                    {activeModal === 'Schedules' ? (
-                        <ScheduleModal index={currentScheduleIndex} onUpdate={updateScheduleForm} onDelete={deleteScheduleForm} schedules={form.schedules} currentSchedule={currentSchedule} closeModal={clearActiveModal} onAdd={addScheduleToForm} />
-                    ) : activeModal === 'Frequencies' ? (
-                        <FrequencyModal closeModal={clearActiveModal} onSelect={handleFrequencyType} frequency={frequencyType} />
-                    ) : activeModal === 'AlarmDuration' ? (
-                        <AlarmDurationModal initialValue={form.alarmDuration} closeModal={clearActiveModal} onSelect={handleAlarmDurationForm} />
-                    ) : activeModal === 'ReminderTimes' ? (
-                        <ReminderTimesModal initialValue={form.reminderTimes} closeModal={clearActiveModal} onSelect={handleReminderTimesForm} />
-                    ) : activeModal === 'Start' ? (
-                        <StartMedicationModal closeModal={clearActiveModal} initialValue={form.start} onSelect={handleStartDate} updateStartDateText={handleStartDateSelect} />
-                    ) : activeModal === 'Duration' ? (
-                        <DurationModal closeModal={clearActiveModal} duration={durationType} onSelect={handleDuration} />
+            {medicationForm.activeModal && (
+                <DefaultModal disableGestures={false} isVisible={!!medicationForm.activeModal} onClose={medicationForm.clearActiveModal}>
+                    {medicationForm.activeModal === 'Schedules' ? (
+                        <ScheduleModal
+                            index={medicationForm.currentScheduleIndex}
+                            onUpdate={medicationForm.updateScheduleForm}
+                            onDelete={medicationForm.deleteScheduleForm}
+                            schedules={medicationForm.form.schedules}
+                            currentSchedule={medicationForm.currentSchedule}
+                            closeModal={medicationForm.clearActiveModal} onAdd={medicationForm.addScheduleToForm}
+                        />
+                    ) : medicationForm.activeModal === 'Frequencies' ? (
+                        <FrequencyModal
+                            closeModal={medicationForm.clearActiveModal}
+                            onSelect={medicationForm.handleFrequencyType}
+                            frequency={medicationForm.frequencyType}
+                        />
+                    ) : medicationForm.activeModal === 'AlarmDuration' ? (
+                        <AlarmDurationModal
+                            initialValue={medicationForm.form.alarmDuration}
+                            closeModal={medicationForm.clearActiveModal}
+                            onSelect={medicationForm.handleAlarmDurationForm} />
+                    ) : medicationForm.activeModal === 'ReminderTimes' ? (
+                        <ReminderTimesModal
+                            initialValue={medicationForm.form.reminderTimes}
+                            closeModal={medicationForm.clearActiveModal}
+                            onSelect={medicationForm.handleReminderTimesForm} />
+                    )
+                    : medicationForm.activeModal === 'Duration' ? (
+                        <DurationModal
+                            closeModal={medicationForm.clearActiveModal}
+                            duration={medicationForm.durationType}
+                            onSelect={medicationForm.handleDurationType}
+                        />
                     ) :
                         null
                     }

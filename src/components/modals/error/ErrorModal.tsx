@@ -1,16 +1,13 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { Modal, View, Text, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { ErrorModalProps } from './types/type_error_modal';
-import { UserType } from 'types/user/User_Types';
-import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
+import {  screenWidth } from '@utils/layout/Screen_Size';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Animated, {
-    useSharedValue,
     useAnimatedStyle,
     withSpring,
     runOnJS,
-    withTiming
 } from 'react-native-reanimated';
 import { GestureDetector, Gesture, GestureHandlerRootView } from 'react-native-gesture-handler';
 import UseModalAnimation from '@hooks/animation/UseModalAnimation';

@@ -9,6 +9,7 @@ import { UseHandleActiveChat } from '../../../chat/hooks/UseHandleActiveChat';
 import { screenHeight } from '@utils/layout/Screen_Size';
 import SearchUsers from '../search/SearchUsers';
 import { UseSearchHandling } from '../../hooks/UseSearchHandling';
+import useMenuAnimation from '@hooks/animation/UseMenuAnimation';
 
 interface PatientTreatmentProps {
     userType?: string;
@@ -16,23 +17,30 @@ interface PatientTreatmentProps {
 }
 
 const PatientTreatment = ({ userType, userData }: PatientTreatmentProps) => {
-    
+
     const { treatment_state } = UseTreatment();
     const { HandleActiveChat } = UseHandleActiveChat();
-    const { modalSearch, handleModalSearch } = UseSearchHandling();
-
-    console.log(treatment_state.treatments)
+    const { modalSearch, handleModalSearch, handleModalTreatmentMenu, treatmentMenu } = UseSearchHandling();
+    const { opacity, translateY, closeMenu } = useMenuAnimation({ isVisible: treatmentMenu, onClose: handleModalTreatmentMenu });
 
     return (
         <View style={styles.screenTreatment}>
-            <Header userType={userType} userData={userData} />
+            <Header
+                userType={userType}
+                userData={userData}
+                opacity={opacity}
+                translateY={translateY}
+                treatmentMenu={treatmentMenu}
+                handleTreatmentMenu={handleModalTreatmentMenu}
+                closeMenu={closeMenu}
+            />
             {
                 treatment_state.treatments.length === 0 ?
                     <Content handleSearch={handleModalSearch} />
-                :
-                <TreatmentRunning treatment_state={treatment_state} userType={userType} userData={userData} handleActiveChat={HandleActiveChat} />
+                    :
+                    <TreatmentRunning treatment_state={treatment_state} userType={userType} userData={userData} handleActiveChat={HandleActiveChat} />
             }
-            { modalSearch && <SearchUsers visible={modalSearch} onClose={handleModalSearch} userData={userData} userType={userType} />}
+            {modalSearch && <SearchUsers visible={modalSearch} onClose={handleModalSearch} userData={userData} userType={userType} />}
         </View>
     )
 }

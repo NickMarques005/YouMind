@@ -1,5 +1,6 @@
 import { DateTime, Settings } from 'luxon';
 Settings.defaultLocale = 'pt-BR';
+const timeZone = 'America/Sao_Paulo';
 
 export const FormatDate = (date?: DateTime) => {
     if (!date) {
@@ -26,8 +27,8 @@ export const FormatStringToISODate = (strDate?: string) => {
         day: parseInt(day),
         month: parseInt(month),
         year: parseInt(year),
-    }, { zone: 'UTC-3' }); 
-    
+    }, { zone: 'UTC-3' });
+
     return date.toISO() || undefined;
 }
 
@@ -119,7 +120,6 @@ export const formatRelativeTime = (isoDate: string) => {
     } else {
         return 'Agora mesmo';
     }
-
 }
 
 export const formatTimer = (totalSeconds: number) => {
@@ -190,12 +190,24 @@ export const formatDateToString = (date: Date): string => {
     return `${day}/${month}/${year}`;
 };
 
+export const formatDateToISO = (date: Date) => {
+    const timeZoneDate = DateTime.fromJSDate(date).setZone(timeZone, { keepLocalTime: true });
+    const isoTimeZone =  timeZoneDate.toISO() || "";
+    return isoTimeZone;
+}
+
 export const formatStringToDate = (strDate: string): Date | null => {
     const [day, month, year] = strDate.split('/').map(Number);
     if (!day || !month || !year) {
         return null;
     }
     return new Date(year, month - 1, day);
+};
+
+export const formatISOToDate = (isoDate: string): Date | null => {
+    const date = DateTime.fromISO(isoDate, { zone: 'America/Sao_Paulo' });
+
+    return date.toUTC().toJSDate();
 };
 
 export const formatDateToJustADay = (date: Date): string => {
@@ -216,3 +228,21 @@ export const calculateDurationInDays = (start: Date, end: Date) => {
     const diffTime = end.getTime() - start.getTime();
     return diffTime / (1000 * 3600 * 24);
 }
+
+export const validateAndFormatISODate = (isoDate: string | undefined): string => {
+    if (!isoDate) return "";
+
+    const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[\+\-]\d{2}:\d{2})?$/;
+    if (isoDateRegex.test(isoDate)) {
+        return isoDate.split('T')[0];
+    }
+
+    return "";
+};
+
+export const formatDateToInitialDate = (date: Date): Date => {
+    const initialDate = DateTime.fromJSDate(date, { zone: timeZone })
+        .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+        
+    return initialDate.toJSDate();
+};

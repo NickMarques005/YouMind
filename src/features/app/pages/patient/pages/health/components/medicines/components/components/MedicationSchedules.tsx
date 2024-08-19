@@ -1,36 +1,69 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
-import { MedicationDuration, MedicationFormType, MedicationFrequency } from 'types/app/patient/health/Medicine_Types';
+import { MedicationDurationType, MedicationFormType, MedicationFrequencyType } from 'types/app/patient/health/Medicine_Types';
 import { MedicationFormModal } from '../../hooks/useMedicationFormBehavior';
 import CustomTextInput from '@components/text_input/CustomInput';
+import InfoModal from '@components/modals/info/InfoModal';
+import { UserType } from 'types/user/User_Types';
+import CustomCalendar from '@components/calendar/CustomCalendar';
+import { FormatISOToStringDate } from '@utils/date/DateFormatting';
+import { responsiveSize } from '@utils/layout/Screen_Size';
+import { MarkedDates, MarkingTypes } from 'react-native-calendars/src/types';
 
 interface MedicationSchedulesProps {
     form: MedicationFormType;
+    loading: boolean;
+    frequencyType: MedicationFrequencyType;
+    durationType: MedicationDurationType;
+    duration: string;
+    sessionIconSize: number;
+    userType: UserType;
+    isFrequencyModalVisible: boolean;
+    modalFrequencyInfo?: string;
+    modalStartInfo?: string;
+    showCalendar: boolean;
+    isStartModalVisible: boolean;
+    scheduleMarkedDates: MarkedDates | undefined;
+    hasSchedulePeriodCompleted: boolean;
+    scheduleMarkingType: MarkingTypes | undefined;
+    handleInputChange: (field: keyof MedicationFormType, value: string) => void;
+    handleDurationChange: (value: string) => void;
+    handleInfoModalPress: (type: keyof MedicationFormType) => void;
+    clearInfoModalType: (type: keyof MedicationFormType) => void;
     showFormModal: (modalType: MedicationFormModal) => void;
     setCurrentScheduleIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
     setCurrentSchedule: React.Dispatch<React.SetStateAction<string | undefined>>;
-    loading: boolean;
-    frequencyType: MedicationFrequency;
-    handleInputChange: (field: keyof MedicationFormType, value: string) => void;
-    startDateText: string;
-    durationType: MedicationDuration;
+    handleShowCalendar: () => void;
 }
 
 const MedicationSchedules: React.FC<MedicationSchedulesProps> = ({
     form,
-    showFormModal,
-    setCurrentScheduleIndex,
-    setCurrentSchedule,
     loading,
     frequencyType,
     durationType,
+    sessionIconSize,
+    userType,
+    modalFrequencyInfo,
+    modalStartInfo,
+    isStartModalVisible,
+    isFrequencyModalVisible,
+    showCalendar,
+    duration,
+    scheduleMarkedDates,
+    hasSchedulePeriodCompleted,
+    scheduleMarkingType,
+    showFormModal,
+    setCurrentScheduleIndex,
+    setCurrentSchedule,
     handleInputChange,
-    startDateText
+    handleInfoModalPress,
+    clearInfoModalType,
+    handleShowCalendar,
+    handleDurationChange
 }) => {
-
-    const sizeIcon = Math.min(screenHeight, screenWidth) * 0.11;
+    const infoModalYOffset = responsiveSize * 0.07;
+    const styles = medicationSchedulesStyle(sessionIconSize);
 
     const hasEndOfDaySchedule = (schedules: string[]) => {
         return schedules.includes("23:59");
@@ -38,31 +71,25 @@ const MedicationSchedules: React.FC<MedicationSchedulesProps> = ({
 
     return (
         <View style={styles.medicationSchedules}>
-            <View style={{ backgroundColor: '#a468b3', position: 'absolute', top: '-5%', left: '3%', height: sizeIcon, width: sizeIcon, borderRadius: sizeIcon, alignItems: 'center', justifyContent: 'center' }}>
-                <MaterialIcons name="schedule" size={sizeIcon * 0.5} color="white" />
-            </View>
-            <View style={styles.infoTemplate}>
-                <Text style={styles.infoTitle}>Horários</Text>
-                <View style={styles.infoContainer}>
-                    {form.schedules.map((schedule, index) => (
-                        <TouchableOpacity disabled={loading} key={index} onPress={() => {
-                            setCurrentScheduleIndex(index);
-                            setCurrentSchedule(schedule);
-                            showFormModal('Schedules');
-                        }} style={styles.scheduleItem}>
-                            <Text style={styles.scheduleText}>{schedule}</Text>
-                        </TouchableOpacity>
-                    ))}
-                    {
-                        !hasEndOfDaySchedule(form.schedules) &&
-                        <TouchableOpacity disabled={loading} onPress={() => showFormModal('Schedules')} style={styles.addScheduleButton}>
-                            <MaterialIcons name="add" size={20} color="white" />
-                        </TouchableOpacity>
-                    }
-                </View>
+            <View style={styles.sessionIconContainer}>
+                <MaterialIcons name="schedule" size={sessionIconSize / 2} color="white" />
             </View>
             <View style={[styles.infoTemplate]}>
-                <Text style={styles.infoTitle}>Frequência</Text>
+                <View style={styles.infoTitleContainer}>
+                    <Text style={styles.infoTitle}>Frequência</Text>
+                    <TouchableOpacity onPress={() => !isFrequencyModalVisible ? handleInfoModalPress('frequency') : clearInfoModalType('frequency')}>
+                        <MaterialIcons name="help-outline" size={20} color="#631c50" />
+                    </TouchableOpacity>
+                </View>
+                {
+                    modalFrequencyInfo &&
+                    <InfoModal
+                        info={modalFrequencyInfo}
+                        isVisible={isFrequencyModalVisible}
+                        userType={userType}
+                        positionStyle={{ top: infoModalYOffset, position: 'absolute', zIndex: 5 }}
+                    />
+                }
                 <View style={styles.infoRowDirection}>
                     <CustomTextInput
                         editable={!loading}
@@ -88,44 +115,70 @@ const MedicationSchedules: React.FC<MedicationSchedulesProps> = ({
                         </TouchableOpacity>
                     </View>
                 </View>
+            </View>
+            <View style={styles.infoTemplate}>
+                <View style={styles.infoTitleContainer}>
+                    <Text style={styles.infoTitle}>Horários</Text>
+                </View>
 
+                <View style={styles.infoContainer}>
+                    {form.schedules.map((schedule, index) => (
+                        <TouchableOpacity disabled={loading} key={index} onPress={() => {
+                            setCurrentScheduleIndex(index);
+                            setCurrentSchedule(schedule);
+                            showFormModal('Schedules');
+                        }} style={styles.scheduleItem}>
+                            <Text style={styles.scheduleText}>{schedule}</Text>
+                        </TouchableOpacity>
+                    ))}
+                    {
+                        !hasEndOfDaySchedule(form.schedules) &&
+                        <TouchableOpacity disabled={loading} onPress={() => showFormModal('Schedules')} style={styles.addScheduleButton}>
+                            <MaterialIcons name="add" size={20} color="white" />
+                        </TouchableOpacity>
+                    }
+                </View>
             </View>
             <View style={[styles.infoTemplate]}>
-                <Text style={styles.infoTitle}>Início</Text>
-                <View style={styles.infoRowDirection}>
-                    <CustomTextInput
-                        viewStyle={[styles.viewInput, { opacity: loading ? 0.6 : 1 }]}
-                        inputStyle={styles.input}
-                        value={form.start}
-                        onChangeText={(text) => handleInputChange('start', text)}
-                        placeholder="Inicío do uso"
-                        backgroundColor='#fcf7fa'
-                        keyboardType={'number-pad'}
-                        editable={false}
-                    />
-                    <View style={{ minWidth: '35%' }}>
-                        <TouchableOpacity
-                            style={[styles.viewActivateModal, { opacity: loading ? 0.6 : 1 }]}
-                            onPress={() => showFormModal('Start')}
-                            disabled={loading}
-                        >
-                            <Text style={[styles.frequencyButtonText]}>
-                                {startDateText}
-                            </Text>
-                            <MaterialIcons name="arrow-drop-down" size={24} color="white" style={{ marginRight: '10%' }} />
+                <View style={styles.infoTitleContainer}>
+                    <View style={styles.infoTitleContainer}>
+                        <Text style={styles.infoTitle}>Início</Text>
+                        <TouchableOpacity onPress={() => !isFrequencyModalVisible ? handleInfoModalPress('start') : () => clearInfoModalType('start')}>
+                            <MaterialIcons name="help-outline" size={20} color="#631c50" />
                         </TouchableOpacity>
+                    </View>
+                    {
+                        modalStartInfo &&
+                        <InfoModal
+                            info={modalStartInfo}
+                            isVisible={isStartModalVisible}
+                            userType={userType}
+                            positionStyle={{ top: infoModalYOffset, position: 'absolute', zIndex: 5 }}
+                        />
+                    }
+                </View>
+
+                <View style={styles.infoRowDirection}>
+                    <View
+                        style={[styles.viewInput, { opacity: loading ? 0.6 : 0.8 }]}
+                    >
+                        <Text style={styles.input}>
+                            {FormatISOToStringDate(form.start)}
+                        </Text>
                     </View>
                 </View>
             </View>
             <View style={styles.infoTemplate}>
+                <View style={styles.infoTitleContainer}>
+                    <Text style={styles.infoTitle}>Duração</Text>
+                </View>
 
-                <Text style={styles.infoTitle}>Duração</Text>
                 <View style={styles.infoRowDirection}>
                     <CustomTextInput
                         viewStyle={[styles.viewInput, { opacity: loading ? 0.6 : 1 }]}
                         inputStyle={styles.input}
-                        value={form.expiresAt}
-                        onChangeText={(text) => handleInputChange('expiresAt', text)}
+                        value={duration}
+                        onChangeText={(text) => handleDurationChange(text)}
                         placeholder="Duração"
                         backgroundColor='#fcf7fa'
                         keyboardType={'number-pad'}
@@ -146,100 +199,172 @@ const MedicationSchedules: React.FC<MedicationSchedulesProps> = ({
                     </View>
                 </View>
             </View>
+
+            <View style={styles.infoTemplate}>
+                <TouchableOpacity
+                    style={[styles.viewActivateModal, { opacity: loading ? 0.6 : 1 }]}
+                    onPress={() => handleShowCalendar()}
+                    disabled={loading}
+                >
+                    <View>
+                        <MaterialIcons name="event" size={24} color="white" />
+                        {
+                            hasSchedulePeriodCompleted &&
+                            <View style={styles.calendarButtonUpdateIcon} />
+                        }
+                        
+                    </View>
+                </TouchableOpacity>
+            </View>
+            {
+                showCalendar &&
+                <View style={styles.infoTemplate}>
+                    <CustomCalendar
+                        onDateSelect={(date) => {
+                            handleInputChange('start', date);
+                        }}
+                        theme={{
+                            backgroundColor: '#ffffff',
+                            calendarBackground: '#ffffff',
+                            textSectionTitleColor: '#c8b6cd',
+                            selectedDayBackgroundColor: '#6b0e96',
+                            selectedDayTextColor: '#ffffff',
+                            todayTextColor: '#bd70db',
+                            dayTextColor: '#482d50',
+                            textDisabledColor: '#d0c3d6',
+                            arrowColor: '#3c1d57',
+                            monthTextColor: '#a92cbf',
+                            indicatorColor: '#a92cbf',
+                        }}
+                        markedDates={scheduleMarkedDates}
+                        markingType={scheduleMarkingType}
+                    />
+                </View>
+            }
         </View>
     );
 };
 
 export default MedicationSchedules;
 
-const styles = StyleSheet.create({
-    medicationSchedules: {
-        backgroundColor: '#fcf5fc',
-        justifyContent: 'space-between',
-        paddingVertical: '6%',
-        paddingHorizontal: '8%',
-        borderRadius: 20,
-        marginVertical: '6%',
-    },
-    infoTemplate: {
-        marginVertical: '5%',
-    },
-    infoTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#631c50',
-        marginBottom: '2%',
-    },
-    infoContainer: {
-        width: '100%',
-        flexDirection: 'row',
-        gap: 5,
-        flexWrap: 'wrap',
-    },
-    infoRowDirection: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 7,
-    },
-    viewInput: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: '4%',
-        borderColor: '#a541b0',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingHorizontal: '5%',
-        flex: 1,
-    },
-    input: {
-        fontSize: 16,
-        color: '#5b1869',
-    },
-    scheduleItem: {
-        minWidth: '20%',
-        paddingVertical: '2%',
-        paddingHorizontal: '3%',
-        backgroundColor: 'white',
-        alignItems: 'center',
-        borderRadius: 10,
-        elevation: 4,
-    },
-    scheduleText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#7e248c',
-    },
-    viewActivateModal: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: '4%',
-        borderColor: '#a541b0',
-        borderWidth: 1,
-        borderRadius: 10,
-        flex: 1,
-        backgroundColor: '#945989',
-    },
-    addScheduleButton: {
-        minWidth: '20%',
-        paddingVertical: '2%',
-        paddingHorizontal: '3%',
-        backgroundColor: '#945989',
-        borderRadius: 10,
-        elevation: 4,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    frequencyButtonText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#fcf7fa',
-        flex: 1,
-        textAlign: 'center',
-        marginLeft: '10%'
-    },
-});
+const medicationSchedulesStyle = (sessionIconSize: number) => {
+    return StyleSheet.create({
+        medicationSchedules: {
+            backgroundColor: '#fcf5fc',
+            justifyContent: 'space-between',
+            paddingVertical: '6%',
+            paddingHorizontal: '8%',
+            borderRadius: 20,
+            marginVertical: '6%',
+        },
+        infoTemplate: {
+            marginVertical: '5%',
+        },
+        infoTitleContainer: {
+            width: '100%',
+            flexDirection: 'row',
+            gap: 5,
+            marginBottom: '2%'
+        },
+        infoTitle: {
+            fontSize: 15,
+            fontWeight: '600',
+            color: '#631c50',
+            marginBottom: '2%',
+        },
+        infoContainer: {
+            width: '100%',
+            flexDirection: 'row',
+            gap: 5,
+            flexWrap: 'wrap',
+        },
+        sessionIconContainer: {
+            backgroundColor: '#a468b3',
+            position: 'absolute',
+            top: - sessionIconSize * 0.65,
+            left: '3%',
+            height: sessionIconSize,
+            width: sessionIconSize,
+            borderRadius: sessionIconSize,
+            alignItems: 'center',
+            justifyContent: 'center'
+        },
+        infoRowDirection: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 7,
+        },
+        viewInput: {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingVertical: '4%',
+            borderColor: '#a541b0',
+            borderWidth: 1,
+            borderRadius: 10,
+            paddingHorizontal: '5%',
+            flex: 1,
+        },
+        input: {
+            fontSize: 16,
+            color: '#5b1869',
+        },
+        scheduleItem: {
+            minWidth: '20%',
+            paddingVertical: '2%',
+            paddingHorizontal: '3%',
+            backgroundColor: 'white',
+            alignItems: 'center',
+            borderRadius: 10,
+            elevation: 4,
+        },
+        scheduleText: {
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: '#7e248c',
+        },
+        viewActivateModal: {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: '4%',
+            borderColor: '#a541b0',
+            borderWidth: 1,
+            borderRadius: 10,
+            flex: 1,
+            backgroundColor: '#945989',
+        },
+        addScheduleButton: {
+            minWidth: '20%',
+            paddingVertical: '2%',
+            paddingHorizontal: '3%',
+            backgroundColor: '#945989',
+            borderRadius: 10,
+            elevation: 4,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        frequencyButtonText: {
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: '#fcf7fa',
+            flex: 1,
+            textAlign: 'center',
+            marginLeft: '10%'
+        },
+        calendarButtonUpdateIcon: {
+            width: sessionIconSize * 0.4,
+            height: sessionIconSize * 0.4,
+            borderRadius: sessionIconSize * 0.4,
+            position: 'absolute',
+            right: - sessionIconSize * 0.25,
+            top: - sessionIconSize * 0.18,
+            backgroundColor: '#daa7fa',
+            borderWidth: 3,
+            borderColor: '#945989'
+        }
+    });
+} 

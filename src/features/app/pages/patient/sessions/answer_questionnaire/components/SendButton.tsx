@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import DefaultLoading from '@components/loading/DefaultLoading';
 import { FormattedAnswer } from 'types/app/patient/health/Question_Types';
 import { LoadingStructure } from 'types/loading/Loading_Types';
+import { responsiveSize } from '@utils/layout/Screen_Size';
 
 interface SendButtonProps {
     sendLoading: LoadingStructure;
@@ -50,20 +51,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     sendButton: {
-        width: '50%',
+        width: '70%',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 25,
     },
     gradientButton: {
         width: '100%',
-        paddingVertical: '5%',
-        borderRadius: 25,
+        height: responsiveSize * 0.18,
+        borderRadius: responsiveSize * 0.18,
         justifyContent: 'center',
         alignItems: 'center',
     },
     sendButtonText: {
-        fontSize: 16,
+        fontSize: 18,
         color: 'white',
     },
 });

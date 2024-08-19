@@ -106,7 +106,7 @@ const QuestionsContainer: React.FC<QuestionsContainerProps> = ({
                         style={styles.metadata_TextInput}
                         editable={!sendLoading.loading}
                         placeholder='Mensagem'
-                        placeholderTextColor={'rgba(207, 192, 201, 0.6)'}
+                        placeholderTextColor={'rgba(207, 192, 201, 0.9)'}
                         onChangeText={(value) => handleMetadataChange(answers[currentQuestionIndex].questionId, value)}
                         value={answers[currentQuestionIndex].metadata}
                         multiline={true}
@@ -168,12 +168,15 @@ const styles = StyleSheet.create({
         color: '#75416b',
     },
     input_View: {
+        marginTop: '5%',
         borderRadius: 15,
         backgroundColor: '#f4f0f5',
         flexDirection: 'row',
         borderWidth: 2,
+        borderColor: '#ad9eb0',
         alignItems: 'center',
         padding: 10,
+        minHeight: '10%'
     },
     metadata_TextInput: {
         flex: 1,
