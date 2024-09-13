@@ -75,3 +75,9 @@ export const FormatToPhoneNumber = (phoneNumber: string): string => {
     
     return phoneNumber;
 };
+
+export const UnformatPhoneNumber = (formattedPhoneNumber: string): string => {
+    // Remove todos os caracteres que não são dígitos
+    const cleaned = formattedPhoneNumber.replace(/\D/g, '');
+    return cleaned;
+};

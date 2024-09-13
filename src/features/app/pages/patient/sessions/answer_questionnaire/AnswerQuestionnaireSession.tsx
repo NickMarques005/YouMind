@@ -1,11 +1,6 @@
-import { ScrollView, StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import React, { useState } from 'react';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { QuestionnaireTemplate } from 'types/app/patient/health/Question_Types';
-import { AppStackNavigation } from 'types/navigation/Navigation_Types';
-import { UseAppNavigation } from '@features/app/hooks/UseAppNavigation';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
-import { useAnswerQuestionnaire } from './hooks/UseAnswerQuestionnaire';
 import LinearGradient from 'react-native-linear-gradient';
 import { screenHeight } from '@utils/layout/Screen_Size';
 import { UseLoading } from '@hooks/loading/UseLoading';
@@ -21,27 +16,20 @@ import ProgressQuestions from './components/ProgressQuestions';
 import QuestionsContainer from './components/QuestionsContainer';
 import SendButton from './components/SendButton';
 import QuestionsNavigation from './components/QuestionsNavigation';
-
-export interface AnswerQuestionnaireParams {
-    template?: QuestionnaireTemplate;
-    questionnaireId?: string;
-}
+import { usePriority } from '@features/app/providers/bridge/PriorityProvider';
+import { useAnswerQuestionnaire } from '@features/app/providers/patient/AnswerQuestionnaireProvider';
+import NoQuestionnaireToAnswer from './components/NoAnswerToAnswer';
+import AnswerQuestionnaireHeader from './components/AnswerQuestionnaireHeader';
 
 const AnswerQuestionnaireSession = () => {
-    const { navigateToAppScreen } = UseAppNavigation();
+    const { removePriority } = usePriority();
+    const { answerQuestionnaire } = useAnswerQuestionnaire();
     const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
-    const route = useRoute<RouteProp<AppStackNavigation, 'answer_questionnaire'> & { params?: { params: AnswerQuestionnaireParams } }>();
-    const questionnaireParams = route.params?.params;
-    if (!questionnaireParams) {
-        console.log("Não há parametros de questionário template.. ");
-        navigateToAppScreen('main_page');
-        HandleResponseAppError('Houve um erro. Questionário não especificado');
-        return null;
-    }
+    const {
+        questions, answers, confirmBackToApp, introduction, setAnswers,
+        handleLeaveAnswerQuestionnaire, handleConfirmBackToAppModal,
+        handleIntroduction } = useAnswerQuestionnaireBehavior({ answerQuestionnaire, removePriority });
 
-    const { template, questionnaireId, answers, setAnswers } = useAnswerQuestionnaire({ params: questionnaireParams });
-    
-    const [questions, setQuestions] = useState(template.questions);
     const sendLoading = UseLoading();
 
     const { currentQuestionIndex, handleNextQuestion, handlePreviousQuestion, HandleSpecificQuestion, questionnaireAnimatedStyle } = useAnswerQuestionnaireAnimations({ questions });
@@ -54,10 +42,7 @@ const AnswerQuestionnaireSession = () => {
         HandleResponseAppError,
         HandleResponseAppSuccess
     });
-    const {
-        handleNavigateBackToApp,
-        handleConfirmBackToAppModal,
-        confirmBackToApp, introduction, handleIntroduction } = useAnswerQuestionnaireBehavior();
+
     const backIcon = images.generic_images.back.arrow_back_white;
     const readyToSend = isEveryQuestionAnswered(questions.length);
 
@@ -70,53 +55,64 @@ const AnswerQuestionnaireSession = () => {
                 colors={['#6b2a6b', '#c2927a']}
                 start={{ x: 1, y: 0 }}
                 end={{ x: 0, y: 1 }} style={styles.gradient}>
-                <ProgressQuestions
-                    questions={questions}
-                    currentQuestionIndex={currentQuestionIndex}
-                    answers={answers}
-                    backIcon={backIcon}
-                    handleConfirmBackToAppModal={handleConfirmBackToAppModal}
-                    handleIntroduction={handleIntroduction}
-                    HandleSpecificQuestion={HandleSpecificQuestion}
-                    isEverySubQuestionAnswered={isEverySubQuestionAnswered}
-                />
+                    <AnswerQuestionnaireHeader
+                        backIcon={backIcon}
+                        handleConfirmBackToAppModal={handleConfirmBackToAppModal}
+                        handleIntroduction={handleIntroduction}
+                    />
+                {
+                    answerQuestionnaire ?
+                        <>
+                            <ProgressQuestions
+                                questions={questions}
+                                currentQuestionIndex={currentQuestionIndex}
+                                answers={answers}
+                                backIcon={backIcon}
+                                handleConfirmBackToAppModal={handleConfirmBackToAppModal}
+                                handleIntroduction={handleIntroduction}
+                                HandleSpecificQuestion={HandleSpecificQuestion}
+                                isEverySubQuestionAnswered={isEverySubQuestionAnswered}
+                            />
 
-                <QuestionsContainer
-                    template={template}
-                    questions={questions}
-                    questionnaireAnimatedStyle={questionnaireAnimatedStyle}
-                    currentQuestionIndex={currentQuestionIndex}
-                    isEverySubQuestionAnswered={isEverySubQuestionAnswered}
-                    answers={answers}
-                    handleAnswerChange={handleAnswerChange}
-                    handleMetadataChange={handleMetadataChange}
-                    sendLoading={sendLoading}
-                />
+                            <QuestionsContainer
+                                template={answerQuestionnaire.template}
+                                questions={questions}
+                                questionnaireAnimatedStyle={questionnaireAnimatedStyle}
+                                currentQuestionIndex={currentQuestionIndex}
+                                isEverySubQuestionAnswered={isEverySubQuestionAnswered}
+                                answers={answers}
+                                handleAnswerChange={handleAnswerChange}
+                                handleMetadataChange={handleMetadataChange}
+                                sendLoading={sendLoading}
+                            />
 
-                <QuestionsNavigation
-                    template={template}
-                    currentQuestionIndex={currentQuestionIndex}
-                    handleNextQuestion={handleNextQuestion}
-                    handlePreviousQuestion={handlePreviousQuestion}
-                />
+                            <QuestionsNavigation
+                                template={answerQuestionnaire.template}
+                                currentQuestionIndex={currentQuestionIndex}
+                                handleNextQuestion={handleNextQuestion}
+                                handlePreviousQuestion={handlePreviousQuestion}
+                            />
 
-                <SendButton
-                    questionnaireId={questionnaireId}
-                    answers={answers}
-                    sendLoading={sendLoading}
-                    handleNavigateBackToApp={handleNavigateBackToApp}
-                    handleSendAnswers={handleSendAnswers}
-                    readyToSend={readyToSend}
-                />
+                            <SendButton
+                                questionnaireId={answerQuestionnaire.questionnaireId}
+                                answers={answers}
+                                sendLoading={sendLoading}
+                                handleLeaveAnswerQuestionnaire={handleLeaveAnswerQuestionnaire}
+                                handleSendAnswers={handleSendAnswers}
+                                readyToSend={readyToSend}
+                            />
+                        </>
+                        : 
+                        <NoQuestionnaireToAnswer/>
+                }
             </LinearGradient>
             {
                 confirmBackToApp &&
                 <DefaultModal isVisible={confirmBackToApp} disableGestures={false} onClose={() => handleConfirmBackToAppModal()}>
-                    <BackModal handleNavigateBackToApp={handleNavigateBackToApp} closeModal={handleConfirmBackToAppModal} />
+                    <BackModal handleLeaveAnswerQuestionnaire={handleLeaveAnswerQuestionnaire} closeModal={handleConfirmBackToAppModal} />
                 </DefaultModal>
             }
             <IntroductionModal isVisible={introduction} closeModal={handleIntroduction} />
-
         </ScrollView>
     )
 }

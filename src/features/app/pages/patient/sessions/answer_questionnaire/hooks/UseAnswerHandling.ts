@@ -2,7 +2,7 @@ import { MessageIcon } from "@components/modals/message/types/type_message_modal
 import { Answer, AnswerType, FormattedAnswer, QuestionnaireTemplate } from "types/app/patient/health/Question_Types";
 import { UseQuestionnaireService } from "@hooks/api/UseQuestionnaireService";
 import { UseQuestionnaire } from "@features/app/providers/patient/QuestionariesProvider";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface UseAnswerHandlingProps {
     answers: FormattedAnswer[];

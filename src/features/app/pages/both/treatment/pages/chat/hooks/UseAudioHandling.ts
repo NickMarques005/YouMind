@@ -2,14 +2,16 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Player, Recorder } from '@react-native-community/audio-toolkit';
 import FirebaseStorageService from "src/__firebase__/services/FirebaseStorageService";
 import { PermissionsAndroid, Platform } from "react-native";
-import { AudioTemplate } from "./UseMessageHandling";
+import { AudioTemplate, SendNewMessage } from "./UseMessageHandling";
 import { formatAudioDuration, formatTimer } from "@utils/date/DateFormatting";
+import { UserType } from "types/user/User_Types";
+import { MentionedMessageTemplate } from "types/chat/Chat_Types";
 
 interface AudioHandling {
     isRecording: boolean;
     startRecording: () => void;
     stopRecording: () => Promise<ResolveRecording>;
-    handleAudioRelease: (senderId: string) => void;
+    handleAudioRelease: (senderId: string, senderType: UserType, mentionedMessage?: MentionedMessageTemplate) => Promise<void>;
     handleAudioPress: () => void;
     recordTime: number;
 }
@@ -21,8 +23,10 @@ interface ResolveRecording {
 
 interface UseAudioHandlingProps {
     HandleResponseAppError: (value: string) => void;
-    handleSendNewMessage: (senderId: string, audio?: AudioTemplate) => Promise<void>;
+    handleSendNewMessage: (sendMessageData: SendNewMessage) => Promise<void>;
     senderId?: string;
+    senderType: UserType;
+    mentionedMessage?: MentionedMessageTemplate;
 }
 
 const recorderOptions = {
@@ -34,7 +38,9 @@ const recorderOptions = {
     encoder: 'aac'
 }
 
-const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage, senderId }: UseAudioHandlingProps): AudioHandling => {
+const useAudioHandling = ({ 
+    HandleResponseAppError, handleSendNewMessage, 
+    senderId, senderType, mentionedMessage }: UseAudioHandlingProps): AudioHandling => {
     const [recorder, setRecorder] = useState<Recorder | null>(null);
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -129,7 +135,7 @@ const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage, sender
         }
     }
 
-    const handleAudioRelease = async (senderId: string) => {
+    const handleAudioRelease = async (senderId: string, senderType: UserType, mentionedMessage?: MentionedMessageTemplate) => {
         if(!isRecording) return;
         try {
             const { filePath, duration} = await stopRecording();
@@ -141,7 +147,7 @@ const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage, sender
             }
             console.log("Audio: ", audio);
 
-            handleSendNewMessage(senderId, audio);
+            handleSendNewMessage({senderId, audio, senderType, mentionedMessage });
         } catch (err) {
             const error = err as Error;
             console.error(err);
@@ -166,7 +172,7 @@ const useAudioHandling = ({ HandleResponseAppError, handleSendNewMessage, sender
 
         if (isRecording && recordTime === 59) {
             console.log("Limite de tempo atingido. Parando gravação...");
-            senderId && handleAudioRelease(senderId);
+            senderId && handleAudioRelease(senderId, senderType, mentionedMessage);
         }
 
         return () => clearInterval(intervalId);

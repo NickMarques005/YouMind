@@ -10,6 +10,7 @@ interface UseHandlingMedicationsToConsumeProps{
 
 const useHandlingMedicationsToConsume = ({medications, selectedDate, setLoading}: UseHandlingMedicationsToConsumeProps) => {
     const [medicationsToConsume, setMedicationsToConsume] = useState<MedicationToConsume[] | undefined>([]);
+    const [areMedicationsScheduled, setAreMedicationsScheduled] = useState<boolean>(false);
     const { performGetMedicationsToConsumeOnDate } = UseMedicationService(setLoading);
 
     const fetchTakenMedications = async (selectedDate: Date) => {
@@ -33,10 +34,15 @@ const useHandlingMedicationsToConsume = ({medications, selectedDate, setLoading}
 
 
     useEffect(() => {
-        fetchTakenMedications(selectedDate);
+        const allMedicationsNotScheduled = medications.every(med => med.isScheduled === false);
+        setAreMedicationsScheduled(!allMedicationsNotScheduled);
+
+        if (!allMedicationsNotScheduled) {
+            fetchTakenMedications(selectedDate);
+        }
     }, [selectedDate, medications]);
 
-    return { medicationsToConsume };
+    return { medicationsToConsume, areMedicationsScheduled };
 };
 
 export default useHandlingMedicationsToConsume;

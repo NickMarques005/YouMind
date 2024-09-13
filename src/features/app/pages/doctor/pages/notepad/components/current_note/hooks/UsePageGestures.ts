@@ -17,9 +17,7 @@ export const usePageGestures = ({ editContent, activeIndex, addPage, deletePage 
             console.log("DONT HAS note");
             return;
         }
-
-        console.log("DATA LENGTH: ", editContent);
-        console.log("INDEX: ", activeIndex.value);
+        
         if (activeIndex.value === editContent.length - 1) {
 
             console.log("END");

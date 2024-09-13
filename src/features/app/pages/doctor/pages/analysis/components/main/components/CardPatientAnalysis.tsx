@@ -31,7 +31,7 @@ const CardPatientAnalysis: React.FC<CardPatientAnalysisProps> = ({ patientUnderA
                     <Image source={!patientUnderAnalysis.patientAvatar ? patientIcon : { uri: patientUnderAnalysis.patientAvatar }} style={{ width: '100%', height: '100%' }} />
                 </View>
 
-                <View style={{ width: '80%' }}>
+                <View style={{ width: '90%' }}>
                     <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#2c4652' }}>{patientUnderAnalysis.patientName}</Text>
                     <Text style={{ fontSize: 16, color: '#54707d' }}>{patientUnderAnalysis.patientEmail}</Text>
                 </View>

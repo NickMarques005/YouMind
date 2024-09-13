@@ -5,7 +5,7 @@ import { responsiveSize, screenHeight } from '@utils/layout/Screen_Size';
 import LinearGradient from 'react-native-linear-gradient';
 import images from '@assets/images';
 import { MaterialIcons } from '@expo/vector-icons';
-import { FormatISOToStringDate, formatRelativeTime } from '@utils/date/DateFormatting';
+import { FormatISOToStringDate, formatRelativeTime, formatRelativeTimeText } from '@utils/date/DateFormatting';
 
 interface HistoryQuestinnaireItemProps {
     questionnaire: HistoryQuestionnaire;
@@ -48,7 +48,7 @@ const HistoryQuestionnaireItem = ({ questionnaire, patientHistory, selectQuestio
                     </View>
                     <View style={{ flex: 1, backgroundColor: '#f2f8fa', borderBottomWidth: 2, paddingLeft: '15%', paddingRight: '3%', alignItems: 'center', flexDirection: 'row', borderBottomColor: '#809ca6' }}>
                         <View style={{ height: '100%', justifyContent: 'center', }}>
-                            <Text style={{ fontSize: 16, fontWeight: '600', color: messageColor }}>{message} {!questionnaire.pending && formatRelativeTime(questionnaire.updatedAt)}</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '600', color: messageColor }}>{message} {!questionnaire.pending && `${formatRelativeTimeText(formatRelativeTime(questionnaire.updatedAt))}`}</Text>
                         </View>
                     </View>
                 </View>

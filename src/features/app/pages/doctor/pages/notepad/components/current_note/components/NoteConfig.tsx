@@ -23,33 +23,33 @@ interface NoteConfigProps {
     visible: boolean;
     deleteLoading: LoadingStructure;
     updateLoading: LoadingStructure;
-    onClose: () => void;
+    newNote: NoteTemplate;
     currentNote: NoteTemplate;
-    handleDeleteNote: (noteId: string, onSuccess?: () => void) => Promise<void>;
-    handleUpdateNote: (noteId: string, updated_note: UpdateNote, onSuccess?: () => void) => Promise<void>;
     noteVerification: Verification | undefined;
     noteBehavior: NoteBehavior | undefined;
+    handleDeleteNote: (noteId: string, onSuccess?: () => void) => Promise<void>;
+    handleUpdateNote: (noteId: string, updated_note: UpdateNote, onSuccess?: () => void) => Promise<void>;
     handleNoteVerification: (handleAccept: () => void, message?: string, acceptText?: string, declineText?: string, behavior?: NoteBehavior) => void;
     clearNoteVerification: () => void;
-    setNewNote: React.Dispatch<React.SetStateAction<NoteTemplate>>;
-    newNote: NoteTemplate;
+    setNewNote: React.Dispatch<React.SetStateAction<NoteTemplate | undefined>>;
     updatedNoteVerification: () => boolean;
+    onClose: () => void;
 }
 
 const NoteConfig: React.FC<NoteConfigProps> = ({
     deleteLoading,
     updateLoading,
     visible,
-    onClose,
     currentNote,
-    handleDeleteNote,
-    handleUpdateNote,
     noteVerification,
     noteBehavior,
+    newNote,
+    onClose,
+    handleDeleteNote,
+    handleUpdateNote,
     handleNoteVerification,
     clearNoteVerification,
     setNewNote,
-    newNote,
     updatedNoteVerification
 }) => {
     const { userData } = UseForm();
@@ -122,7 +122,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
                                             style={[styleAddNote.input, { opacity: deleteLoading.loading || updateLoading.loading ? 0.5 : 1 }]}
                                             placeholder="Título"
                                             value={newNote.title}
-                                            onChangeText={(e) => setNewNote({ ...newNote, title: e })}
+                                            onChangeText={(e) => newNote && setNewNote({ ...newNote, title: e })}
                                             placeholderTextColor={'#ddeded'}
                                         />
                                         <TextInput
@@ -130,7 +130,7 @@ const NoteConfig: React.FC<NoteConfigProps> = ({
                                             style={[styleAddNote.input, { opacity: deleteLoading.loading || updateLoading.loading ? 0.5 : 1 }]}
                                             placeholder="Descrição"
                                             value={newNote.description}
-                                            onChangeText={(e) => setNewNote({ ...newNote, description: e })}
+                                            onChangeText={(e) => newNote && setNewNote({ ...newNote, description: e })}
                                             placeholderTextColor={'#577980'}
                                         />
                                     </View>

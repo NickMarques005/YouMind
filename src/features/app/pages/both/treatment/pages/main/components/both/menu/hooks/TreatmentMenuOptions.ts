@@ -1,7 +1,8 @@
 
 export enum TreatmentMenuOptionNames {
     STATUS = "STATUS",
-    INSTRUCTIONS = "INSTRUCTIONS"
+    INSTRUCTIONS = "INSTRUCTIONS",
+    MOTIVATIONAL_PHRASES= "MOTIVATIONAL_PHRASES"
 }
 
 export const MenuOptionDetails = {
@@ -12,5 +13,9 @@ export const MenuOptionDetails = {
     [TreatmentMenuOptionNames.INSTRUCTIONS]: {
         name: "Instruções",
         icon: "description",
-    }
+    },
+    [TreatmentMenuOptionNames.MOTIVATIONAL_PHRASES]: {
+        name: "Frases Motivacionais",
+        icon: "lightbulb",
+    },
 };

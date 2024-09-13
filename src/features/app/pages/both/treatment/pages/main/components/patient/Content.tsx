@@ -14,7 +14,7 @@ const Content = ({ handleSearch }: ContentProps) => {
 
     return (
         <View style={styles.messagesContent_Container}>
-            <LinearGradient colors={[`#c48fb9`, '#854ba6', `#342954`,]}
+            <LinearGradient colors={[`#c48fb9`, '#854ba6', `#342954`]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }} style={styles.treatment_View}>
                 <View style={styles.treatmentContentTemplate_View}>

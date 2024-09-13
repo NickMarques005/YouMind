@@ -23,7 +23,11 @@ const Schedule = () => {
     const {
         clearCurrentMedication, handleCurrentMedication,
         currentMedication, handleSelectedMedication } = useScheduleBehavior();
-    const { handleDeleteMedication } = useScheduleHandling({ setLoading: removeLoading.setLoading, HandleResponseAppError, HandleResponseAppSuccess });
+    const { handleDeleteMedication } = useScheduleHandling({ 
+        setLoading: removeLoading.setLoading, 
+        HandleResponseAppError, 
+        HandleResponseAppSuccess 
+    });
 
     const backIcon = images.generic_images.back.arrow_back_white;
     const current_medications_illustration = images.app_patient_images.health.medicines.current_medications_illustration;
@@ -104,7 +108,7 @@ const Schedule = () => {
             </View>
             {
                 currentMedication &&
-                <DefaultModal disableGestures={removeLoading.loading} onClose={clearCurrentMedication} isVisible={!!currentMedication}>
+                <DefaultModal disableGestures={false} onClose={clearCurrentMedication} isVisible={!!currentMedication}>
                     <RemoveMedication closeModal={clearCurrentMedication} medication={currentMedication} removeMedication={handleDeleteMedication} loading={removeLoading.loading} removeIcon={iconVerification(currentMedication.type, true)} />
                 </DefaultModal>
             }

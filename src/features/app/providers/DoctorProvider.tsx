@@ -5,6 +5,7 @@ import { PatientHistoryProvider } from './doctor/PatientHistoryProvider';
 import { LatestMedicationProvider } from './doctor/LatestMedicationProvider';
 import { LatestQuestionnaireProvider } from './doctor/LatestQuestionnaireProvider';
 import { PatientProgressProvider } from './doctor/PatientProgressProvider';
+import { CurrentNoteProvider } from './doctor/CurrentNoteProvider';
 
 const DoctorProvider: React.FC<DefaultProviderProps> = ({ children }) => {
     return (
@@ -13,7 +14,9 @@ const DoctorProvider: React.FC<DefaultProviderProps> = ({ children }) => {
                 <LatestQuestionnaireProvider>
                     <PatientProgressProvider>
                         <NotepadProvider>
-                            {children}
+                            <CurrentNoteProvider>
+                                {children}
+                            </CurrentNoteProvider>
                         </NotepadProvider>
                     </PatientProgressProvider>
                 </LatestQuestionnaireProvider>

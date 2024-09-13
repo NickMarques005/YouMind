@@ -16,9 +16,7 @@ interface LatestHistoryProps {
 }
 
 const LatestHistory = ({ selectLatestMedication, selectLatestQuestionnaire, loadingSize }: LatestHistoryProps) => {
-    const { latestMedications, latestQuestionnaires, 
-        latestMedicationState, 
-        latestQuestionnaireState,
+    const { latestMedications, latestQuestionnaires,
         medicationLoading,
         questionnaireLoading
     } = useLatestHistoryHandling();

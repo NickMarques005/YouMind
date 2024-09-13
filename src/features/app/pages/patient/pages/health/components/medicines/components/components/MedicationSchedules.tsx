@@ -5,13 +5,15 @@ import { MedicationDurationType, MedicationFormType, MedicationFrequencyType } f
 import { MedicationFormModal } from '../../hooks/useMedicationFormBehavior';
 import CustomTextInput from '@components/text_input/CustomInput';
 import InfoModal from '@components/modals/info/InfoModal';
-import { UserType } from 'types/user/User_Types';
+import { UserPatient, UserType } from 'types/user/User_Types';
 import CustomCalendar from '@components/calendar/CustomCalendar';
 import { FormatISOToStringDate } from '@utils/date/DateFormatting';
 import { responsiveSize } from '@utils/layout/Screen_Size';
 import { MarkedDates, MarkingTypes } from 'react-native-calendars/src/types';
+import { UseForm } from '@features/app/providers/sub/UserProvider';
 
 interface MedicationSchedulesProps {
+    userPatient: UserPatient;
     form: MedicationFormType;
     loading: boolean;
     frequencyType: MedicationFrequencyType;
@@ -38,6 +40,7 @@ interface MedicationSchedulesProps {
 }
 
 const MedicationSchedules: React.FC<MedicationSchedulesProps> = ({
+    userPatient,
     form,
     loading,
     frequencyType,
@@ -70,178 +73,190 @@ const MedicationSchedules: React.FC<MedicationSchedulesProps> = ({
     }
 
     return (
-        <View style={styles.medicationSchedules}>
-            <View style={styles.sessionIconContainer}>
-                <MaterialIcons name="schedule" size={sessionIconSize / 2} color="white" />
-            </View>
-            <View style={[styles.infoTemplate]}>
-                <View style={styles.infoTitleContainer}>
-                    <Text style={styles.infoTitle}>Frequência</Text>
-                    <TouchableOpacity onPress={() => !isFrequencyModalVisible ? handleInfoModalPress('frequency') : clearInfoModalType('frequency')}>
-                        <MaterialIcons name="help-outline" size={20} color="#631c50" />
-                    </TouchableOpacity>
+        <>
+            {
+                !userPatient.is_treatment_running &&
+                <View style={styles.disableSessionContainer}>
+                    <Text style={styles.disableSessionText}>
+                        {
+                            `Enquanto você estiver fora do tratamento, o agendamento do medicamento permanecerá desativado!`
+                        }
+                    </Text>
                 </View>
-                {
-                    modalFrequencyInfo &&
-                    <InfoModal
-                        info={modalFrequencyInfo}
-                        isVisible={isFrequencyModalVisible}
-                        userType={userType}
-                        positionStyle={{ top: infoModalYOffset, position: 'absolute', zIndex: 5 }}
-                    />
-                }
-                <View style={styles.infoRowDirection}>
-                    <CustomTextInput
-                        editable={!loading}
-                        viewStyle={[styles.viewInput, { opacity: loading ? 0.6 : 1 }]}
-                        inputStyle={styles.input}
-                        value={String(form.frequency)}
-                        onChangeText={(text) => handleInputChange('frequency', text)}
-                        placeholder="Frequência"
-                        backgroundColor='#fcf7fa'
-                        keyboardType={'number-pad'}
-                        maxLength={3}
-                    />
-                    <View style={{ minWidth: '35%' }}>
-                        <TouchableOpacity
-                            style={[styles.viewActivateModal, { opacity: loading ? 0.6 : 1 }]}
-                            onPress={() => showFormModal('Frequencies')}
-                            disabled={loading}
-                        >
-                            <Text style={[styles.frequencyButtonText]}>
-                                {frequencyType}
-                            </Text>
-                            <MaterialIcons name="arrow-drop-down" size={24} color="white" style={{ marginRight: '10%' }} />
-                        </TouchableOpacity>
-                    </View>
+            }
+            <View style={[styles.medicationSchedules, { opacity: !userPatient.is_treatment_running ? 0.5 : 1 }]}>
+                <View style={styles.sessionIconContainer}>
+                    <MaterialIcons name="schedule" size={sessionIconSize / 2} color="white" />
                 </View>
-            </View>
-            <View style={styles.infoTemplate}>
-                <View style={styles.infoTitleContainer}>
-                    <Text style={styles.infoTitle}>Horários</Text>
-                </View>
-
-                <View style={styles.infoContainer}>
-                    {form.schedules.map((schedule, index) => (
-                        <TouchableOpacity disabled={loading} key={index} onPress={() => {
-                            setCurrentScheduleIndex(index);
-                            setCurrentSchedule(schedule);
-                            showFormModal('Schedules');
-                        }} style={styles.scheduleItem}>
-                            <Text style={styles.scheduleText}>{schedule}</Text>
-                        </TouchableOpacity>
-                    ))}
-                    {
-                        !hasEndOfDaySchedule(form.schedules) &&
-                        <TouchableOpacity disabled={loading} onPress={() => showFormModal('Schedules')} style={styles.addScheduleButton}>
-                            <MaterialIcons name="add" size={20} color="white" />
-                        </TouchableOpacity>
-                    }
-                </View>
-            </View>
-            <View style={[styles.infoTemplate]}>
-                <View style={styles.infoTitleContainer}>
+                <View style={[styles.infoTemplate]}>
                     <View style={styles.infoTitleContainer}>
-                        <Text style={styles.infoTitle}>Início</Text>
-                        <TouchableOpacity onPress={() => !isFrequencyModalVisible ? handleInfoModalPress('start') : () => clearInfoModalType('start')}>
+                        <Text style={styles.infoTitle}>Frequência</Text>
+                        <TouchableOpacity disabled={loading || !userPatient.is_treatment_running} onPress={() => !isFrequencyModalVisible ? handleInfoModalPress('frequency') : clearInfoModalType('frequency')}>
                             <MaterialIcons name="help-outline" size={20} color="#631c50" />
                         </TouchableOpacity>
                     </View>
                     {
-                        modalStartInfo &&
+                        modalFrequencyInfo &&
                         <InfoModal
-                            info={modalStartInfo}
-                            isVisible={isStartModalVisible}
+                            info={modalFrequencyInfo}
+                            isVisible={isFrequencyModalVisible}
                             userType={userType}
                             positionStyle={{ top: infoModalYOffset, position: 'absolute', zIndex: 5 }}
                         />
                     }
-                </View>
-
-                <View style={styles.infoRowDirection}>
-                    <View
-                        style={[styles.viewInput, { opacity: loading ? 0.6 : 0.8 }]}
-                    >
-                        <Text style={styles.input}>
-                            {FormatISOToStringDate(form.start)}
-                        </Text>
+                    <View style={styles.infoRowDirection}>
+                        <CustomTextInput
+                            editable={!loading && userPatient.is_treatment_running}
+                            viewStyle={[styles.viewInput, { opacity: loading ? 0.6 : 1 }]}
+                            inputStyle={styles.input}
+                            value={String(form.frequency)}
+                            onChangeText={(text) => handleInputChange('frequency', text)}
+                            placeholder="Frequência"
+                            backgroundColor='#fcf7fa'
+                            keyboardType={'number-pad'}
+                            maxLength={3}
+                        />
+                        <View style={{ minWidth: '35%' }}>
+                            <TouchableOpacity
+                                style={[styles.viewActivateModal, { opacity: loading ? 0.6 : 1 }]}
+                                onPress={() => showFormModal('Frequencies')}
+                                disabled={loading || !userPatient.is_treatment_running}
+                            >
+                                <Text style={[styles.frequencyButtonText]}>
+                                    {frequencyType}
+                                </Text>
+                                <MaterialIcons name="arrow-drop-down" size={24} color="white" style={{ marginRight: '10%' }} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
-            <View style={styles.infoTemplate}>
-                <View style={styles.infoTitleContainer}>
-                    <Text style={styles.infoTitle}>Duração</Text>
-                </View>
-
-                <View style={styles.infoRowDirection}>
-                    <CustomTextInput
-                        viewStyle={[styles.viewInput, { opacity: loading ? 0.6 : 1 }]}
-                        inputStyle={styles.input}
-                        value={duration}
-                        onChangeText={(text) => handleDurationChange(text)}
-                        placeholder="Duração"
-                        backgroundColor='#fcf7fa'
-                        keyboardType={'number-pad'}
-                        editable={!loading}
-                        maxLength={3}
-                    />
-                    <View style={{ minWidth: '35%' }}>
-                        <TouchableOpacity
-                            style={[styles.viewActivateModal, { opacity: loading ? 0.6 : 1 }]}
-                            onPress={() => showFormModal('Duration')}
-                            disabled={loading}
-                        >
-                            <Text style={[styles.frequencyButtonText]}>
-                                {durationType}
-                            </Text>
-                            <MaterialIcons name="arrow-drop-down" size={24} color="white" style={{ marginRight: '10%' }} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-
-            <View style={styles.infoTemplate}>
-                <TouchableOpacity
-                    style={[styles.viewActivateModal, { opacity: loading ? 0.6 : 1 }]}
-                    onPress={() => handleShowCalendar()}
-                    disabled={loading}
-                >
-                    <View>
-                        <MaterialIcons name="event" size={24} color="white" />
-                        {
-                            hasSchedulePeriodCompleted &&
-                            <View style={styles.calendarButtonUpdateIcon} />
-                        }
-                        
-                    </View>
-                </TouchableOpacity>
-            </View>
-            {
-                showCalendar &&
                 <View style={styles.infoTemplate}>
-                    <CustomCalendar
-                        onDateSelect={(date) => {
-                            handleInputChange('start', date);
-                        }}
-                        theme={{
-                            backgroundColor: '#ffffff',
-                            calendarBackground: '#ffffff',
-                            textSectionTitleColor: '#c8b6cd',
-                            selectedDayBackgroundColor: '#6b0e96',
-                            selectedDayTextColor: '#ffffff',
-                            todayTextColor: '#bd70db',
-                            dayTextColor: '#482d50',
-                            textDisabledColor: '#d0c3d6',
-                            arrowColor: '#3c1d57',
-                            monthTextColor: '#a92cbf',
-                            indicatorColor: '#a92cbf',
-                        }}
-                        markedDates={scheduleMarkedDates}
-                        markingType={scheduleMarkingType}
-                    />
+                    <View style={styles.infoTitleContainer}>
+                        <Text style={styles.infoTitle}>Horários</Text>
+                    </View>
+
+                    <View style={styles.infoContainer}>
+                        {form.schedules.map((schedule, index) => (
+                            <TouchableOpacity disabled={loading || !userPatient.is_treatment_running} key={index} onPress={() => {
+                                setCurrentScheduleIndex(index);
+                                setCurrentSchedule(schedule);
+                                showFormModal('Schedules');
+                            }} style={styles.scheduleItem}>
+                                <Text style={styles.scheduleText}>{schedule}</Text>
+                            </TouchableOpacity>
+                        ))}
+                        {
+                            !hasEndOfDaySchedule(form.schedules) &&
+                            <TouchableOpacity disabled={loading || !userPatient.is_treatment_running} onPress={() => showFormModal('Schedules')} style={[styles.addScheduleButton, { elevation: !userPatient.is_treatment_running ? 0 : 4 }]}>
+                                <MaterialIcons name="add" size={20} color="white" />
+                            </TouchableOpacity>
+                        }
+                    </View>
                 </View>
-            }
-        </View>
+                <View style={[styles.infoTemplate]}>
+                    <View style={styles.infoTitleContainer}>
+                        <View style={styles.infoTitleContainer}>
+                            <Text style={styles.infoTitle}>Início</Text>
+                            <TouchableOpacity disabled={loading || !userPatient.is_treatment_running} onPress={() => !isFrequencyModalVisible ? handleInfoModalPress('start') : () => clearInfoModalType('start')}>
+                                <MaterialIcons name="help-outline" size={20} color="#631c50" />
+                            </TouchableOpacity>
+                        </View>
+                        {
+                            modalStartInfo &&
+                            <InfoModal
+                                info={modalStartInfo}
+                                isVisible={isStartModalVisible}
+                                userType={userType}
+                                positionStyle={{ top: infoModalYOffset, position: 'absolute', zIndex: 5 }}
+                            />
+                        }
+                    </View>
+
+                    <View style={styles.infoRowDirection}>
+                        <View
+                            style={[styles.viewInput, { opacity: loading ? 0.6 : 0.8 }]}
+                        >
+                            <Text style={styles.input}>
+                                {FormatISOToStringDate(form.start)}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+                <View style={styles.infoTemplate}>
+                    <View style={styles.infoTitleContainer}>
+                        <Text style={styles.infoTitle}>Duração</Text>
+                    </View>
+
+                    <View style={styles.infoRowDirection}>
+                        <CustomTextInput
+                            editable={!loading && userPatient.is_treatment_running}
+                            viewStyle={[styles.viewInput, { opacity: loading ? 0.6 : 1 }]}
+                            inputStyle={styles.input}
+                            value={duration}
+                            onChangeText={(text) => handleDurationChange(text)}
+                            placeholder="Duração"
+                            backgroundColor='#fcf7fa'
+                            keyboardType={'number-pad'}
+                            maxLength={3}
+                        />
+                        <View style={{ minWidth: '35%' }}>
+                            <TouchableOpacity
+                                disabled={loading || !userPatient.is_treatment_running}
+                                style={[styles.viewActivateModal, { opacity: loading ? 0.6 : 1 }]}
+                                onPress={() => showFormModal('Duration')}
+                            >
+                                <Text style={[styles.frequencyButtonText]}>
+                                    {durationType}
+                                </Text>
+                                <MaterialIcons name="arrow-drop-down" size={24} color="white" style={{ marginRight: '10%' }} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={styles.infoTemplate}>
+                    <TouchableOpacity
+                        style={[styles.viewActivateModal, { opacity: loading ? 0.6 : 1 }]}
+                        onPress={() => handleShowCalendar()}
+                        disabled={loading || !userPatient.is_treatment_running}
+                    >
+                        <View>
+                            <MaterialIcons name="event" size={24} color="white" />
+                            {
+                                hasSchedulePeriodCompleted &&
+                                <View style={styles.calendarButtonUpdateIcon} />
+                            }
+
+                        </View>
+                    </TouchableOpacity>
+                </View>
+                {
+                    showCalendar &&
+                    <View style={styles.infoTemplate}>
+                        <CustomCalendar
+                            onDateSelect={(date) => {
+                                handleInputChange('start', date);
+                            }}
+                            theme={{
+                                backgroundColor: '#ffffff',
+                                calendarBackground: '#ffffff',
+                                textSectionTitleColor: '#c8b6cd',
+                                selectedDayBackgroundColor: '#6b0e96',
+                                selectedDayTextColor: '#ffffff',
+                                todayTextColor: '#bd70db',
+                                dayTextColor: '#482d50',
+                                textDisabledColor: '#d0c3d6',
+                                arrowColor: '#3c1d57',
+                                monthTextColor: '#a92cbf',
+                                indicatorColor: '#a92cbf',
+                            }}
+                            markedDates={scheduleMarkedDates}
+                            markingType={scheduleMarkingType}
+                        />
+                    </View>
+                }
+            </View>
+        </>
     );
 };
 
@@ -343,7 +358,6 @@ const medicationSchedulesStyle = (sessionIconSize: number) => {
             paddingHorizontal: '3%',
             backgroundColor: '#945989',
             borderRadius: 10,
-            elevation: 4,
             justifyContent: 'center',
             alignItems: 'center',
         },
@@ -365,6 +379,19 @@ const medicationSchedulesStyle = (sessionIconSize: number) => {
             backgroundColor: '#daa7fa',
             borderWidth: 3,
             borderColor: '#945989'
+        },
+        disableSessionContainer: {
+            width: '100%',
+            paddingVertical: 15,
+            paddingHorizontal: '6%',
+            backgroundColor: '#b85f8d',
+            borderRadius: 20,
+            marginBottom: '5%',
+        },
+        disableSessionText: {
+            fontSize: 15,
+            color: 'white',
+            fontWeight: '700'
         }
     });
 } 

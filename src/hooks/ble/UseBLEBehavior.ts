@@ -21,17 +21,15 @@ export const useBLEBehavior = ({
 
     const { HandleResponseAppError } = UseGlobalResponse();
 
-    const handleDiscoverPeripherals = useCallback(() => {
-        return new Promise<Peripheral[]>((resolve, reject) => {
-            BleManager.getDiscoveredPeripherals()
-                .then((peripherals) => {
-                    resolve(peripherals as Peripheral[]);
-                })
-                .catch((error) => {
-                    console.log("Houve um erro ao buscar os perifericos: ", error);
-                    reject(error);
-                })
-        });
+    const handleDiscoverPeripherals = useCallback(async () => {
+        try {
+            const peripherals = await BleManager.getDiscoveredPeripherals();
+            console.log("Periféricos achados: ", peripherals);
+            return peripherals as Peripheral[];
+        } catch (error) {
+            console.log("Houve um erro ao buscar os periféricos: ", error);
+            throw error;
+        }
     }, []);
 
     const handleStopScan = async () => {

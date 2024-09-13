@@ -2,15 +2,19 @@ import { screenWidth } from "@utils/layout/Screen_Size";
 import { StyleSheet } from "react-native"
 
 
-export const profile_data_style = (userType: string | undefined) => {
+export const profile_data_style = (userType: string | undefined, backIconSize: number) => {
 
     return StyleSheet.create({
         screenProfileData: {
-            width: screenWidth,
+            width: '100%',
             borderBottomLeftRadius: 30,
             borderBottomRightRadius: 30,
             alignItems: 'center',
             justifyContent: 'center',
+        },
+        profileMainContainer: {
+            paddingBottom: '10%',
+            paddingHorizontal: 20
         },
         headerProfileData: {
             display: 'flex',
@@ -18,19 +22,18 @@ export const profile_data_style = (userType: string | undefined) => {
             width: '100%',
             alignItems: 'center',
             justifyContent: 'space-between',
-            paddingHorizontal: 25,
             paddingVertical: 25,
         },
         exitProfileData_Button: {
-            height: 35,
-            width: 35
+            height: backIconSize,
+            width: backIconSize,
         },
         accountView: {
-            marginBottom: 30,
             gap: 5,
-            width: '100%',
+            flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
+            marginBottom: 25
         },
         accountUserPhotoView: {
     
@@ -69,8 +72,31 @@ export const profile_data_style = (userType: string | undefined) => {
             fontSize: 22,
             textAlign: 'center',
         },
+        restrictionProfileView: {
+            width: '100%',
+            flexDirection: 'row', 
+            paddingVertical: 20, 
+            gap: 10,
+            alignItems: 'center'
+        },
+        restrictionContainerIcon: {
+            
+        },
+        restrictionContainerTitle: {
+            flex: 1,
+        },
+        restrictionTitleText: {
+            fontSize: 19,
+            fontWeight: '800',
+            color: userType === 'patient' ? '#461c5c' : '#1c5c4c',
+            width: '86%',
+        },
+        learnMoreText: {
+            fontSize: 15, 
+            fontWeight: '600', 
+            color: userType === 'patient' ? '#7f37b0' : '#37b092'
+        },
         profileMainOptionsView: {
-            paddingHorizontal: 20,
             gap: 5,
         },
         headerProfileOptionsView: {

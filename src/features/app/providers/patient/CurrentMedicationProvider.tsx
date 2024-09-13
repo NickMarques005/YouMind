@@ -31,37 +31,47 @@ export const CurrentMedicationProvider = ({ children }: CurrentMedicationProvide
     const updateNextMedication = () => {
         if (medications.length > 0) {
             const now = new Date();
+
             const upcomingDoses = medications
-                .map(medication => ({ medication, nextDose: calculateNextDose(medication, now) }))
-                .filter(({ nextDose }) => nextDose)
+                .map(medication => ({
+                    medication,
+                    nextDose: calculateNextDose(medication, now)
+                }))
+                .filter(({ nextDose }) => nextDose !== null)
                 .sort((a, b) => a.nextDose!.getTime() - b.nextDose!.getTime());
+            
+                console.log("Upcoming Doses: ", upcomingDoses);
+                console.log(medications);
 
             if (upcomingDoses.length > 0) {
                 const { medication, nextDose } = upcomingDoses[0];
                 setNextMedication(medication);
-                const nowTime = now.getTime();
-                const nextDoseTime = nextDose!.getTime();
-                const timeDifference = nextDoseTime - nowTime;
 
-                const oneDay = 24 * 60 * 60 * 1000;
-                if (timeDifference < oneDay) {
-                    if (now.getDate() === nextDose!.getDate()) {
-                        setAlertText(`Hoje às ${nextDose!.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
-                    } else {
-                        setAlertText(`Amanhã às ${nextDose!.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
-                    }
+                const nextDoseDate = new Date(nextDose!);
+                const nowDate = new Date(now);
+
+                const isToday = nextDoseDate.getDate() === nowDate.getDate() &&
+                    nextDoseDate.getMonth() === nowDate.getMonth() &&
+                    nextDoseDate.getFullYear() === nowDate.getFullYear();
+
+                const isTomorrow = nextDoseDate.getDate() === nowDate.getDate() + 1 &&
+                    nextDoseDate.getMonth() === nowDate.getMonth() &&
+                    nextDoseDate.getFullYear() === nowDate.getFullYear();
+
+                if (isToday) {
+                    setAlertText(`Hoje às ${nextDoseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+                } else if (isTomorrow) {
+                    setAlertText(`Amanhã às ${nextDoseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
                 } else {
-                    setAlertText(`Em ${nextDose!.toLocaleDateString()} às ${nextDose!.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+                    setAlertText(`Em ${nextDoseDate.toLocaleDateString()} às ${nextDoseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
                 }
-            }
-            else{
+            } else {
                 setNextMedication(null);
                 setAlertText('');
             }
-        }
-        else{
+        } else {
             setNextMedication(null);
-                setAlertText('');
+            setAlertText('');
         }
     };
 
@@ -70,7 +80,7 @@ export const CurrentMedicationProvider = ({ children }: CurrentMedicationProvide
 
         const interval = setInterval(() => {
             updateNextMedication();
-        }, 60000);
+        }, 60000); //Atualização a cada minuto
 
         return () => clearInterval(interval);
     }, [medications]);

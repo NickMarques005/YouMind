@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { LatestQuestionnaire, PatientHistory, SocketLatestMedication, SocketLatestQuestionnaire, SocketPatientHistory } from 'types/history/PatientHistory_Types';
+import { SocketLatestMedication, SocketLatestQuestionnaire, SocketPatientHistory } from 'types/history/PatientHistory_Types';
 import { usePatientHistory } from '@features/app/providers/doctor/PatientHistoryProvider';
 import { useLatestQuestionnaire } from '@features/app/providers/doctor/LatestQuestionnaireProvider';
 import { useLatestMedication } from '@features/app/providers/doctor/LatestMedicationProvider';

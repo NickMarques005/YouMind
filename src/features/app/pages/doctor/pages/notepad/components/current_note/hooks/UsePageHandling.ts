@@ -3,13 +3,16 @@ import { SharedValue, withTiming, Easing, useSharedValue } from 'react-native-re
 import { NoteTemplate } from 'types/app/doctor/notepad/Notepad_Types';
 
 interface UsePageHandlingProps {
-    initialContent: string[];
+    editContent: string[];
+    setEditContent: React.Dispatch<React.SetStateAction<string[]>>;
     handleUpdateNewContent: (updatedContent: string[]) => void;
-    newNote: NoteTemplate;
+    newNote?: NoteTemplate;
 }
 
-export const usePageHandling = ({ initialContent, handleUpdateNewContent, newNote }: UsePageHandlingProps) => {
-    const [editContent, setEditContent] = useState<string[]>(initialContent);
+export const usePageHandling = ({ 
+    editContent, setEditContent,
+    handleUpdateNewContent, newNote }: UsePageHandlingProps) => {
+
     const activeIndex = useSharedValue(0);
 
     const addPage = (index: number) => {
@@ -34,7 +37,7 @@ export const usePageHandling = ({ initialContent, handleUpdateNewContent, newNot
     };
 
     useEffect(() => {
-        if(newNote.content !== editContent)
+        if(newNote && newNote.content !== editContent)
         {
             handleUpdateNewContent(editContent);
         }

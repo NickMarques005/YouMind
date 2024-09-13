@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { PatientHistory } from 'types/history/PatientHistory_Types';
@@ -15,6 +15,8 @@ interface PatientPerformanceDataContainerProps {
 
 const PatientPerformanceDataContainer: React.FC<PatientPerformanceDataContainerProps> = ({ title, data, hasDataBelow, dataType, history }) => {
 
+    const [performance, setPerformance] = useState<number>(0);
+
     const renderPerformanceDataIcon = () => {
         switch (dataType) {
             case 'medication':
@@ -28,7 +30,7 @@ const PatientPerformanceDataContainer: React.FC<PatientPerformanceDataContainerP
         }
     };
 
-    const calculatePerformance = () => {
+    const calculatePerformance = (history?: PatientHistory) => {
         if (!history) return 0;
 
         switch (dataType) {
@@ -41,13 +43,18 @@ const PatientPerformanceDataContainer: React.FC<PatientPerformanceDataContainerP
                     ? history.questionnaireHistory.answered / history.questionnaireHistory.total
                     : 0;
             case 'productivity':
-                return getProductivityLevel(history) / 100;
+                console.log('productivity')
+                const performance = getProductivityLevel(history) ?? 0;
+                return performance/100;
             default:
                 return 0;
         }
     };
 
-    const performance = calculatePerformance();
+    useEffect(() => {
+        const newPerformance = calculatePerformance(history);
+        setPerformance(newPerformance);
+    }), [history];
 
     return (
         <View style={[{ display: 'flex', width: '100%', paddingVertical: '3%' }, hasDataBelow && { borderBottomWidth: 1.5, borderColor: 'rgba(200, 213, 219, 0.5)' }]}>
@@ -59,14 +66,14 @@ const PatientPerformanceDataContainer: React.FC<PatientPerformanceDataContainerP
                 <View style={{}}>
                     <Text style={{ fontSize: 16, color: '#dce6e8' }}>{data}</Text>
                 </View>
-                <View style={{paddingVertical: '5%',}}>
+                <View style={{ paddingVertical: '5%', }}>
                     <Bar
                         width={null}
                         height={10}
                         borderRadius={5}
                         color={'#cae4eb'}
                         unfilledColor={'rgba(200, 213, 219, 0.5)'}
-                        progress={performance}
+                        progress={performance || 0}
                     />
                 </View>
             </View>

@@ -22,7 +22,7 @@ function useBLE(): BluetoothLowEnergyApi {
               {
                 title: 'Permissão de localização',
                 message: 'Bluetooth Low Energy precisa de acesso à sua localização',
-                buttonNeutral: 'Ask Later',
+                buttonNeutral: 'Perguntar Depois',
                 buttonNegative: 'Cancelar',
                 buttonPositive: 'OK',
               },

@@ -1,5 +1,5 @@
 import { TreatmentInfoTemplate } from "types/treatment/Treatment_Types";
-import { UserData } from "types/user/User_Types";
+import { UserData, UserType } from "types/user/User_Types";
 
 export interface UserChat {
     last_msg?: LastMsg;
@@ -21,10 +21,16 @@ export interface Request_SaveNewMessageArgs {
     content: string;
     audioUrl?: string;
     duration?: string;
+    senderType: UserType;
 }
 
 export interface Request_GetMessagesArgs {
     conversationId: string;
+}
+
+export interface Request_AddMessagesToNoteArgs {
+    messages: string[];
+    noteId: string;
 }
 
 export type ProcessedMessageItem =
@@ -34,6 +40,7 @@ export type ProcessedMessageItem =
 export interface MessageTemplate {
     conversationId: string;
     sender: string;
+    senderType: UserType;
     content: string;
     _id: string;
     createdAt: string;
@@ -42,6 +49,30 @@ export interface MessageTemplate {
     audioUrl?: string;
     duration?: string;
     sending?: boolean;
+    isMarked?: boolean;
+    isRemoved?: boolean;
+    mentionedMessageId?: string;
+    mentionedMessage?: MentionedMessageTemplate;
+}
+
+export interface MentionedMessageTemplate {
+    _id: string;
+    senderId: string;
+    senderName: string;
+    senderType: UserType;
+    content: string;
+    hasAudio?: boolean;
+}
+
+export interface MessageSelected {
+    messageId: string;
+    ownMessage: boolean;
+    isMarked?: boolean;
+    senderId: string;
+    senderName: string;
+    senderType: UserType;
+    hasAudio?: boolean;
+    content: string;
 }
 
 export type ChatUser = {
@@ -51,6 +82,7 @@ export type ChatUser = {
     email: string;
     phone?: string;
     gender?: string;
+    birth?: string;
     avatar?: string;
     online?: boolean;
 };
@@ -72,4 +104,20 @@ export interface UpdatedInitialChat {
 
 export interface SocketInitialChat {
     updatedChat: UpdatedInitialChat;
+}
+
+export interface Socket_MarkedMessages {
+    messages: MessageTemplate[];
+    isMarked: boolean;
+}
+
+export interface Socket_AllUnmarkedMessage {
+    messageIds: string[];
+    isMarked: boolean;
+}
+
+export interface Socket_FoundMessage {
+    foundMessageId: string;
+    messages: MessageTemplate[];
+    page: number;
 }

@@ -9,7 +9,7 @@ interface UseMedicationFormBehaviorProps {
 export type MedicationFormModal = 'Schedules' | 'Frequencies' | 'ReminderTimes' | 'AlarmDuration' | 'Start' | 'Duration';
 
 export const useMedicationFormBehavior = ({ currentMedication }: UseMedicationFormBehaviorProps) => {
-    const initialFrequency: MedicationFrequencyType = currentMedication ? convertFrequencies(currentMedication.frequency) : "Dias";
+    const initialFrequency: MedicationFrequencyType = currentMedication && currentMedication.frequency ? convertFrequencies(currentMedication.frequency) : "Dias";
     const initialDuration: MedicationDurationType = 'Dias';
     const [suggestions, setSuggestions] = useState<string[] | undefined>([]);
     const [frequencyType, setFrequencyType] = useState<MedicationFrequencyType>(initialFrequency);
@@ -20,7 +20,7 @@ export const useMedicationFormBehavior = ({ currentMedication }: UseMedicationFo
     const [reminderTimes, setReminderTimes] = useState<number | undefined>(currentMedication?.reminderTimes);
     const [startDateText, setStartDateText] = useState<string>("Hoje");
     const [durationType, setDurationType] = useState<MedicationDurationType>(initialDuration);
-    const [duration, setDuration] = useState<string>(currentMedication ? calculateDaysBetweenDates(currentMedication.start, currentMedication.expiresAt).toString() : '');
+    const [duration, setDuration] = useState<string>(currentMedication && currentMedication.start && currentMedication.expiresAt ? calculateDaysBetweenDates(currentMedication.start, currentMedication.expiresAt).toString() : '');
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
 
     const handleStartDateSelect = (date: string) => {

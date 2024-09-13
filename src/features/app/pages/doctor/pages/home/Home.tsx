@@ -1,12 +1,12 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native'
-import React from 'react'
-import LinearGradient from 'react-native-linear-gradient'
-import { UseForm } from '@features/app/providers/sub/UserProvider'
-import Title from './components/Title'
-import SearchPatients from './components/SearchPatients'
-import ProgressOverview from './components/ProgressOverview'
-import NotesReminder from './components/NotesReminder'
-import { useTabNavigation } from '@features/app/hooks/UseTabNavigator'
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React from 'react';
+import LinearGradient from 'react-native-linear-gradient';
+import { UseForm } from '@features/app/providers/sub/UserProvider';
+import Title from './components/Title';
+import SearchPatients from './components/SearchPatients';
+import ProgressOverview from './components/ProgressOverview';
+import NotesReminder from './components/NotesReminder';
+import { useTabNavigation } from '@features/app/hooks/navigation/UseTabNavigator';
 
 const Home = () => {
     const { userData } = UseForm();

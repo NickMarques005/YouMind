@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LatestMedication, LatestQuestionnaire } from 'types/history/PatientHistory_Types';
-import { UseTreatment } from '@providers/TreatmentProvider';
+import { UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
 import { useLatestQuestionnaire } from '@features/app/providers/doctor/LatestQuestionnaireProvider';
 import { useLatestMedication } from '@features/app/providers/doctor/LatestMedicationProvider';
 import { UseLoading } from '@hooks/loading/UseLoading';

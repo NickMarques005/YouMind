@@ -1,4 +1,3 @@
-import { useEffect } from "react"; // ajuste o caminho de acordo com sua estrutura
 import { UseNotepadService } from "@hooks/api/UseNotepadService";
 import { UseAuth } from "@features/root/providers/AuthenticationProvider";
 import { useNotepad } from "@features/app/providers/doctor/NotepadProvider";
@@ -7,8 +6,8 @@ import { UsePatientHistoryService } from "@hooks/api/UsePatientHistoryService";
 import { usePatientHistory } from "@features/app/providers/doctor/PatientHistoryProvider";
 import { useLatestMedication } from "@features/app/providers/doctor/LatestMedicationProvider";
 import { useLatestQuestionnaire } from "@features/app/providers/doctor/LatestQuestionnaireProvider";
-import { UseTreatment } from "@providers/TreatmentProvider";
 import { PatientHistory } from "types/history/PatientHistory_Types";
+import { useRedirect } from "@features/app/providers/bridge/RedirectProvider";
 
 interface UsePerformProps {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,8 +48,7 @@ export const useGetNotepad = ({ setLoading, HandleConnectionAppError }: UsePerfo
 
 export const useGetAllPatientHistory = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
     const { performGetAllHistory } = UsePatientHistoryService(setLoading);
-    const { treatment_state } = UseTreatment();
-    const { state, dispatch } = usePatientHistory();
+    const { dispatch } = usePatientHistory();
     const { uid } = UseAuth();
     const { userData } = UseForm();
 
@@ -148,10 +146,12 @@ export const useGetDoctorInitialData = ({ setLoading, HandleConnectionAppError }
     const { getNotepads } = useGetNotepad({ setLoading, HandleConnectionAppError });
     const { getAllPatientHistory } = useGetAllPatientHistory({ setLoading, HandleConnectionAppError });
     const { getLatestPatientHistory } = useGetLatestHistory({ setLoading, HandleConnectionAppError });
+    const { handleEnableRedirects, handleDisableRedirects } = useRedirect();
 
     const getDoctorInitialData = async (stopLoading?: boolean) => {
         setLoading(true);
         try {
+            handleDisableRedirects();
             await getNotepads(stopLoading || false);
             await getAllPatientHistory(stopLoading || false);
             await getLatestPatientHistory(stopLoading || false);
@@ -159,6 +159,7 @@ export const useGetDoctorInitialData = ({ setLoading, HandleConnectionAppError }
             console.error("Erro ao buscar dados do médico: ", error);
         } finally {
             setLoading(false);
+            handleEnableRedirects();
         }
     }
 
@@ -168,6 +169,7 @@ export const useGetDoctorInitialData = ({ setLoading, HandleConnectionAppError }
 export const useUpdateTreatmentForDoctor = ({ setLoading, HandleConnectionAppError }: UsePerformProps) => {
     const { getAllPatientHistory } = useGetAllPatientHistory({ setLoading, HandleConnectionAppError });
     const { getLatestPatientHistory } = useGetLatestHistory({ setLoading, HandleConnectionAppError });
+    const { handleEnableRedirects } = useRedirect();
 
     const getUpdateDoctorData = async (stopLoading?: boolean) => {
         setLoading(true);
@@ -178,6 +180,7 @@ export const useUpdateTreatmentForDoctor = ({ setLoading, HandleConnectionAppErr
             console.error("Erro ao buscar dados do médico: ", error);
         } finally {
             setLoading(false);
+            handleEnableRedirects();
         }
     }
 

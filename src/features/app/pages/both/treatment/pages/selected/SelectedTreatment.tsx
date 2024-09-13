@@ -27,7 +27,6 @@ export interface TreatmentSelectedParams {
 
 const SelectedTreatment = () => {
     const { userData } = UseForm();
-
     const { navigateToTreatmentScreen } = UseTreatmentNavigation();
     const route = useRoute<RouteProp<TreatmentStackNavigation, 'selected_treatment'> & { params?: TreatmentSelectedParams }>();
     const currentTreatmentParams = route.params?.params;
@@ -35,7 +34,7 @@ const SelectedTreatment = () => {
     const { loading, setLoading } = UseLoading();
     const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
 
-    const { patientProgress, history, productivityLevel, performanceMessage } = UsePatientProgressHandling(currentTreatment?.uid);
+    const { patientProgress, history, productivityLevel, performanceMessage } = UsePatientProgressHandling({ currentTreatment: currentTreatment });
     const backIcon = images.generic_images.back.arrow_back_white;
     const userIcon = images.app_doctor_images.chat.user_icon_chat;
     const userAvatarIconSize = responsiveSize * 0.18;

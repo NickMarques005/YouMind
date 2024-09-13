@@ -1,7 +1,6 @@
-import useMenuAnimation from '@hooks/animation/UseMenuAnimation';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { View, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { runOnJS, SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { MenuOption } from 'types/menu/Menu_Types';
@@ -52,7 +51,7 @@ const VerticalMenu: React.FC<VerticalMenuProps> = ({
     });
 
     return (
-        <GestureHandlerRootView style={rootView}>
+        <View style={rootView}>
             <GestureDetector gesture={tapGesture}>
                 <Animated.View style={[backgroundStyle, backgroundAnimationStyle]}>
                     <Animated.View style={[containerStyle, containerAnimationStyle]}>
@@ -73,7 +72,7 @@ const VerticalMenu: React.FC<VerticalMenuProps> = ({
                     </Animated.View>
                 </Animated.View>
             </GestureDetector>
-        </GestureHandlerRootView>
+        </View>
     );
 };
 

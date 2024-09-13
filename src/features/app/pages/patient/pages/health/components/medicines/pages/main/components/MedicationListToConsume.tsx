@@ -10,7 +10,6 @@ interface MedicationListToConsumeProps {
 }
 
 const MedicationListToConsume: React.FC<MedicationListToConsumeProps> = ({ currentDateMedications }) => {
-
     return (
         <FlatList
             data={currentDateMedications}

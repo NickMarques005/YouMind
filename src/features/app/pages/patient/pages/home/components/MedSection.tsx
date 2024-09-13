@@ -4,7 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import { PatientScreenName } from 'types/navigation/Navigation_Types';
 import { Medication } from 'types/app/patient/health/Medicine_Types';
-import HomeMedications from './MedicationDisplayList';
+import HomeMedications from './HomeMedications';
 import { HealthPage, UseHealthPage } from '@features/app/providers/patient/HealthProvider';
 
 interface MedSectionProps {

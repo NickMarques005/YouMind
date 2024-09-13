@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { TreatmentState, UseTreatment } from '@providers/TreatmentProvider';
+import { TreatmentState, UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
 import TemplateChatUser from '../../both/TemplateChatUser';
 import { UserData } from 'types/user/User_Types';
 import images from '@assets/images';

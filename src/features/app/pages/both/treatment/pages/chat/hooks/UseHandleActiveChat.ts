@@ -1,5 +1,5 @@
-import { useNavigation, StackActions } from "@react-navigation/native";
-import { UseChat } from "../../../../../../../../providers/ChatProvider";
+import { useNavigation } from "@react-navigation/native";
+import { UseChat } from "../../../../../../providers/bridge/ChatProvider";
 import { TreatmentStackTypes } from "types/navigation/Navigation_Types";
 import { TreatmentInfoTemplate } from "types/treatment/Treatment_Types";
 import { UseTreatmentNavigation } from "../../../hooks/UseTreatmentNavigation";

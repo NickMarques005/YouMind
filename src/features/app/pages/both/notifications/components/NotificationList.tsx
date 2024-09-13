@@ -1,18 +1,16 @@
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
-import React, { SetStateAction, useEffect } from 'react'
-import Animated, { useSharedValue, useAnimatedStyle, withDelay, withSpring, runOnJS, withTiming } from 'react-native-reanimated';
-import images from '@assets/images';
+import React, { useEffect } from 'react'
+import Animated, { withSpring, runOnJS } from 'react-native-reanimated';
 import { NotificationData } from 'types/notification/Notification_Types';
 import { UseLoading } from '@hooks/loading/UseLoading';
-import { UseNotifications } from '@features/app/reducers/NotificationReducer';
 import { UseNotificationConfig } from '../hooks/UseNotificationConfig';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
-import { MessageIcon } from '@components/modals/message/types/type_message_modal';
-import { formatRelativeTime } from '@utils/date/DateFormatting';
+import { formatRelativeTime, formatRelativeTimeText } from '@utils/date/DateFormatting';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { responsiveSize, screenWidth } from '@utils/layout/Screen_Size';
+import { screenWidth } from '@utils/layout/Screen_Size';
 import { UseNotificationIcon } from '../hooks/UseNotificationIcon';
 import { useNotificationAnimations } from '../hooks/UseNotificationAnimations';
+import { MessageIconTypeKey } from 'types/icon/Icon_Types';
 
 interface NotificationsListProps {
     filteredNotifications: NotificationData[];
@@ -29,7 +27,7 @@ interface NotificationItemProps {
     index: number;
     userType: string;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    HandleResponseAppSuccess: (message: string, messageType: MessageIcon) => void;
+    HandleResponseAppSuccess: (message: string, messageType: MessageIconTypeKey) => void;
     HandleResponseAppError: (value: string) => void;
     handleNotificationPress: (
         notification: NotificationData,
@@ -100,8 +98,8 @@ const NotificationItem = ({ item, index, userType, setLoading, HandleResponseApp
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.notificationMessage_titleText, { color: `${userType === "patient" ? "#5f2b6e" : "#2b516e"}` }]}>{item.title}</Text>
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.notificationMessage_bodyText, { color: `${userType === "patient" ? '#9a72ab' : "#72a8ab"}` }]}>{item.body}</Text>
                                 <Text style={{ fontSize: 13, color: userType === 'patient' ? `#a192ad` : "#929dad" }}>{
-                                    item.savePushDate ? formatRelativeTime(item.savePushDate) :
-                                        item.data?.updatedAt ? formatRelativeTime(item.data.updatedAt) : ""
+                                    item.savePushDate ? `${formatRelativeTimeText(formatRelativeTime(item.savePushDate))}` :
+                                        item.data?.updatedAt ? `${formatRelativeTimeText(formatRelativeTime(item.data.updatedAt))}` : ""
                                 }</Text>
                             </View>
                             {

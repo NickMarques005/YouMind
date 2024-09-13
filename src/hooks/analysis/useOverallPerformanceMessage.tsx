@@ -26,7 +26,7 @@ const useOverallPerformanceMessage = (overallPerformance?: number) => {
 
     }, [overallPerformance]);
 
-    return overallPerformanceMessage;
+    return { overallPerformanceMessage };
 };
 
 export default useOverallPerformanceMessage;

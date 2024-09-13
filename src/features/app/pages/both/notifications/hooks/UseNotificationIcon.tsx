@@ -10,7 +10,7 @@ export const UseNotificationIcon = () => {
     const handleNotificationIcon = (notification: NotificationData) => {
         const notificationType = notification.data?.notify_type;
 
-        switch (notificationType){
+        switch (notificationType) {
             case 'chat':
                 const senderAvatar = notification.data?.sender_params?.avatar;
                 const senderType = notification.data?.sender_params?.type;
@@ -18,13 +18,24 @@ export const UseNotificationIcon = () => {
                     userAvatar: senderAvatar,
                     userType: senderType,
                     defaultAppIcon: defaultIconNotifications
-                })
+                });
 
             case 'treatment':
+                if (notification.data?.notify_function === 'solicitation') {
+                    const requesterAvatar = notification.data?.solicitation_params?.avatar;
+                    const requesterType = notification.data?.solicitation_params?.type;
+                    return handleUserIcon({
+                        userAvatar: requesterAvatar,
+                        userType: requesterType,
+                        defaultAppIcon: defaultIconNotifications
+                    });
+                }
                 return defaultIconNotifications;
             case 'ble':
+
                 return defaultIconNotifications;
             case 'update':
+
                 return defaultIconNotifications;
             default:
                 return defaultIconNotifications

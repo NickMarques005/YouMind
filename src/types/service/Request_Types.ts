@@ -1,3 +1,4 @@
+import { Socket } from "socket.io-client";
 import { Token } from "../auth/Auth_Types";
 
 export interface Response<T> {

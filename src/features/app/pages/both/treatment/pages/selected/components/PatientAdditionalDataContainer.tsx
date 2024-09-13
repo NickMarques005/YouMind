@@ -19,10 +19,10 @@ const PatientAdditionalData: React.FC<PatientAdditionalDataProps> = ({ title, da
         switch (type)
         {
             case 'birth':
-                formattedData = FormatISOToStringDate(data);
+                formattedData = FormatISOToStringDate(value);
                 break;
             case 'phone':
-                formattedData = FormatToPhoneNumber(data);
+                formattedData = FormatToPhoneNumber(value);
                 break;
             default:
                 return;
@@ -38,7 +38,7 @@ const PatientAdditionalData: React.FC<PatientAdditionalDataProps> = ({ title, da
             </View>
             <View>
                 <Text style={{fontSize: 15, color: 'rgba(87, 120, 122, 0.9)'}}>
-                    {formattedData}
+                    {formattedData || "Não informado"}
                 </Text>
             </View>
         </View>

@@ -11,11 +11,11 @@ type QuestionaireListProps = {
     handleGetQuestionnaireTemplate: (id: string, onSuccess?: ((template: QuestionnaireTemplate, questionnaireId: string, questionnaire?: Questionnaire) => void) | undefined, currentQuestionnaire?: Questionnaire) => Promise<void>;
     answerLoading: boolean;
     visualizeLoading: boolean;
-    handleAnswerQuestionnaire: (template: QuestionnaireTemplate, questionnaireId: string) => void
+    handleSelectQuestionnaireToAnswer: (template: QuestionnaireTemplate, questionnaireId: string) => void
     handleVisualizeCurrentQuestionnaire: (questionnaireId: string, questionnaire?: Questionnaire, template?: QuestionnaireTemplate, ) => void;
 };
 
-const QuestionnaireList: React.FC<QuestionaireListProps> = ({ handleVisualizeCurrentQuestionnaire, handleAnswerQuestionnaire, answerLoading, visualizeLoading, handleGetQuestionnaireTemplate, questionnaires, activeIndex }) => {
+const QuestionnaireList: React.FC<QuestionaireListProps> = ({ handleVisualizeCurrentQuestionnaire, handleSelectQuestionnaireToAnswer, answerLoading, visualizeLoading, handleGetQuestionnaireTemplate, questionnaires, activeIndex }) => {
 
     return (
         <>
@@ -31,7 +31,7 @@ const QuestionnaireList: React.FC<QuestionaireListProps> = ({ handleVisualizeCur
                             onAnswerPress={handleGetQuestionnaireTemplate}
                             answerLoading={answerLoading}
                             visualizeLoading={visualizeLoading}
-                            handleAnswerQuestionnaire={handleAnswerQuestionnaire}
+                            handleSelectQuestionnaireToAnswer={handleSelectQuestionnaireToAnswer}
                             handleVisualizeCurrentQuestionnaire={handleVisualizeCurrentQuestionnaire}
                         />
                     )

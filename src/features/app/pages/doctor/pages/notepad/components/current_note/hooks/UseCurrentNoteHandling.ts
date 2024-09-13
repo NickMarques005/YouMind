@@ -1,4 +1,3 @@
-import { MessageIcon } from "@components/modals/message/types/type_message_modal";
 import { UseNotepadService } from "@hooks/api/UseNotepadService";
 import { NoteTemplate, UpdateCurrentNote, UpdateNote } from "types/app/doctor/notepad/Notepad_Types";
 import { UseNotepadNavigation } from "../../../hooks/UseNotepadNavigation";
@@ -6,12 +5,13 @@ import { useNotepad } from "@features/app/providers/doctor/NotepadProvider";
 import { useState } from "react";
 import { Verification } from "types/verification/Verification_Types";
 import { NoteBehavior } from "../components/NoteVerification";
+import { MessageIconTypeKey } from "types/icon/Icon_Types";
 
 interface UseCurrentNoteHandlingProps {
     updateSetLoading: React.Dispatch<React.SetStateAction<boolean>>;
     deleteSetLoading: React.Dispatch<React.SetStateAction<boolean>>;
     HandleResponseAppError: (value: string) => void;
-    HandleResponseAppSuccess: (message: string, messageType?: MessageIcon) => void;
+    HandleResponseAppSuccess: (message: string, messageType?: MessageIconTypeKey) => void;
     handleUpdateCurrentNote: ({ updatedTitle, updatedDescription, updatedContent }: UpdateCurrentNote) => void;
     handleBackToMainNote: () => void;
 }
@@ -74,7 +74,7 @@ export const UseCurrentNoteHandling = ({
                 if (response.message) {
                     console.log(response);
                     handleBackToMainNote();
-                    HandleResponseAppSuccess(response.message, response.type as MessageIcon)
+                    HandleResponseAppSuccess(response.message, response.type as MessageIconTypeKey)
                 }
                 if (onSuccess) {
                     onSuccess();
@@ -102,11 +102,12 @@ export const UseCurrentNoteHandling = ({
                     handleUpdateCurrentNote({
                         updatedTitle: updatedNote.title, 
                         updatedDescription: updatedNote.description, 
-                        updatedContent: updatedNote.content});
+                        updatedContent: updatedNote.content
+                    });
                 }
                 if (response.message) {
                     console.log(response);
-                    HandleResponseAppSuccess(response.message, response.type as MessageIcon)
+                    HandleResponseAppSuccess(response.message, response.type as MessageIconTypeKey)
                 }
                 if (onSuccess) {
                     onSuccess();
@@ -127,7 +128,8 @@ export const UseCurrentNoteHandling = ({
         handleBackToMainNote();
     }
 
-    const handleUpdateVerification = (currentNote: NoteTemplate, newNote: NoteTemplate) => {
+    const handleUpdateVerification = (currentNote?: NoteTemplate, newNote?: NoteTemplate) => {
+        if(!currentNote || !newNote) return handleBackToMainNote();
         handleExitNoteVerification(() => handleUpdateNote(currentNote._id, newNote, handleExitNote), 'Deseja salvar sua anotação antes de sair?', 'Salvar', 'Não', 'update_exit');
     }
 

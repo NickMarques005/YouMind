@@ -1,8 +1,10 @@
-import { UseAppNavigation } from "@features/app/hooks/UseAppNavigation";
+
+import { UseAppNavigation } from "@features/app/hooks/navigation/UseAppNavigation";
 import { UseTreatmentNavigation } from "@features/app/pages/both/treatment/hooks/UseTreatmentNavigation";
+import { usePriority } from "@features/app/providers/bridge/PriorityProvider";
 
 const useTreatmentMenuActions = () => {
-
+    const { addPriority, priorityList, removePriority } = usePriority();
     const { navigateToAppScreen } = UseAppNavigation();
     const { navigateToTreatmentScreen } = UseTreatmentNavigation();
 
@@ -16,7 +18,12 @@ const useTreatmentMenuActions = () => {
         navigateToAppScreen('welcome');
     };
 
-    return { handleStatus, handleInstructions }
+    const handleMotivationPhrases = () => {
+        console.log("Phrase");
+        addPriority('motivationalPhrase');
+    }
+
+    return { handleStatus, handleInstructions, handleMotivationPhrases }
 }
 
 export default useTreatmentMenuActions;

@@ -6,10 +6,6 @@ export interface Request_DeleteNotificationsArgs {
     notificationIds: string[];
 }
 
-export interface Request_NotificationTreatmentSolicitationArgs{
-    receiver_email: string;
-}
-
 export interface NotificationTemplate {
     _id: string;
     createdAt: string;
@@ -27,5 +23,3 @@ export interface DeleteNotificationResponse {
 export interface DeleteNotificationsResponse {
     notificationIds: string[];
 }
-
-export type NotificationTreatmentSolicitationResponse = undefined;

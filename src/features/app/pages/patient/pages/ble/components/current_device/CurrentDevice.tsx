@@ -18,10 +18,10 @@ const CurrentDevice = () => {
         setDeviceState, 
         setDiscoveredPeripherals,
         } = UseBluetoothDevice();
-    const { requestPermissions } = useBLE();
+    const { handleRequestBluetoothPermissions } = UseBluetoothDevice();
     const { HandleResponseAppError } = UseGlobalResponse();
     const deviceConnectionLoading = UseLoading();
-    const { disconnectFromDevice } = useBleConnection({ setCurrentDevice, setDeviceState, setDiscoveredPeripherals, requestPermissions, setLoading: deviceConnectionLoading.setLoading, HandleResponseAppError, userData });
+    const { disconnectFromDevice } = useBleConnection({ setCurrentDevice, setDeviceState, setDiscoveredPeripherals, handleRequestBluetoothPermissions, setLoading: deviceConnectionLoading.setLoading, HandleResponseAppError, userData });
     const { navigateToBleScreen } = useBleNavigation();
 
     useEffect(() => {

@@ -28,7 +28,7 @@ const Questionnaire = ({ latestQuestionnaire, selectLatestQuestionnaire }: Quest
             <TouchableOpacity style={{ width: '100%', height: '100%', overflow: 'hidden', backgroundColor: '#fff', borderRadius: 20, elevation: 4, }} onPress={() => selectLatestQuestionnaire(latestQuestionnaire)}>
                 <View style={{ width: '100%', minHeight: '30%', backgroundColor: '#2f5f70', padding: '4%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', }}>
                     <Text style={{ fontSize: 16, fontWeight: '700', color: '#badce3', width: '80%', }}>
-                        {latestQuestionnaire.currentQuestionnaire.name}
+                        {latestQuestionnaire.currentQuestionnaire.name || "Questionário"}
                     </Text>
                     <View style={{ width: iconSize, height: iconSize, right: '15%', borderRadius: iconSize, borderWidth: 2, overflow: 'hidden', borderColor: '#7eb2bf', backgroundColor: '#8fbfc9' }}>
                         <Image style={{ width: '100%', height: '100%', resizeMode: 'contain', }} source={handleUserIcon({userAvatar: latestQuestionnaire.patientAvatar, userType: 'patient', defaultAppIcon: questionnaireIcon})} />

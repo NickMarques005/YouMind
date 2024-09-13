@@ -1,13 +1,15 @@
 import { validateAndFormatISODate } from "@utils/date/DateFormatting";
 import { Medication, MedicationFormType } from "types/app/patient/health/Medicine_Types";
 import { UseMedicationNavigation } from "./UseMedicationNavigation";
+import { UserPatient } from "types/user/User_Types";
 
 interface UseMedicationFormHandlingParams {
+    userPatient: UserPatient,
     updateMedication: ((form: MedicationFormType, id: string, onSuccess?: () => void) => void) | undefined;
     addMedication: ((form: MedicationFormType, onSuccess?: () => void) => void) | undefined;
 }
 
-const useMedicationFormHandling = ({ updateMedication, addMedication }: UseMedicationFormHandlingParams) => {
+const useMedicationFormHandling = ({ updateMedication, addMedication, userPatient }: UseMedicationFormHandlingParams) => {
     const { navigateToMedicationScreen } = UseMedicationNavigation();
 
     const backToMedications = () => {
@@ -17,34 +19,49 @@ const useMedicationFormHandling = ({ updateMedication, addMedication }: UseMedic
     const formValidation = (form: MedicationFormType, currentMedication?: Medication) => {
         let result: boolean;
 
-        const isFormValid =
+        const isBasicFormValid =
             form.name &&
                 form.type &&
                 form.dosage &&
+                form.alarmDuration &&
+                form.reminderTimes
+                ? true
+                : false;
+
+        const isCompleteFormValid =
+            isBasicFormValid &&
                 form.frequency &&
                 form.start &&
-                form.alarmDuration &&
-                form.reminderTimes &&
                 form.schedules.length !== 0 &&
                 form.expiresAt
                 ? true
                 : false;
 
-        if (currentMedication) {
-            const formIsDifferentFromCurrentMedication = 
-                form.name !== currentMedication.name ||
-                form.type !== currentMedication.type ||
-                form.dosage !== currentMedication.dosage ||
-                form.expiresAt !== validateAndFormatISODate(currentMedication.expiresAt) ||
-                form.frequency !== currentMedication.frequency.toString() ||
-                JSON.stringify(form.schedules) !== JSON.stringify(currentMedication.schedules) ||
-                form.start !== validateAndFormatISODate(currentMedication.start)   ||
-                form.alarmDuration !== currentMedication.alarmDuration ||
-                form.reminderTimes !== currentMedication.reminderTimes;
-
-            result = formIsDifferentFromCurrentMedication && isFormValid;
+        if (userPatient.is_treatment_running) {
+            result = currentMedication
+                ? (
+                    (form.name !== currentMedication.name ||
+                        form.type !== currentMedication.type ||
+                        form.dosage !== currentMedication.dosage ||
+                        form.expiresAt !== validateAndFormatISODate(currentMedication.expiresAt) ||
+                        form.frequency !== currentMedication.frequency?.toString() ||
+                        JSON.stringify(form.schedules) !== JSON.stringify(currentMedication.schedules) ||
+                        form.start !== validateAndFormatISODate(currentMedication.start) ||
+                        form.alarmDuration !== currentMedication.alarmDuration ||
+                        form.reminderTimes !== currentMedication.reminderTimes)
+                    && isCompleteFormValid
+                )
+                : isCompleteFormValid;
         } else {
-            result = isFormValid;
+            result = currentMedication ? (
+                (
+                    form.name !== currentMedication.name ||
+                    form.type !== currentMedication.type ||
+                    form.dosage !== currentMedication.dosage ||
+                    form.alarmDuration !== currentMedication.alarmDuration ||
+                    form.reminderTimes !== currentMedication.reminderTimes
+                )
+            ) : isBasicFormValid;
         }
 
         return result;

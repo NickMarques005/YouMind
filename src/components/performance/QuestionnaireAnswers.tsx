@@ -1,9 +1,9 @@
 import { screenWidth } from '@utils/layout/Screen_Size';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
-import { Gesture, GestureDetector, GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
-import Animated, { Easing, Extrapolation, SharedValue, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
-import { Questionnaire, QuestionnaireTemplate, FormattedAnswer, Question, Answer } from 'types/app/patient/health/Question_Types';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { Easing, Extrapolation, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { Questionnaire, QuestionnaireTemplate, } from 'types/app/patient/health/Question_Types';
 import { UserType } from 'types/user/User_Types';
 import { MaterialIcons } from '@expo/vector-icons';
 import { handleColorType } from '@utils/design/Color';
@@ -51,7 +51,7 @@ const QuestionnaireAnswers: React.FC<QuestionnaireAnswersProps> = ({
             runOnJS(setGestureActive)(true);
         })
         .onUpdate((event) => {
-            questionTranslateX.value = event.translationX;
+            questionTranslateX.value = withSpring(event.translationX);
 
             if (currentQuestionIndex === -1) {
                 swipeOpacity.value = interpolate(
@@ -67,12 +67,11 @@ const QuestionnaireAnswers: React.FC<QuestionnaireAnswersProps> = ({
 
             if (event.translationX < -screenWidth / 4 && currentQuestionIndex !== template.questions.length - 1) {
 
-                questionTranslateX.value = withTiming(-screenWidth, { duration: 300, easing: Easing.cubic }, () => {
+                questionTranslateX.value = withTiming(-screenWidth, { duration: 200, easing: Easing.ease }, () => {
                     runOnJS(handleNextQuestion)();
                     questionTranslateX.value = screenWidth;
                     questionTranslateX.value = withTiming(0, { duration: 400, easing: Easing.cubic });
                 });
-
                 return;
             } else if (event.translationX > screenWidth / 4 && currentQuestionIndex >= 0) {
 
@@ -107,10 +106,8 @@ const QuestionnaireAnswers: React.FC<QuestionnaireAnswersProps> = ({
         };
     });
 
-    console.log(currentQuestionIndex);
-
     return (
-        <GestureHandlerRootView style={styles.root}>
+        <View style={styles.root}>
             <GestureDetector gesture={gestureHandler}>
                 <View style={styles.gestureContainer}>
                     <View style={styles.swipeContainer}>
@@ -141,7 +138,7 @@ const QuestionnaireAnswers: React.FC<QuestionnaireAnswersProps> = ({
                     }
                 </View>
             </GestureDetector>
-        </GestureHandlerRootView>
+        </View>
     );
 };
 

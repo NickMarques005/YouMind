@@ -19,7 +19,6 @@ function MainAnalysis() {
     const { selectPatientToAnalyze, selectLatestMedication, selectLatestQuestionnaire } = useMainAnalysisBehavior();
     const loadingSize = responsiveSize * 0.15;
     
-
     return (
         <View style={{ display: 'flex', flex: 1, width: screenWidth, height: screenHeight * 0.9, alignItems: 'center', }}>
             <ScrollView nestedScrollEnabled={true} style={{flex: 1}}>

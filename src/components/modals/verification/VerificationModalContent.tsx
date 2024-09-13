@@ -4,6 +4,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import CustomButton from '@components/button/CustomButton';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DefaultLoading from '@components/loading/DefaultLoading';
+import { defaultIconMap } from '@utils/icon/mainIcons';
+import { DefaultIconTypeKey } from 'types/icon/Icon_Types';
 
 interface VerificationModalProps {
     message: string;
@@ -12,7 +14,7 @@ interface VerificationModalProps {
     titleConfirm: string;
     handleConfirm: () => void;
     handleDecline?: () => void;
-    icon?: string;
+    icon?: DefaultIconTypeKey;
     userType?: string;
     loading?: boolean;
     notClose?: boolean;
@@ -26,6 +28,7 @@ const VerificationModalContent = ({
     const styles = verificationStyles(userType);
     const gradientCancel = buttonCancelGradient(userType);
     const gradientDefault = buttonDefaultGradient(userType);
+    const iconName = icon && defaultIconMap[icon] ? defaultIconMap[icon] : "info";
 
     return (
         <View style={styles.container}>
@@ -35,7 +38,7 @@ const VerificationModalContent = ({
                 </Text>
             </View>
             <View style={styles.iconContainer}>
-                <Icon name={icon || "info"} size={50} color={userType === 'doctor' ? "#4ea6a0" : "#8a4ea6"} />
+                <Icon name={iconName} size={50} color={userType === 'doctor' ? "#4ea6a0" : "#8a4ea6"} />
             </View>
             <View style={styles.buttonContainer}>
                 <LinearGradient
@@ -49,9 +52,7 @@ const VerificationModalContent = ({
                             if (handleDecline) {
                                 handleDecline();
                             }
-                            else {
-                                closeModal();
-                            }
+                            closeModal();
                         }}
                         disabled={loading}
                         buttonStyle={styles.button}
@@ -71,7 +72,6 @@ const VerificationModalContent = ({
                             if (!notClose) {
                                 closeModal();
                             }
-
                         }}
                         disabled={loading}
                         buttonStyle={styles.button}

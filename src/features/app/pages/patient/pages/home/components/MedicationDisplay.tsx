@@ -26,14 +26,24 @@ const MedicationDisplay = ({ medication }: UseMedicationDisplay) => {
                 </LinearGradient>
 
                 <View style={styles.ViewName}>
-                    <View style={{width: '100%', marginBottom: '5%', gap: 5}}>
+                    <View style={{ width: '100%', marginBottom: '5%', gap: 5 }}>
                         <Text style={styles.Name}>{medication.name}</Text>
                         <Text style={styles.TextInfo1}>{`${medication.dosage}${medication.type === 'Líquido' ? 'ml' : 'mg'}`}</Text>
                     </View>
 
                     <View style={{}}>
-                        
-                        <Text style={styles.TextInfo2}>{`Uso até dia ${FormatDateToSpeakDate(new Date(medication.expiresAt))}`}</Text>
+                        {
+                            medication.isScheduled && medication.expiresAt ?
+                                <Text style={styles.TextInfo2}>{`Uso até dia ${FormatDateToSpeakDate(new Date(medication.expiresAt))}`}</Text>
+                                :
+                                <LinearGradient colors={['rgba(180, 98, 227, 0.4)', '#96275f']}
+                                    style={{ padding: 5, borderRadius: 5,}}
+                                >
+                                    <Text style={{ color: 'rgba(255, 255, 255, 0.7)', fontWeight: '600', fontSize: 14, textAlign: 'center'}}>
+                                        {`DESATIVADO`}
+                                    </Text>
+                                </LinearGradient>
+                        }
                     </View>
                 </View>
             </View>

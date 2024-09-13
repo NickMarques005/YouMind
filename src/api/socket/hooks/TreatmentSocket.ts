@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
-import { UseTreatment } from '@providers/TreatmentProvider';
-import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
-import { UseChat } from '@providers/ChatProvider';
+import { UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
+
 import { TreatmentInfoTemplate } from 'types/treatment/Treatment_Types';
 import { Notice } from 'types/notice/Notice_Types';
 import { useNotice } from '@features/app/providers/sub/NoticeProvider';
@@ -10,6 +9,8 @@ import { UseTreatmentService } from '@hooks/api/UseTreatmentService';
 import { useUpdatePatientState } from '@features/app/pages/patient/hooks/UpdatePatientState';
 import { useUpdateDoctorState } from '@features/app/pages/doctor/hooks/UpdateDoctorState';
 import { SocketInitialChat } from 'types/chat/Chat_Types';
+import { UseTreatmentEnded } from '@features/app/providers/sub/TreatmentEndedProvider';
+import { UseForm } from '@features/app/providers/sub/UserProvider';
 
 interface UpdateStatus {
     userId: string;
@@ -24,8 +25,11 @@ interface UseTreatmentSocketProps {
 const UseTreatmentSocket = ({ perform, userType }: UseTreatmentSocketProps) => {
     const { setLoading, HandleConnectionAppError } = perform;
     const { addTreatment, removeTreatment, treatment_state, setTreatments, updateInitialChat } = UseTreatment();
+    const { UpdateSpecificDataInUser } = UseForm();
+    const { addEndedTreatment, removeEndedTreatment } = UseTreatmentEnded();
     const { performVerifyTreatmentInitialization, performVerifyTreatmentCompletion } = UseTreatmentService(setLoading);
     let handleInitiateTreatmentData: () => Promise<void>, handleRemoveTreatmentData: (treatmentId?: string) => Promise<void>;
+    
     if (userType === 'patient') {
         ({ handleInitiateTreatmentData, handleRemoveTreatmentData } = useUpdatePatientState({ setLoading, HandleConnectionAppError }));
     } else if (userType === 'doctor') {
@@ -33,10 +37,13 @@ const UseTreatmentSocket = ({ perform, userType }: UseTreatmentSocketProps) => {
     }
 
     const { handleSelectedNotice } = useNotice();
-    const { setCurrentChat, currentChat } = UseChat();
 
-    const handleTreatmentAdd = useCallback(async (data: { treatment: TreatmentInfoTemplate, notice: Notice }) => {
-        console.log("Tratamento adicionado: ", data);
+    /*
+    ### Função para adicionar o tratamento
+    */
+    const handleTreatmentAdd = useCallback(async (data: { treatment: TreatmentInfoTemplate, notice: Notice, is_treatment_running?: boolean }) => {
+        console.log("Tratamento iniciado: ", data);
+        //Inicio de Tratamento!
         try {
             const newTreatment = data.treatment;
             const response = await performVerifyTreatmentInitialization(newTreatment._id);
@@ -49,7 +56,15 @@ const UseTreatmentSocket = ({ perform, userType }: UseTreatmentSocketProps) => {
                 await handleInitiateTreatmentData();
             }
 
-            addTreatment(newTreatment);
+            removeEndedTreatment(newTreatment._id);  //Remove dos tratamentos encerrados se tiver
+            addTreatment(newTreatment);              //Adiciona nos tratamentos atuais
+
+            if(data.is_treatment_running){
+                const isTreatmentRunning = data.is_treatment_running;
+                console.log("***Tratamento em andamento atualização: ", isTreatmentRunning);
+                UpdateSpecificDataInUser({ is_treatment_running: isTreatmentRunning });
+            }
+
             handleSelectedNotice(data.notice);
         }
         catch (err) {
@@ -58,22 +73,26 @@ const UseTreatmentSocket = ({ perform, userType }: UseTreatmentSocketProps) => {
 
     }, [addTreatment]);
 
+    /*
+    ### Função para encerrar o tratamento
+    */
     const handleTreatmentEnd = useCallback(async (data: { treatment: TreatmentInfoTemplate, notice: Notice }) => {
-        console.log("Tratamento removido: ", data);
-
+        console.log("Tratamento encerrado: ", data);
+        //Encerramento de Tratamento!
         try {
-            const newTreatment = data.treatment;
+            const treatmentEnded = data.treatment;
 
-            const response = await performVerifyTreatmentCompletion(newTreatment._id);
+            const response = await performVerifyTreatmentCompletion(treatmentEnded._id);
             if (!response.success) {
                 return console.log("Tratamento não encerrado!");
             }
 
             if (handleRemoveTreatmentData) {
-                await handleRemoveTreatmentData(newTreatment._id);
+                await handleRemoveTreatmentData(treatmentEnded._id);
             }
 
-            removeTreatment(newTreatment._id);
+            removeTreatment(treatmentEnded._id); //Remove de tratamentos atuais se estiver
+            addEndedTreatment(treatmentEnded);   //Adiciona aos tratamentos encerrados
             handleSelectedNotice(data.notice);
         }
         catch (err) {
@@ -82,12 +101,25 @@ const UseTreatmentSocket = ({ perform, userType }: UseTreatmentSocketProps) => {
 
     }, [removeTreatment]);
 
+    /*
+    ### Função para deletar o tratamento do aplicativo
+    */
+    const handleTreatmentDelete = useCallback(() => {
+
+    }, []);
+
+    /*
+    ### Função para mostrar a mensagem de alerta no aplicativo
+    */
     const handleNoticeMessage = useCallback((data: { notice: Notice }) => {
         console.log("New Notice message: ", data);
         handleSelectedNotice(data.notice);
     }, [handleSelectedNotice]);
 
-    const handleTreatmentUpdateStatus = useCallback((data: UpdateStatus) => {
+    /*
+    ### Função para atualizar o Status de online e offline do usuário no tratamento
+    */
+    const handleTreatmentUpdateOnlineStatus = useCallback((data: UpdateStatus) => {
         const isUserInTreatments = treatment_state.treatments.some(treatment => treatment.uid === data.userId);
 
         if (isUserInTreatments) {
@@ -96,27 +128,25 @@ const UseTreatmentSocket = ({ perform, userType }: UseTreatmentSocketProps) => {
             );
             setTreatments(updatedTreatments);
         }
+    }, [treatment_state]);
 
-        if (currentChat && currentChat.uid === data.userId) {
-            const updatedCurrentChat = { ...currentChat, online: data.online };
-            setCurrentChat(updatedCurrentChat);
-        }
-
-    }, [treatment_state, currentChat, setCurrentChat]);
-
+    /*
+    ### Função para atualizar os dados iniciais do chat (última mensagem adicionada, etc)
+    */
     const handleUpdateInitialChat = useCallback((data: SocketInitialChat) => {
         console.log("Initial Chat Update: ", data);
 
         const { updatedChat } = data;
         updateInitialChat(updatedChat);
-        
+
     }, [treatment_state]);
 
-    return { 
-        handleTreatmentAdd, 
-        handleTreatmentEnd, 
-        handleNoticeMessage, 
-        handleTreatmentUpdateStatus,
+    return {
+        handleTreatmentAdd,
+        handleTreatmentEnd,
+        handleTreatmentDelete,
+        handleNoticeMessage,
+        handleTreatmentUpdateOnlineStatus,
         handleUpdateInitialChat
     };
 };

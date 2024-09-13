@@ -22,7 +22,7 @@ export default function MainStack({ user, Init, LeaveModalVisible, HandleLeaveDe
                         <Stack.Screen name="loading" component={LoadingScreen} />
                         :
                         user ? (
-                            <Stack.Screen name="app" options={{ animation: 'fade_from_bottom' }}>
+                            <Stack.Screen name="main_app" options={{ animation: 'fade_from_bottom' }}>
                                 {() => (
                                     <AppProvider>
                                         <AppSession />

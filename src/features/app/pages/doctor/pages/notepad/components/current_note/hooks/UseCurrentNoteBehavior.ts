@@ -4,16 +4,20 @@ import { NotepadScreenName } from "types/navigation/Navigation_Types";
 import { NoteBehavior } from "../components/NoteVerification";
 
 interface UseCurrentNoteBehaviorParams {
-    note: NoteTemplate;
+    currentNote?: NoteTemplate;
+    newNote?: NoteTemplate;
     navigateToNotepadScreen: (screenName: NotepadScreenName) => void;
+    clearCurrentNote: () => void;
 }
 
-const useCurrentNoteBehavior = ({ note, navigateToNotepadScreen }: UseCurrentNoteBehaviorParams) => {
-    const [currentNote, setCurrentNote] = useState<NoteTemplate>(note);
-    const [newNote, setNewNote] = useState<NoteTemplate>(note);
+const useCurrentNoteBehavior = ({ 
+    currentNote, clearCurrentNote,
+    newNote, navigateToNotepadScreen }: UseCurrentNoteBehaviorParams) => {
     const [configNoteVisible, setConfigNoteVisible] = useState(false);
 
     const updatedNoteVerification = (): boolean => {
+        if(!currentNote || !newNote) return false;
+
         return (
             currentNote.title !== newNote.title ||
             currentNote.description !== newNote.description ||
@@ -24,6 +28,7 @@ const useCurrentNoteBehavior = ({ note, navigateToNotepadScreen }: UseCurrentNot
 
     const handleBackToMainNote = () => {
         console.log("Back to main notepad");
+        clearCurrentNote();
         navigateToNotepadScreen('main_notepad');
     }
 
@@ -40,8 +45,6 @@ const useCurrentNoteBehavior = ({ note, navigateToNotepadScreen }: UseCurrentNot
     }
 
     return {
-        currentNote, setCurrentNote,
-        newNote, setNewNote,
         configNoteVisible, setConfigNoteVisible,
         closeHandleNoteConfig, handleBackNotePress,
         updatedNoteVerification, handleBackToMainNote

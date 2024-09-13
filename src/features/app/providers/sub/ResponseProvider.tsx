@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
-import { MessageIcon } from '@components/modals/message/types/type_message_modal';
+
 import { UseLoading } from '@hooks/loading/UseLoading';
+import { MessageIconType, MessageIconTypes } from 'types/icon/Icon_Types';
 
 interface SuccessMessage {
     message?: string;
-    messageType?: MessageIcon;
+    messageType?: keyof MessageIconTypes;
 }
 
 interface ResponseContextType {
@@ -17,7 +18,7 @@ interface ResponseContextType {
     HasAppError: () => boolean;
     HandleResponseAppError: (value: string) => void;
     HandleConnectionAppError: (value: string) => void;
-    HandleResponseAppSuccess: (message: string, messageType?: MessageIcon) => void;
+    HandleResponseAppSuccess: (message: string, messageType?: keyof MessageIconTypes) => void;
     stateAppLoading: {
         loading: boolean;
         setLoading: Dispatch<SetStateAction<boolean>>;
@@ -34,7 +35,7 @@ export const ResponseProvider: React.FC<ResponseProviderProps> = ({ children }) 
     const [responseAppError, setResponseAppError] = useState<string | undefined>(undefined);
     const [connectionAppError, setConnectionAppError] = useState<string | undefined>(undefined);
     const [responseAppSuccess, setResponseAppSuccess] = useState<SuccessMessage | undefined>(undefined);
-    const stateAppLoading = UseLoading();
+    const stateAppLoading = UseLoading(false);
 
     const ClearResponseAppError = () => {
         setResponseAppError(undefined);
@@ -62,7 +63,7 @@ export const ResponseProvider: React.FC<ResponseProviderProps> = ({ children }) 
         setConnectionAppError(value);
     }
 
-    const HandleResponseAppSuccess = (message: string, messageType?: MessageIcon) => {
+    const HandleResponseAppSuccess = (message: string, messageType?: keyof MessageIconTypes) => {
         setResponseAppSuccess({ message, messageType });
     };
 

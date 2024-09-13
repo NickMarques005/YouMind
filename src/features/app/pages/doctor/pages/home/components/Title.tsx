@@ -1,10 +1,9 @@
-import { View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet } from 'react-native';
+import React from 'react';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
-import { FormData } from 'types/auth/Form_Types';
 import CountNotifications from '@features/app/pages/both/notifications/components/CountNotifications';
 import images from '@assets/images';
-import { UseAppNavigation } from '@features/app/hooks/UseAppNavigation';
+import { UseAppNavigation } from '@features/app/hooks/navigation/UseAppNavigation';
 
 interface TitleProps {
     name?: string;

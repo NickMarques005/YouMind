@@ -1,4 +1,4 @@
-import { Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { QuestionStackNavigation } from 'types/navigation/Navigation_Types';
@@ -11,6 +11,7 @@ import { UseForm } from '@features/app/providers/sub/UserProvider';
 import { UserType } from 'types/user/User_Types';
 import QuestionnaireAnswers from '@components/performance/QuestionnaireAnswers';
 import QuestionnairePerformance from '@components/performance/QuestionnairePerformance';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface VisualizeQuestionParams {
     currentQuestionnaire: Questionnaire;
@@ -30,10 +31,12 @@ const VisualizeQuestion = () => {
     const backIcon = images.generic_images.back.arrow_back_white;
     const current_questionnaire_illustration = images.app_patient_images.health.quiz.current_questionnaire_illustration;
     const [gestureActive, setGestureActive] = useState(false);
-    console.log(currentQuestionParams);
 
     return (
-        <ScrollView scrollEnabled={!gestureActive} style={{ flex: 1 }}>
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={!gestureActive}
+            style={{ flex: 1 }}>
             <View style={styles.visualizeQuestionContainer}>
                 <View style={styles.header}>
                     <ImageBackground source={current_questionnaire_illustration}

@@ -7,12 +7,13 @@ export interface Medication {
     name: string;
     dosage: string;
     type: MedicationType;
-    expiresAt: string;
-    frequency: number;
-    schedules: string[];
-    start: string;
+    expiresAt?: string;
+    frequency?: number;
+    schedules?: string[];
+    start?: string;
     alarmDuration: number;
-    reminderTimes: number;  
+    reminderTimes: number;
+    isScheduled?: boolean;
     patientId: string;
     createdAt: string;
     updatedAt: string;
@@ -47,7 +48,7 @@ export interface FormattedMedicationForm {
     dosage: string;
     expiresAt?: Date;
     frequency?: number;
-    schedules: string[];
+    schedules?: string[];
     start?: Date;
     alarmDuration: number;
     reminderTimes: number;

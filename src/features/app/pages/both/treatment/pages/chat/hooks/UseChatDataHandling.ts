@@ -1,8 +1,5 @@
-import USE_ENV from "@api/constants/server_url/ServerUrl";
-import UseSocketService from "@api/socket/SocketService";
-import { UseSocket } from "@features/app/providers/sub/SocketProvider";
-import { UseChatService } from "@hooks/api/UseChatService";
-import { UseTreatment } from "@providers/TreatmentProvider";
+import { UseSocket } from "@features/app/providers/bridge/SocketProvider";
+import { UseTreatment } from "@features/app/providers/sub/TreatmentProvider";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatUser, MessageTemplate } from "types/chat/Chat_Types";
 import { UserData } from "types/user/User_Types";

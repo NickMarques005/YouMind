@@ -14,7 +14,7 @@ interface TreatmentMenuProps {
 }
 
 const TreatmentMenu = ({ opacity, closeTreatmentMenu, userType, translateY }: TreatmentMenuProps) => {
-    const { options } = useTreatmentMenuBehavior();
+    const { options } = useTreatmentMenuBehavior({ userType });
     const styles = treatmentMenuStyles(userType);
 
     return (
@@ -53,7 +53,7 @@ const treatmentMenuStyles = (userType: UserType) => {
             alignItems: 'center',
         },
         menuContainer: {
-            width: '55%',
+            maxWidth: '68%',
             backgroundColor: '#f0f0f0',
             borderRadius: 10,
             shadowColor: '#000',

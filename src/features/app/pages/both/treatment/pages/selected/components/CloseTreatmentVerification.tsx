@@ -23,7 +23,7 @@ const CloseTreatmentVerification: React.FC<CloseTreatmentVerificationProps> = ({
                 titleCancel="Cancelar"
                 titleConfirm={acceptText || "Aceitar"}
                 handleConfirm={handleVerificationAccept}
-                icon={"healing"}
+                icon={"completed"}
                 userType={userData.type}
                 closeModal={handleCloseVerification}
             />

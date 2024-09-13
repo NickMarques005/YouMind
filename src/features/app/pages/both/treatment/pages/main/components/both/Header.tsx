@@ -5,7 +5,6 @@ import { FontAwesome } from '@expo/vector-icons';
 import images from '@assets/images';
 import { screenHeight } from '@utils/layout/Screen_Size';
 import { UserData, UserType } from 'types/user/User_Types';
-import { UseChat } from '@providers/ChatProvider';
 import TreatmentMenu from './menu/TreatmentMenu';
 import { SharedValue } from 'react-native-reanimated';
 

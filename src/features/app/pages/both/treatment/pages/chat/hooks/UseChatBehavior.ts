@@ -1,36 +1,38 @@
-import { useEffect, useState } from "react";
-import { UseHandleActiveChat } from "./UseHandleActiveChat";
-import { ChatUser, CurrentChat } from "types/chat/Chat_Types";
-import { TreatmentInfoTemplate } from "types/treatment/Treatment_Types";
+import { useState } from "react";
+import { UseTreatmentNavigation } from "../../../hooks/UseTreatmentNavigation";
+import { UseChat } from "@features/app/providers/bridge/ChatProvider";
 
 interface UseChatHandlingProps {
-    currentChat: CurrentChat | null;
-    redirectChat: TreatmentInfoTemplate | null;
+
 }
 
-export const UseChatBehavior = ({ currentChat, redirectChat }: UseChatHandlingProps) => {
-
-    const [chat, setChat] = useState<ChatUser | undefined>(undefined);
+export const UseChatBehavior = ({ }: UseChatHandlingProps) => {
+    const { handleLeaveChat } = UseChat();
+    const { navigateToTreatmentScreen } = UseTreatmentNavigation();
     const [chatMenu, setChatMenu] = useState<boolean>(false);
+    const [messageDeleteModal, setMessageDeleteModal] = useState<boolean>(false);
+    const [sendMessagesToNoteModal, setSendMessagesToNoteModal] = useState<boolean>(false);
+
+    const handleMessageDeleteModal = () => {
+        setMessageDeleteModal(prev => !prev);
+    }
+
+    const handleSendMessageToNoteModal = () => {
+        setSendMessagesToNoteModal(prev => !prev);
+    }
 
     const handleChatMenu = () => {
         setChatMenu(prev => !prev);
     }
 
-    useEffect(() => {
-        console.log("SETAR CHAT BEHAVIOR");
-        if (currentChat) {
-                console.log("CURRENT CHAT: ", currentChat);
-                setChat(currentChat);
-        }
-        else{
-            if(redirectChat)
-            {
-                console.log(" SET REDIRECT CHAT: ", redirectChat);
-                setChat(redirectChat);
-            }
-        }
-    }, [currentChat, redirectChat]);
+    const handleChatNavigateBack = () => {
+        handleLeaveChat();
+        navigateToTreatmentScreen('main_treatment');
+    }
 
-    return { chat, chatMenu, handleChatMenu }
+    return { 
+        chatMenu, handleChatMenu, handleChatNavigateBack,
+        handleMessageDeleteModal, handleSendMessageToNoteModal,
+        messageDeleteModal, sendMessagesToNoteModal
+    }
 }

@@ -1,13 +1,13 @@
-import { ChatProvider } from '@providers/ChatProvider';
-import { TreatmentProvider } from '@providers/TreatmentProvider';
+import { TreatmentProvider } from '@features/app/providers/sub/TreatmentProvider';
 import { UserProvider } from '@features/app/providers/sub/UserProvider';
 import React from 'react';
 import { DefaultProviderProps } from 'types/providers/Provider_Types';
 import { ResponseProvider } from './sub/ResponseProvider';
 import { NotificationProvider } from '../reducers/NotificationReducer';
-import { SocketProvider } from './sub/SocketProvider';
 import { AudioPlayerProvider } from './sub/AudioPlayerProvider';
 import { NoticeProvider } from './sub/NoticeProvider';
+import { TreatmentEndedProvider } from '@features/app/providers/sub/TreatmentEndedProvider';
+import { SearchProvider } from './sub/SearchProvider';
 
 const AppProvider: React.FC<DefaultProviderProps> = ({ children }) => {
     return (
@@ -16,15 +16,15 @@ const AppProvider: React.FC<DefaultProviderProps> = ({ children }) => {
             <NoticeProvider>
                 <NotificationProvider>
                     <UserProvider>
-                        <SocketProvider>
-                            <TreatmentProvider>
-                                <ChatProvider>
+                        <TreatmentProvider>
+                            <TreatmentEndedProvider>
+                                <SearchProvider>
                                     <AudioPlayerProvider>
                                         {children}
                                     </AudioPlayerProvider>
-                                </ChatProvider>
-                            </TreatmentProvider>
-                        </SocketProvider>
+                                </SearchProvider>
+                            </TreatmentEndedProvider>
+                        </TreatmentProvider>
                     </UserProvider>
                 </NotificationProvider>
             </NoticeProvider>

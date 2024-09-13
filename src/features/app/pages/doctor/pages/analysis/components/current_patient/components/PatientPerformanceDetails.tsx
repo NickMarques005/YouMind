@@ -29,14 +29,14 @@ const PatientPerformanceDetails: React.FC<PatientPerformanceDetailsProps> = ({
                         <MaterialIcons name="medication" size={iconSize * 0.7} color="#254345" />
                         <Text style={{ fontSize: 16, color: '#3e6669' }}>Desempenho dos Medicamentos: </Text>
                     </View>
-                    <Text style={{ fontSize: 17, color: '#3e6669', fontWeight: '900', flex: 1, textAlign: 'right' }}>{medicationPerformance}%</Text>
+                    <Text style={{ fontSize: 17, color: '#3e6669', fontWeight: '900', flex: 1, textAlign: 'right' }}>{medicationPerformance || 0}%</Text>
                 </View>
                 <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
                     <View style={{ flexDirection: 'row', gap: 3, alignItems: 'center' }}>
                         <MaterialIcons name="assignment" size={iconSize * 0.7} color="#254345" />
                         <Text style={{ fontSize: 16, color: '#3e6669' }}>Desempenho dos Questionários: </Text>
                     </View>
-                    <Text style={{ fontSize: 17, color: '#3e6669', fontWeight: '900', textAlign: 'right' }}>{questionnairePerformance}%</Text>
+                    <Text style={{ fontSize: 17, color: '#3e6669', fontWeight: '900', textAlign: 'right' }}>{questionnairePerformance || 0}%</Text>
                 </View>
             </View>
             <LinearGradient colors={['#4195a6', '#316663']}

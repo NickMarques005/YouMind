@@ -7,7 +7,6 @@ const deviceMainOptions = [
     "Configurações de Display",
     "Controle de Vibração",
     "Som",
-    "Alarmes",
     "Notificações",
     "Atualizações de Firmware",
 ]
@@ -22,7 +21,6 @@ export const useDeviceOptions = () => {
         "Configurações de Display": undefined,
         "Controle de Vibração": undefined,
         "Som": undefined,
-        "Alarmes": undefined,
         "Notificações": undefined,
         "Atualizações de Firmware": undefined,
     }
@@ -53,11 +51,6 @@ export const useDeviceOptions = () => {
                 return [
                     { label: "Volume", action: () => console.log("Configurar Volume") },
                     { label: "Tom de Notificação", action: () => console.log("Configurar Tom de Notificação") },
-                ];
-            case "Alarmes":
-                return [
-                    { label: "Duração", action: () => console.log("Duração") },
-                    { label: "Adiar Alarme", action: () => console.log("Adiar Alarme") },
                 ];
             case "Notificações":
                 return [

@@ -1,7 +1,5 @@
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { UseQuestionnaire } from '@features/app/providers/patient/QuestionariesProvider';
-import { useSharedValue, withTiming, Easing } from 'react-native-reanimated';
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
 import { Directions, Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
@@ -12,13 +10,13 @@ import useQuestionnaireAnimations from './hooks/UseQuestionnaireAnimations';
 import { UseLoading } from '@hooks/loading/UseLoading';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import { useQuestionnaireBehavior } from './hooks/UseQuestionnaireBehavior';
-import { UseTreatment } from '@providers/TreatmentProvider';
+import { UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
 
 const MainQuestions = () => {
     const { HandleResponseAppError } = UseGlobalResponse();
     const answerLoading = UseLoading();
     const visualizeLoading = UseLoading();
-    const { handleAnswerQuestionnaire, handleVisualizeCurrentQuestionnaire } = useQuestionnaireBehavior();
+    const { handleSelectQuestionnaireToAnswer, handleVisualizeCurrentQuestionnaire } = useQuestionnaireBehavior();
     const { questionnaires, handleGetQuestionnaireTemplate } = useQuestionnaireHandling({ HandleResponseAppError, setLoading: answerLoading.setLoading });
     const { handleFlingDown, handleFlingUp, activeIndex } = useQuestionnaireAnimations({ totalLength: questionnaires.length })
     const backgroundMainQuestions = images.app_patient_images.health.quiz.quiz_background;
@@ -26,7 +24,6 @@ const MainQuestions = () => {
 
     return (
         <SafeAreaView style={styles.healthQuestionaries_mainView}>
-
             <LinearGradient colors={['#4d2448', '#ab32a5']}
                 start={{ x: 0.1, y: 0 }}
                 end={{ x: 0.3, y: 0.28 }} style={styles.questionaire_contentView}>
@@ -36,7 +33,7 @@ const MainQuestions = () => {
                     <View style={styles.titleView}>
                         <Text style={styles.titleText}>Questionários</Text>
                     </View>
-                    <GestureHandlerRootView style={styles.questionaire_listContainer}>
+                    <View style={styles.questionaire_listContainer}>
                         {
                             treatment_state.treatments.length === 0 ?
                                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -56,7 +53,7 @@ const MainQuestions = () => {
                                                 questionnaires={questionnaires}
                                                 answerLoading={answerLoading.loading}
                                                 visualizeLoading={visualizeLoading.loading}
-                                                handleAnswerQuestionnaire={handleAnswerQuestionnaire}
+                                                handleSelectQuestionnaireToAnswer={handleSelectQuestionnaireToAnswer}
                                                 handleVisualizeCurrentQuestionnaire={handleVisualizeCurrentQuestionnaire}
                                             />
                                         </View>
@@ -70,7 +67,7 @@ const MainQuestions = () => {
                                         </View>
                                     </View>
                         }
-                    </GestureHandlerRootView>
+                    </View>
                 </View>
             </LinearGradient>
         </SafeAreaView>

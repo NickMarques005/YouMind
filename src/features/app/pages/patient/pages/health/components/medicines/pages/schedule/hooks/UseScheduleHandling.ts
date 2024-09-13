@@ -1,20 +1,23 @@
-import { MessageIcon } from "@components/modals/message/types/type_message_modal";
+
 import { FormattedMedicationForm, MedicationDurationType, MedicationFormType, MedicationFrequencyType } from "types/app/patient/health/Medicine_Types";
 import useFetchMedication from "@hooks/api/axios/UseMedicationService";
 import { UseMedicationService } from "@hooks/api/UseMedicationService";
 import { UseMedications } from "@features/app/providers/patient/MedicationProvider";
 import { convertFrequencyToNumber, FormatExpiresAtParams, formatFrequency } from "@utils/health/HandlingMedication";
 import { formatISOToDate } from "@utils/date/DateFormatting";
+import {  MessageIconTypeKey } from "types/icon/Icon_Types";
+import { UserPatient } from "types/user/User_Types";
 
 interface UseScheduleHandlingProps {
+    userPatient?: UserPatient;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     setFetchLoading?: React.Dispatch<React.SetStateAction<boolean>>;
     HandleResponseAppError: (value: string) => void;
-    HandleResponseAppSuccess: (message: string, messageType?: MessageIcon) => void;
+    HandleResponseAppSuccess: (message: string, messageType?:  MessageIconTypeKey) => void;
     setSuggestions?: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-    formatExpiresAt: ({ start, frequency, frequencyType, durationType, duration, onError }: FormatExpiresAtParams) => Date | undefined;
-    frequencyType: MedicationFrequencyType;
-    durationType: MedicationDurationType;
+    formatExpiresAt?: ({ start, frequency, frequencyType, durationType, duration, onError }: FormatExpiresAtParams) => Date | undefined;
+    frequencyType?: MedicationFrequencyType;
+    durationType?: MedicationDurationType;
     duration?: string;
 }
 
@@ -27,14 +30,14 @@ export const useScheduleHandling = ({
     setSuggestions,
     frequencyType,
     durationType,
-    duration
+    duration,
+    userPatient
 }: UseScheduleHandlingProps) => {
 
     const fetchMedicationData = setFetchLoading ? useFetchMedication(setFetchLoading).fetchMedicationData : async () => { return { success: false, data: [], error: 'Carregamento não definido' }; };
     const { performAddMedication,
         performDeleteMedication,
-        performUpdateMedication,
-        performDeleteManyMedications
+        performUpdateMedication
     } = UseMedicationService(setLoading);
     const { dispatch } = UseMedications();
 
@@ -62,13 +65,45 @@ export const useScheduleHandling = ({
     const handleAddMedication = async (form: MedicationFormType, onSuccess?: () => void) => {
         console.log("ADD MEDICATION");
 
+        if (!userPatient?.is_treatment_running) {
+            // Se o tratamento não estiver ativo, enviar somente os campos obrigatórios
+            const formattedForm: FormattedMedicationForm = {
+                name: form.name,
+                dosage: form.dosage,
+                type: form.type,
+                alarmDuration: form.alarmDuration,
+                reminderTimes: form.reminderTimes
+            };
+
+            try {
+                const response = await performAddMedication(formattedForm);
+                if (response.success) {
+                    if (response.data) {
+                        dispatch({ type: "ADD_MEDICATION", medication: response.data });
+                    }
+                    if (response.message) {
+                        HandleResponseAppSuccess(response.message, response.type as MessageIconTypeKey);
+                    }
+                    if (onSuccess) onSuccess();
+                    return;
+                }
+                if (response.error) {
+                    HandleResponseAppError(response.error);
+                }
+            } catch (err) {
+                const error = err as Error;
+                HandleResponseAppError(error.message);
+            }
+            return;
+        }
+
         const formKeys = Object.keys(form);
-        const requiredKeys = ['name', 'type', 'dosage', 'frequency', 'expiresAt', 'start'];
-        const missingKeys = requiredKeys.filter(key => !formKeys.includes(key));
+        const requiredKeys = ["name", "type", "dosage", "frequency", "expiresAt", "start"];
+        const missingKeys = requiredKeys.filter((key) => !formKeys.includes(key));
 
         if (missingKeys.length > 0) {
             console.log("Campos faltando");
-            HandleResponseAppError(`Campos obrigatórios faltando: ${missingKeys.join(', ')}`);
+            HandleResponseAppError(`Campos obrigatórios faltando: ${missingKeys.join(", ")}`);
             return;
         }
 
@@ -78,10 +113,12 @@ export const useScheduleHandling = ({
         }
 
         const convertedFrequency = convertFrequencyToNumber(form.frequency);
-        if(!convertedFrequency) {
+        if (!convertedFrequency) {
             HandleResponseAppError("Valor de frequência inválido");
             return;
         }
+
+        if (!frequencyType) return HandleResponseAppError("Tipo de frequência não definido");
 
         let formattedForm: FormattedMedicationForm = {
             name: form.name,
@@ -91,20 +128,21 @@ export const useScheduleHandling = ({
             alarmDuration: form.alarmDuration,
             reminderTimes: form.reminderTimes,
             start: formatISOToDate(form.start) || undefined,
-            frequency: formatFrequency(convertedFrequency, frequencyType)
+            frequency: formatFrequency(convertedFrequency, frequencyType),
         };
 
-        console.log("Form formatado");
+        if (!formatExpiresAt) return HandleResponseAppError("Houve um erro incomum: cálculo da formatação de agendamento não definido");
+        if (!durationType) return HandleResponseAppError("Houve um erro: Tipo de duração do medicamento não definido");
 
-        const formattedExpiresAt = formatExpiresAt(
-            {
-                start: form.start,
-                frequency: convertedFrequency,
-                frequencyType,
-                duration,
-                durationType,
-                onError: HandleResponseAppError
-            });
+        const formattedExpiresAt = formatExpiresAt({
+            start: form.start,
+            frequency: convertedFrequency,
+            frequencyType,
+            duration,
+            durationType,
+            onError: HandleResponseAppError,
+        });
+
         if (!formattedExpiresAt) {
             return;
         }
@@ -115,11 +153,11 @@ export const useScheduleHandling = ({
             const response = await performAddMedication(formattedForm);
             if (response.success) {
                 if (response.data) {
-                    dispatch({ type: 'ADD_MEDICATION', medication: response.data });
+                    dispatch({ type: "ADD_MEDICATION", medication: response.data });
                 }
 
                 if (response.message) {
-                    HandleResponseAppSuccess(response.message, response.type as MessageIcon)
+                    HandleResponseAppSuccess(response.message, response.type as  MessageIconTypeKey);
                 }
                 if (onSuccess) onSuccess();
                 return;
@@ -127,7 +165,6 @@ export const useScheduleHandling = ({
             if (response.error) {
                 HandleResponseAppError(response.error);
             }
-
         } catch (err) {
             const error = err as Error;
             HandleResponseAppError(error.message);
@@ -135,6 +172,38 @@ export const useScheduleHandling = ({
     }
 
     const handleUpdateMedication = async (form: MedicationFormType, id: string, onSuccess?: () => void) => {
+        if (!userPatient?.is_treatment_running) {
+            // Se o tratamento não estiver ativo, enviar somente os campos obrigatórios
+            const formattedForm: FormattedMedicationForm = {
+                name: form.name,
+                dosage: form.dosage,
+                type: form.type,
+                alarmDuration: form.alarmDuration,
+                reminderTimes: form.reminderTimes
+            };
+
+            try {
+                const response = await performUpdateMedication(formattedForm, id);
+                if (response.success) {
+                    if (response.data) {
+                        dispatch({ type: "UPDATE_MEDICATION", medication: response.data, id: id });
+                    }
+                    if (response.message) {
+                        HandleResponseAppSuccess(response.message, response.type as  MessageIconTypeKey);
+                    }
+                    if (onSuccess) onSuccess();
+                    return;
+                }
+                if (response.error) {
+                    HandleResponseAppError(response.error);
+                }
+            } catch (err) {
+                const error = err as Error;
+                HandleResponseAppError(error.message);
+            }
+            return;
+        }
+        
         const formKeys = Object.keys(form);
         const requiredKeys = ['name', 'type', 'dosage', 'frequency', 'expiresAt', 'start'];
         const missingKeys = requiredKeys.filter(key => !formKeys.includes(key));
@@ -156,10 +225,12 @@ export const useScheduleHandling = ({
 
         const convertedFrequency = convertFrequencyToNumber(form.frequency);
 
-        if(!convertedFrequency) {
+        if (!convertedFrequency) {
             HandleResponseAppError("Valor de frequência inválido");
             return;
         }
+
+        if (!frequencyType) return HandleResponseAppError("Tipo de frequência não definido");
 
         let formattedForm: FormattedMedicationForm = {
             name: form.name,
@@ -171,6 +242,10 @@ export const useScheduleHandling = ({
             start: formatISOToDate(form.start) || undefined,
             frequency: formatFrequency(convertedFrequency, frequencyType)
         };
+
+        if (!formatExpiresAt) return HandleResponseAppError("Houve um erro incomum: cálculo da formatação de agendamento não definido")
+        if (!durationType) return HandleResponseAppError("Houve um erro: Tipo de duração do medicamento não definido");
+
 
 
         const formattedExpiresAt = formatExpiresAt(
@@ -198,7 +273,7 @@ export const useScheduleHandling = ({
                 }
 
                 if (response.message) {
-                    HandleResponseAppSuccess(response.message, response.type as MessageIcon)
+                    HandleResponseAppSuccess(response.message, response.type as  MessageIconTypeKey)
                 }
                 if (onSuccess) onSuccess();
                 return;
@@ -223,7 +298,7 @@ export const useScheduleHandling = ({
                 }
 
                 if (response.message) {
-                    HandleResponseAppSuccess(response.message, response.type as MessageIcon)
+                    HandleResponseAppSuccess(response.message, response.type as  MessageIconTypeKey)
                 }
                 if (onSuccess) onSuccess();
                 return;

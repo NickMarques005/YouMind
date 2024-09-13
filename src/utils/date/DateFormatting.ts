@@ -32,11 +32,12 @@ export const FormatStringToISODate = (strDate?: string) => {
     return date.toISO() || undefined;
 }
 
-export const FormatRelativeDate = (date: DateTime) => {
-    const today = DateTime.local();
-    const diff = Math.round(date.diff(today, 'days').days);
+export const formatRelativeDate = (isoString: string) => {
+    const date = DateTime.fromISO(isoString).startOf('day');
+    const today = DateTime.local().startOf('day'); 
+    const diff = date.diff(today, 'days').days;
 
-    switch (diff) {
+    switch (Math.round(diff)) { 
         case 0:
             return "Hoje";
         case 1:
@@ -45,18 +46,16 @@ export const FormatRelativeDate = (date: DateTime) => {
             return "Ontem";
         default:
             if (diff > 1) {
-                return `${diff} dias depois`
-            }
-            else if (diff < -1) {
-                return `${Math.abs(diff)} dias atrás`;
-            }
-            else {
-                return ''
+                return `${Math.round(diff)} dias depois`; // Usar arredondamento
+            } else if (diff < -1) {
+                return `${Math.abs(Math.round(diff))} dias atrás`; // Usar arredondamento
+            } else {
+                return '';
             }
     }
-}
+};
 
-export const FormatRelativeMessageDate = (date: DateTime) => {
+export const formatRelativeMessageDate = (date: DateTime) => {
     const today = DateTime.local().startOf('day');
     const messageDate = date.startOf('day');
     const diffDays = today.diff(messageDate, 'days').days;
@@ -76,7 +75,7 @@ export const formatDateMessage = (isoDate: string) => {
         return "Data inválida";
     }
 
-    return FormatRelativeMessageDate(date);
+    return formatRelativeMessageDate(date);
 
 }
 
@@ -104,22 +103,30 @@ export const formatRelativeTime = (isoDate: string) => {
 
     if (diff.years >= 1) {
         const years = Math.floor(diff.years);
-        return `Há ${years} ano${years > 1 ? 's' : ''} atrás`;
+        return `${years} ano${years > 1 ? 's' : ''} atrás`;
     } else if (diff.months >= 1) {
         const months = Math.floor(diff.months);
-        return `Há ${months} mês${months > 1 ? 'es' : ''} atrás`;
+        return `${months} ${months > 1 ? 'meses' : 'mês'} atrás`;
     } else if (diff.days >= 1) {
         const days = Math.floor(diff.days);
         return days === 1 ? 'Ontem' : `${days} dias atrás`;
     } else if (diff.hours >= 1) {
         const hours = Math.floor(diff.hours);
-        return `Há ${hours} hora${hours > 1 ? 's' : ''} atrás`;
+        return `${hours} hora${hours > 1 ? 's' : ''} atrás`;
     } else if (diff.minutes >= 1) {
         const minutes = Math.floor(diff.minutes);
-        return `Há ${minutes} minuto${minutes > 1 ? 's' : ''} atrás`;
+        return `${minutes} minuto${minutes > 1 ? 's' : ''} atrás`;
     } else {
         return 'Agora mesmo';
     }
+}
+
+export const formatRelativeTimeText = (textTime: string) => {
+    if(textTime === "Agora mesmo"){
+        return textTime;
+    }
+    
+    return `Há ${textTime}`
 }
 
 export const formatTimer = (totalSeconds: number) => {

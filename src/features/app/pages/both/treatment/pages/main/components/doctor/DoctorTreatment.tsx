@@ -1,14 +1,13 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import React from 'react'
 import { UserData, UserType } from 'types/user/User_Types';
-import { UseTreatment } from '@providers/TreatmentProvider';
+import { UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
 import Header from '../both/Header';
 import { screenHeight } from '@utils/layout/Screen_Size';
 import Content from './Content';
 import { UseHandleActiveChat } from '../../../chat/hooks/UseHandleActiveChat';
 import { UseSearchHandling } from '../../hooks/UseSearchHandling';
 import SearchUsers from '../search/SearchUsers';
-import TreatmentMenu from '../both/menu/TreatmentMenu';
 import useMenuAnimation from '@hooks/animation/UseMenuAnimation';
 
 interface DoctorTreatmentProps {
@@ -26,10 +25,10 @@ const DoctorTreatment = ({ userType, userData }: DoctorTreatmentProps) => {
         <View style={styles.screenTreatment}>
             <Header
                 handleTreatmentMenu={handleModalTreatmentMenu}
-                handleSearch={handleModalSearch} 
+                handleSearch={handleModalSearch}
                 userType={userType}
                 treatmentMenu={treatmentMenu}
-                userData={userData} 
+                userData={userData}
                 closeMenu={closeMenu}
                 opacity={opacity}
                 translateY={translateY}
@@ -38,11 +37,15 @@ const DoctorTreatment = ({ userType, userData }: DoctorTreatmentProps) => {
                 handleActiveChat={HandleActiveChat}
                 treatment_state={treatment_state}
                 userData={userData} />
-            <SearchUsers
-                visible={modalSearch}
-                onClose={handleModalSearch}
-                userData={userData}
-                userType={userType} />
+            {
+                modalSearch &&
+                <SearchUsers
+                    visible={modalSearch}
+                    onClose={handleModalSearch}
+                    userData={userData}
+                    userType={userType as UserType}
+                />
+            }
         </View>
     )
 }

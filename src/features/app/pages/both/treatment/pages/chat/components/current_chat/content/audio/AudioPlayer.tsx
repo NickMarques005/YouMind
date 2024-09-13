@@ -8,14 +8,11 @@ import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import { UseAudioPlayer } from '@features/app/providers/sub/AudioPlayerProvider';
 
 interface AudioPlayerProps {
-    ownMessage: boolean;
-    message: MessageTemplate;
     url: string;
-    showUserIcon: boolean;
     totalDuration?: string;
 }
 
-const AudioPlayer = ({ totalDuration, url, message, ownMessage, showUserIcon }: AudioPlayerProps) => {
+const AudioPlayer = ({ totalDuration, url }: AudioPlayerProps) => {
     const { playerRef, currentUrl, handleCurrentUrl } = UseAudioPlayer();
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);

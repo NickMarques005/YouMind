@@ -23,7 +23,6 @@ interface CurrentQuestionnaireParams {
 
 const CurrentQuestionnaire = () => {
     const { navigateToAnalysisScreen } = UseAnalysisNavigation();
-    const { analysisNavigateOnSuccess } = UseNavigateOnSuccess();
     const { userData } = UseForm();
     const route = useRoute<RouteProp<AnalysisStackNavigation, 'current_questionnaire'> & { params?: CurrentQuestionnaireParams }>();
     const currentQuestionParams = route.params?.params;

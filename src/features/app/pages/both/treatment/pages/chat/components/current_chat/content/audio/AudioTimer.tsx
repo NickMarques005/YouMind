@@ -53,7 +53,8 @@ export default AudioTimer;
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        alignItems: 'flex-end'
+        alignItems: 'flex-end',
+        paddingBottom: 20,
     },
     audioTimerView: {
         flexDirection: 'row',

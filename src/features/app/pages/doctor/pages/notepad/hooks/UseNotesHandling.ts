@@ -1,13 +1,11 @@
-import { MessageIcon } from "@components/modals/message/types/type_message_modal";
 import { useNotepad } from "@features/app/providers/doctor/NotepadProvider";
 import { UseNotepadService } from "@hooks/api/UseNotepadService"
-import { useState } from "react";
-import { NoteTemplate } from "types/app/doctor/notepad/Notepad_Types";
+import { MessageIconTypeKey } from "types/icon/Icon_Types";
 
 interface UseNotesHandlingProps {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     HandleResponseAppError: (value: string) => void;
-    HandleResponseAppSuccess: (message: string, messageType?: MessageIcon) => void;
+    HandleResponseAppSuccess: (message: string, messageType?: MessageIconTypeKey) => void;
 }
 
 export const UseNotesHandling = ({ setLoading, HandleResponseAppError, HandleResponseAppSuccess }: UseNotesHandlingProps) => {
@@ -28,7 +26,7 @@ export const UseNotesHandling = ({ setLoading, HandleResponseAppError, HandleRes
                 
                 if(onSuccess) onSuccess();
                 if (response.message) {
-                    HandleResponseAppSuccess(response.message, response.type as MessageIcon);
+                    HandleResponseAppSuccess(response.message, response.type as MessageIconTypeKey);
                 }
             } else if (response.error) {
                 HandleResponseAppError(response.error);

@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
-import { UseAppNavigation } from '@features/app/hooks/UseAppNavigation';
 import images from '@assets/images';
 import CountNotifications from '@features/app/pages/both/notifications/components/CountNotifications';
+import { UseAppNavigation } from '@features/app/hooks/navigation/UseAppNavigation';
 
 interface TitleProps {
     name?: string;

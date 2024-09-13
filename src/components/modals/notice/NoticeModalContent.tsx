@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Notice } from 'types/notice/Notice_Types';
 import images from '@assets/images';
 import { responsiveSize } from '@utils/layout/Screen_Size';
+import { defaultIconMap } from '@utils/icon/mainIcons';
 
 interface NoticeContentProps {
     notice: Notice;
@@ -33,14 +34,13 @@ const NoticeContent: React.FC<NoticeContentProps> = ({
             <View style={styles.iconContainer}>
                 {
                     icon ?
-                        <Icon name={icon} size={50} color={userType === 'doctor' ? "#4ea6a0" : "#8a4ea6"} />
+                        <Icon name={defaultIconMap[icon] || 'info'} size={50} color={userType === 'doctor' ? "#4ea6a0" : "#8a4ea6"} />
                         :
                         <Image
                             style={{ width: youMindLogoSize, height: youMindLogoSize, borderRadius: youMindLogoSize, borderWidth: 5, borderColor: userType === 'doctor' ? "#4ea6a0" : "#8a4ea6" }}
                             source={youMindLogo}
                         />
                 }
-
             </View>
             <View style={styles.messageView}>
                 <Text style={styles.message}>
@@ -49,22 +49,25 @@ const NoticeContent: React.FC<NoticeContentProps> = ({
             </View>
             <View style={styles.buttonContainer}>
                 <View style={styles.answerNoticeButtonsContainer}>
-                    <LinearGradient
-                        colors={gradientCancel.colors}
-                        start={gradientCancel.start}
-                        end={gradientCancel.end}
-                        style={styles.buttonGradient}>
-                        <CustomButton
-                            title={declineText || "Cancelar"}
-                            onPress={() => {
-                                handleDontShow(notice, dontShowState);
-                                closeModal();
-                            }}
-                            buttonStyle={styles.button}
-                            textStyle={styles.buttonText}
-                        />
-                    </LinearGradient>
+                    {
+                        declineText &&
+                        <LinearGradient
+                            colors={gradientCancel.colors}
+                            start={gradientCancel.start}
+                            end={gradientCancel.end}
+                            style={styles.buttonGradient}>
 
+                            <CustomButton
+                                title={declineText}
+                                onPress={() => {
+                                    handleDontShow(notice, dontShowState);
+                                    closeModal();
+                                }}
+                                buttonStyle={styles.button}
+                                textStyle={styles.buttonText}
+                            />
+                        </LinearGradient>
+                    }
                     <LinearGradient
                         colors={gradientDefault.colors}
                         start={gradientDefault.start}

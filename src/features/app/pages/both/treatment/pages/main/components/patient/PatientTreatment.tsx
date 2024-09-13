@@ -1,12 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import Header from '../both/Header'
-import { UserData } from 'types/user/User_Types';
-import { UseTreatment } from '@providers/TreatmentProvider';
+import { StyleSheet, View } from 'react-native';
+import React from 'react';
+import Header from '../both/Header';
+import { UserData, UserType } from 'types/user/User_Types';
+import { UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
 import Content from './Content';
 import TreatmentRunning from './TreatmentRunning';
 import { UseHandleActiveChat } from '../../../chat/hooks/UseHandleActiveChat';
-import { screenHeight } from '@utils/layout/Screen_Size';
 import SearchUsers from '../search/SearchUsers';
 import { UseSearchHandling } from '../../hooks/UseSearchHandling';
 import useMenuAnimation from '@hooks/animation/UseMenuAnimation';
@@ -38,9 +37,21 @@ const PatientTreatment = ({ userType, userData }: PatientTreatmentProps) => {
                 treatment_state.treatments.length === 0 ?
                     <Content handleSearch={handleModalSearch} />
                     :
-                    <TreatmentRunning treatment_state={treatment_state} userType={userType} userData={userData} handleActiveChat={HandleActiveChat} />
+                    <TreatmentRunning
+                        patientTreatment={treatment_state.treatments[0]}
+                        userType={userType}
+                        userData={userData}
+                        handleActiveChat={HandleActiveChat}
+                    />
             }
-            {modalSearch && <SearchUsers visible={modalSearch} onClose={handleModalSearch} userData={userData} userType={userType} />}
+            {
+                modalSearch && <SearchUsers
+                    visible={modalSearch}
+                    onClose={handleModalSearch}
+                    userData={userData} 
+                    userType={userType as UserType}
+                />
+            }
         </View>
     )
 }

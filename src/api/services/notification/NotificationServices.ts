@@ -1,4 +1,4 @@
-import { DeleteNotificationResponse, DeleteNotificationsResponse, NotificationTemplate, NotificationTreatmentSolicitationResponse, Request_DeleteNotificationArgs, Request_DeleteNotificationsArgs, Request_NotificationTreatmentSolicitationArgs } from "types/notification/Request_Types";
+import { DeleteNotificationResponse, DeleteNotificationsResponse, NotificationTemplate, Request_DeleteNotificationArgs, Request_DeleteNotificationsArgs } from "types/notification/Request_Types";
 import { MakeRequest } from "../Request";
 import { GetAccessToken } from "@utils/token/GetAccessToken";
 
@@ -29,14 +29,5 @@ export const NotificationService = {
             { ...deleteNotificationsData },
             token
         )
-    },
-    TreatmentSolicitation: async (treatmentSolicitationData: Request_NotificationTreatmentSolicitationArgs, type: string) => {
-        const token = await GetAccessToken();
-        return MakeRequest<NotificationTreatmentSolicitationResponse>(
-            'notifications/treatment/solicitation',
-            'POST',
-            { ...treatmentSolicitationData, type },
-            token
-        )
-    },
+    }
 }

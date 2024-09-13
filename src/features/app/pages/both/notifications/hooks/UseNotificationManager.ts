@@ -1,19 +1,15 @@
-import { UseNotificationService } from '@hooks/api/UseNotificationService';
 import { useCallback, useState } from 'react';
-import { Animated, Easing } from 'react-native';
 import { NotificationData } from 'types/notification/Notification_Types';
-import { UseNotifications } from '@features/app/reducers/NotificationReducer';
 import { UseNotificationConfig } from './UseNotificationConfig';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import { UseTreatmentService } from '@hooks/api/UseTreatmentService';
 import { UserData } from 'types/user/User_Types';
-import { UseChat } from '@providers/ChatProvider';
-import { TreatmentInfoTemplate } from 'types/treatment/Treatment_Types';
-import { UseChatNavigation } from '../../treatment/pages/chat/hooks/UseChatNavigation';
-import { DoctorScreenName, DoctorTabNavigatorParamList, PatientScreenName, TreatmentScreenName } from 'types/navigation/Navigation_Types';
-import { UseTreatmentNavigation } from '../../treatment/hooks/UseTreatmentNavigation';
-import { useTabNavigation } from '@features/app/hooks/UseTabNavigator';
+import { DoctorScreenName, PatientScreenName } from 'types/navigation/Navigation_Types';
 import { HealthPage, UseHealthPage } from '@features/app/providers/patient/HealthProvider';
+import { useTabNavigation } from '@features/app/hooks/navigation/UseTabNavigator';
+import { UseSolicitationService } from '@hooks/api/UseSolicitationService';
+import { ChatUser } from 'types/chat/Chat_Types';
+import { UseChat } from '@features/app/providers/bridge/ChatProvider';
 
 export interface SelectedNotification {
     removeNotification?: () => void;
@@ -22,6 +18,7 @@ export interface SelectedNotification {
 
 export interface UseNotificationManager {
     setDeleteNotificationLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    setDeclineLoading: React.Dispatch<React.SetStateAction<boolean>>;
     setModalLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userType: string | undefined;
     userData?: UserData;
@@ -29,16 +26,23 @@ export interface UseNotificationManager {
 
 export interface HandlePageDirectionParams {
     tab: DoctorScreenName | PatientScreenName,
-    sender?: TreatmentInfoTemplate,
+    sender?: ChatUser,
     healthPage?: HealthPage,
 }
 
-export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationLoading, userType, userData }: UseNotificationManager) => {
+export const UseNotificationManager = ({ 
+    setModalLoading, 
+    setDeleteNotificationLoading, 
+    userType, 
+    setDeclineLoading,
+    userData }: UseNotificationManager) => {
+    
     const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
     const { handleRemove } = UseNotificationConfig({ setLoading: setDeleteNotificationLoading, HandleResponseAppError, HandleResponseAppSuccess });
     const { performInitializeTreatment } = UseTreatmentService(setModalLoading);
+    const { performDeclineSolicitation } = UseSolicitationService(setDeclineLoading);
     const [selectedNotification, setSelectedNotification] = useState<SelectedNotification | null>(null);
-    const { handleRedirectChat } = UseChat();
+    const { handleActivateCurrentChat } = UseChat();
     const { navigateToDoctorScreen, navigateToPatientScreen } = useTabNavigation();
     let handleCurrentHealthPage: (page: HealthPage) => void;
 
@@ -50,7 +54,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
     const handlePageRedirection = ({ tab, sender, healthPage }: HandlePageDirectionParams) => {
         if (sender) {
             console.log("HANDLE REDIRECT CHAT!!");
-            handleRedirectChat(sender);
+            handleActivateCurrentChat(sender);
         }
         if (userData?.type === 'doctor') {
             navigateToDoctorScreen(tab as DoctorScreenName);
@@ -82,14 +86,14 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
                             senderParams.email && senderParams._id) {
                             const screen = redirectParams.screen;
                             const menuOption = redirectParams.menu_option;
-                            const sender: TreatmentInfoTemplate = {
+                            const sender: ChatUser = {
                                 _id: senderParams._id,
                                 name: senderParams.name,
                                 email: senderParams.email,
                                 avatar: senderParams.avatar,
                                 birth: senderParams.birth,
                                 gender: senderParams.gender,
-                                uid: senderParams.uid
+                                uid: senderParams.uid,
                             }
                             console.log("Current Chat: ", sender);
                             if (screen === 'chat_treatment') {
@@ -149,9 +153,9 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
             case "solicitation":
                 console.log(notification);
                 console.log("Type Function Solicitation");
-                if (notificationData.sender_params?.email && userData && userType) {
+                if (notificationData.solicitation_params?.email && userData && userType) {
                     try {
-                        const response = await performInitializeTreatment({ email_1: userData.email, email_2: notificationData.sender_params?.email }, userType);
+                        const response = await performInitializeTreatment({ email_1: userData.email, email_2: notificationData.solicitation_params?.email }, userType);
                         if (response.success) {
                             console.log(response);
                             if (removeNotification) {
@@ -178,6 +182,49 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
                 break;
         }
     }, [setModalLoading, userData]);
+
+    const handleNotificationDecline = useCallback(async (notification: NotificationData, removeNotification?: () => void) => {
+        const notificationData = notification.data ? notification.data : undefined;
+    
+        if (notificationData === undefined) {
+            console.log("Erro: notificação não definida");
+            return;
+        }
+    
+        switch (notificationData.notify_function) {
+            case "solicitation":
+                console.log("Tipo de função: Solicitação (Decline)");
+                if (notificationData.solicitation_params?.email && userData && userType) {
+                    try {
+                        const solicitationType = notificationData.solicitation_params?.solicitationType;
+                        const solicitationId = notificationData.solicitation_params?.solicitationId;
+                        if(!solicitationType || !solicitationId) return HandleResponseAppError("Houve um erro ao recusar solicitação: Parâmetros da solicitação inválidos");
+
+                        const response = await performDeclineSolicitation({ solicitationType, solicitationId });
+                        if (response.success) {
+                            console.log("Solicitação recusada com sucesso:", response);
+                            
+                            if (removeNotification) {
+                                removeNotification();
+                            }
+                        } else if (response.error) {
+                            HandleResponseAppError(response.error);
+                        }
+                    } catch (err) {
+                        const error = err as Error;
+                        console.log("Erro ao recusar a solicitação:", error.message);
+                        HandleResponseAppError(error.message);
+                    }
+                }
+                break;
+            case "message_alert":
+                console.log("Tipo de função: Alerta de mensagem (Decline)");
+                break;
+            default:
+                console.log("Erro na seleção de notify_function da notificação (Decline)");
+                break;
+        }
+    }, [setDeclineLoading, userData]);
 
     const groupNotificationsBySender = (notifications: NotificationData[]) => {
         const groupedNotifications: NotificationData[] = [];
@@ -258,6 +305,7 @@ export const UseNotificationManager = ({ setModalLoading, setDeleteNotificationL
         setSelectedNotification,
         handleClearSelectedNotification,
         handleNotificationAccept,
+        handleNotificationDecline,
         handleNotificationPress,
         groupNotificationsBySender
     };

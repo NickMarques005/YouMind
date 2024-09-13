@@ -16,7 +16,6 @@ import {
 	deleteField,
 } from 'firebase/firestore';
 import { FIRESTORE } from 'src/__firebase__/FirebaseConfig';
-import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 
 // Configurações do servidor Ice (Interactive Connectivity Establishment) STUN 
 const configuration: RTCConfiguration = {
@@ -40,6 +39,8 @@ export class WebRTCServices {
 	private remoteStream: MediaStream | null = null;
 	private peerConnection: RTCPeerConnection | null = null;
 	private roomId: string;
+	private makingOffer: boolean = false;
+	private remoteCandidatesQueue: RTCIceCandidate[] = [];
 
 	constructor(roomId: string) {
 		this.roomId = roomId;
@@ -55,8 +56,8 @@ export class WebRTCServices {
 		)?.deviceId;
 
 		const videoConstraints: MediaTrackConstraints = {
-			width: { min: 500 },
-			height: { min: 300 },
+			width: { min: 300 },
+			height: { min: 100 },
 			frameRate: { min: 30 },
 			facingMode: facingMode,
 			deviceId: devices.find(
@@ -95,27 +96,41 @@ export class WebRTCServices {
 			});
 		});
 
-		const offer = await this.peerConnection.createOffer(defaultOfferOptions);
-		await this.peerConnection.setLocalDescription(offer);
+		if (this.makingOffer) return;
+		this.makingOffer = true;
 
-		await setDoc(roomRef, { offer, connected: false });
+		try {
+			const offer = await this.peerConnection.createOffer(defaultOfferOptions);
+			await this.peerConnection.setLocalDescription(offer);
+			await setDoc(roomRef, { offer, connected: false });
 
-		onSnapshot(roomRef, (snapshot) => {
-			const data = snapshot.data();
-			if (data?.answer && !this.peerConnection?.remoteDescription) {
-				const rtcSessionDescription = new RTCSessionDescription(data.answer);
-				this.peerConnection?.setRemoteDescription(rtcSessionDescription);
-			}
-		});
-
-		onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
-			snapshot.docChanges().forEach((change) => {
-				if (change.type === 'added') {
-					const candidate = new RTCIceCandidate(change.doc.data());
-					this.peerConnection?.addIceCandidate(candidate);
+			onSnapshot(roomRef, (snapshot) => {
+				const data = snapshot.data();
+				if (data?.answer && !this.peerConnection?.remoteDescription) {
+					const rtcSessionDescription = new RTCSessionDescription(data.answer);
+					this.peerConnection?.setRemoteDescription(rtcSessionDescription);
 				}
 			});
-		});
+
+			onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
+				snapshot.docChanges().forEach((change) => {
+					if (change.type === 'added') {
+						const candidate = new RTCIceCandidate(change.doc.data());
+						this.remoteCandidatesQueue.push(candidate); // Adiciona candidatos à fila
+					}
+				});
+
+				if (this.peerConnection?.signalingState === 'stable') {
+					this.remoteCandidatesQueue.forEach(async (candidate) => {
+						await this.peerConnection?.addIceCandidate(candidate);
+					});
+					this.remoteCandidatesQueue = []; // Limpa a fila de candidatos
+				}
+			});
+
+		} finally {
+			this.makingOffer = false;
+		}
 	}
 
 	public async joinCall(): Promise<void> {
@@ -154,9 +169,16 @@ export class WebRTCServices {
 			snapshot.docChanges().forEach((change) => {
 				if (change.type === 'added') {
 					const candidate = new RTCIceCandidate(change.doc.data());
-					this.peerConnection?.addIceCandidate(candidate);
+					this.remoteCandidatesQueue.push(candidate);
 				}
 			});
+
+			if (this.peerConnection?.signalingState === 'stable') {
+				this.remoteCandidatesQueue.forEach(async (candidate) => {
+					await this.peerConnection?.addIceCandidate(candidate);
+				});
+				this.remoteCandidatesQueue = [];
+			}
 		});
 	}
 

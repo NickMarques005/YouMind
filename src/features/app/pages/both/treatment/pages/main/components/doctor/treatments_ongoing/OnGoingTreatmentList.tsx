@@ -1,4 +1,4 @@
-import { TreatmentState } from '@providers/TreatmentProvider';
+import { TreatmentState } from '@features/app/providers/sub/TreatmentProvider';
 import React from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
 import OnGoingTreatmentTemplate from './OnGoingTreatmentTemplate';

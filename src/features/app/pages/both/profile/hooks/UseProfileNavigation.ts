@@ -4,9 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 export const UseProfileNavigation = () => {
     const navigation = useNavigation<ProfileStackTypes>();
 
-    const navigateToProfileScreen = (screenName: ProfileScreenName) => {
-        navigation.navigate(screenName);
+    const navigateToProfileScreen = (screenName: ProfileScreenName, params?: any) => {
+        navigation.navigate(screenName, params);
     }
 
-    return { navigateToProfileScreen };
+    const navigateBack = () => {
+        navigation.canGoBack() ?
+        navigation.goBack() : navigation.navigate('main_profile');
+    }
+
+    return { navigateToProfileScreen, navigateBack };
 }

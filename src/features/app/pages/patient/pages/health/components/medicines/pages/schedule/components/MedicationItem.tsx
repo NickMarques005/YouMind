@@ -1,6 +1,6 @@
 import { ConvertHoursToDateString } from '@utils/date/DateConversions';
 import { FormatISOToStringDate } from '@utils/date/DateFormatting';
-import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
+import { responsiveSize, screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import React from 'react';
 import { Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -14,51 +14,73 @@ interface MedicationItemProps {
     navigateToUpdateMedication: () => void;
 }
 
-const MedicationItem: React.FC<MedicationItemProps> = React.memo(({ item, icon, navigateToUpdateMedication, handleCurrentMedication }) => (
-    <View style={styles.medicationItem}>
-        <View style={styles.medicationNameContainer}>
-            <Text style={styles.medicationName}>{item.name}</Text>
+const MedicationItem: React.FC<MedicationItemProps> = React.memo(({ item, icon, navigateToUpdateMedication, handleCurrentMedication }) => {
+    const actionButtonSize = responsiveSize * 0.125;
+    const largeMedicationIconSize = responsiveSize * 0.3;
+    const medicationItemStyles = styles(actionButtonSize, largeMedicationIconSize);
+    return (
+        <View style={[medicationItemStyles.medicationItem]}>
+            <View style={medicationItemStyles.medicationNameContainer}>
+                <Text style={medicationItemStyles.medicationName}>{item.name}</Text>
+            </View>
+            <LinearGradient colors={[`${item.isScheduled ? '#c085c9' : '#b07baa'}`, `${item.isScheduled ? '#814d87' : '#855681'}`]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }} style={medicationItemStyles.detailsGradient}>
+                <View style={{ height: 0, width: '100%', alignItems: 'flex-end' }}>
+                    <LinearGradient colors={[`${item.isScheduled ? '#b165c2' : '#b85f8d'}`, `${ item.isScheduled ? '#783160' : '#633955'}`]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0.3, y: 1 }} style={medicationItemStyles.iconGradient}>
+                        <Image source={icon} style={[medicationItemStyles.icon, { opacity: item.isScheduled ? 1 : 0.6 }]} />
+                    </LinearGradient>
+                </View>
+                {
+                    item.schedules && item.schedules.length !== 0 &&
+                    <View style={medicationItemStyles.infoTemplateContainer}>
+                        <MaterialIcons name="schedule" size={20} color="#ecdff2" />
+                        {item.schedules.map((schedule, index) => (
+                            <Text style={medicationItemStyles.medicationDetails} key={index}>{schedule}{ item.schedules && index < item.schedules.length - 1 ? ', ' : ''}</Text>
+                        ))}
+                    </View>
+                }
+                <View style={medicationItemStyles.infoTemplateContainer}>
+                    <MaterialIcons name="opacity" size={20} color="#ecdff2" />
+                    <Text style={medicationItemStyles.medicationDetails}>{`${item.dosage}${item.type === 'Comprimido' || item.type === 'Cápsula' ? `mg` : 'ml'}`}</Text>
+                </View>
+                {
+                    item.frequency &&
+                    <View>
+                        <Text style={medicationItemStyles.medicationDetails}>{`A cada ${item.frequency} dia(s)`}</Text>
+                    </View>
+                }
+                {
+                    item.expiresAt &&
+                    <View>
+                        <Text style={medicationItemStyles.medicationDetails}>{`Usar até o dia ${FormatISOToStringDate(item.expiresAt)}`}</Text>
+                    </View>
+                }
+                <View style={medicationItemStyles.actionsContainer}>
+                    <TouchableOpacity onPress={navigateToUpdateMedication} style={medicationItemStyles.actionButton}>
+                        <MaterialIcons name='edit' size={actionButtonSize / 2} color="#ecdff2" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleCurrentMedication(item)} style={medicationItemStyles.actionButton}>
+                        <MaterialIcons name='delete' size={actionButtonSize / 2} color="#ecdff2" />
+                    </TouchableOpacity>
+                </View>
+                {
+                    !item.isScheduled &&
+                    <LinearGradient colors={['#a61654', '#61222f']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }} style={medicationItemStyles.deactivatedContainer}>
+                        <MaterialIcons name="block" size={20} color="white" />
+                        <Text style={medicationItemStyles.deactivatedText}>{`DESATIVADO`}</Text>
+                    </LinearGradient>
+                }
+            </LinearGradient>
         </View>
-        <LinearGradient colors={['#c085c9', '#814d87']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }} style={styles.detailsGradient}>
-            <View style={{ height: 0, width: '100%', alignItems: 'flex-end' }}>
-                <LinearGradient colors={['#b165c2', '#783160']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0.3, y: 1 }} style={styles.iconGradient}>
-                    <Image source={icon} style={styles.icon} />
-                </LinearGradient>
-            </View>
-            <View style={{ flexDirection: 'row', gap: 5, }}>
-                <MaterialIcons name="schedule" size={20} color="#ecdff2" />
-                {item.schedules.map((schedule, index) => (
-                        <Text style={styles.medicationDetails} key={index}>{schedule}{index < item.schedules.length - 1 ? ', ' : ''}</Text>
-                    ))}
-            </View>
-            <View style={{ flexDirection: 'row', gap: 5, }}>
-                <MaterialIcons name="opacity" size={20} color="#ecdff2" />
-                
-                <Text style={styles.medicationDetails}>{`${item.dosage}${item.type === 'Comprimido' || item.type === 'Cápsula' ? `mg` : 'ml'}`}</Text>
-            </View>
-            <View>
-                <Text style={styles.medicationDetails}>{`A cada ${item.frequency} dia(s)`}</Text>
-            </View>
-            <View>
-                <Text style={styles.medicationDetails}>{`Usar até o dia ${FormatISOToStringDate(item.expiresAt)}`}</Text>
-            </View>
-            <View style={{ width: '100%', justifyContent: 'flex-end', flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity onPress={navigateToUpdateMedication} style={{ width: 50, height: 50, borderRadius: screenWidth * 0.1, backgroundColor: '#80407c', alignItems: 'center', justifyContent: 'center' }}>
-                    <MaterialIcons name='edit' size={25} color="#ecdff2" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleCurrentMedication(item)} style={{ width: 50, height: 50, borderRadius: screenWidth * 0.1, backgroundColor: '#80407c', alignItems: 'center', justifyContent: 'center' }}>
-                    <MaterialIcons name='delete' size={25} color="#ecdff2" />
-                </TouchableOpacity>
-            </View>
-        </LinearGradient>
-    </View>
-));
+    )
+});
 
-const styles = StyleSheet.create({
+const styles = (actionButtonSize: number, largeMedicationIconSize: number) => StyleSheet.create({
     medicationItem: {
         width: '100%',
         backgroundColor: '#f9f9f9',
@@ -67,20 +89,19 @@ const styles = StyleSheet.create({
         marginVertical: '5%'
     },
     iconGradient: {
-        right: "-12%",
-        top: -(screenWidth * 0.27),
+        right: -(largeMedicationIconSize * 0.3),
+        top: -(largeMedicationIconSize * 0.92),
         elevation: 6,
         zIndex: 2,
-        width: screenWidth * 0.3,
-        height: screenWidth * 0.3,
-        borderRadius: screenWidth * 0.2,
-        padding: '20%',
+        width: largeMedicationIconSize,
+        height: largeMedicationIconSize,
+        borderRadius: largeMedicationIconSize,
         alignItems: 'center',
         justifyContent: 'center',
     },
     icon: {
-        width: screenWidth * 0.2,
-        height: screenWidth * 0.2,
+        width: largeMedicationIconSize * 0.65,
+        height: largeMedicationIconSize * 0.65,
     },
     medicationNameContainer: {
         width: '100%',
@@ -98,6 +119,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#4d2448',
     },
+    infoTemplateContainer: {
+        flexDirection: 'row',
+        gap: 5,
+    },
     detailsGradient: {
         paddingHorizontal: '6%',
         paddingVertical: '5%',
@@ -108,6 +133,34 @@ const styles = StyleSheet.create({
     medicationDetails: {
         fontSize: 14,
         color: '#ecdff2',
+    },
+    actionsContainer: {
+        width: '100%',
+        justifyContent: 'flex-end',
+        flexDirection: 'row',
+        gap: 10,
+    },
+    actionButton: {
+        width: actionButtonSize,
+        height: actionButtonSize,
+        borderRadius: actionButtonSize / 2,
+        backgroundColor: '#80407c',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    deactivatedContainer: {
+        position: 'absolute',
+        flexDirection: 'row',
+        borderRadius: 20,
+        padding: 8,
+        bottom: -10,
+        left: -5,
+        gap: 5,
+    },
+    deactivatedText: {
+        fontSize: 16,
+        color: 'white',
+        fontWeight: '700',
     },
 });
 

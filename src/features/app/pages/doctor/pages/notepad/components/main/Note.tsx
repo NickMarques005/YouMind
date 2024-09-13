@@ -1,5 +1,4 @@
 import { screenHeight } from "@utils/layout/Screen_Size";
-import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { NoteTemplate } from "types/app/doctor/notepad/Notepad_Types";
@@ -12,7 +11,6 @@ interface NoteProps {
 
 
 const Note = ({ item, handleSelectedNote, notePart }: NoteProps) => {
-    const [pressed, setPressed] = useState(false);
 
     return (
         <TouchableOpacity
@@ -23,7 +21,7 @@ const Note = ({ item, handleSelectedNote, notePart }: NoteProps) => {
             activeOpacity={0.9}
         >
             <View style={styles.shadowNote} />
-            <LinearGradient colors={pressed ? ['#4e6e78', '#0c3c44'] : ['#76a1ab', '#155a6b']}
+            <LinearGradient colors={['#76a1ab', '#155a6b']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0.2, y: 1 }} style={{ display: 'flex', flex: 1, width: '100%', borderTopRightRadius: 30, borderBottomRightRadius: 20, alignItems: 'center', elevation: 5, height: '100%' }}>
                 <View style={{ position: 'absolute', left: '-30%', bottom: '10%' }}>

@@ -11,7 +11,7 @@ interface SendButtonProps {
     handleSendAnswers: (answers: FormattedAnswer[], id: string, onSuccess?: () => void) => Promise<void>;
     answers: FormattedAnswer[];
     questionnaireId: string;
-    handleNavigateBackToApp: () => void;
+    handleLeaveAnswerQuestionnaire: () => void;
     readyToSend: boolean;
 }
 
@@ -20,12 +20,12 @@ const SendButton: React.FC<SendButtonProps> = ({
     handleSendAnswers,
     answers,
     questionnaireId,
-    handleNavigateBackToApp,
+    handleLeaveAnswerQuestionnaire,
     readyToSend
 }) => {
     return (
         <View style={styles.sendButtonContainer}>
-            <TouchableOpacity onPress={() => handleSendAnswers(answers, questionnaireId, handleNavigateBackToApp)} disabled={!readyToSend || sendLoading.loading} style={[styles.sendButton, { opacity: !readyToSend || sendLoading.loading ? 0.5 : 1 }]}>
+            <TouchableOpacity onPress={() => handleSendAnswers(answers, questionnaireId, handleLeaveAnswerQuestionnaire)} disabled={!readyToSend || sendLoading.loading} style={[styles.sendButton, { opacity: !readyToSend || sendLoading.loading ? 0.5 : 1 }]}>
                 <LinearGradient
                     colors={['#8f3ea3', '#523a50']}
                     start={{ x: 0, y: 0 }}

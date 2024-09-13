@@ -5,10 +5,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ImageBackground, Image, StyleSheet } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useCurrentMedication } from '@features/app/providers/patient/CurrentMedicationProvider';
-import { UseTreatment } from '@providers/TreatmentProvider';
+import { UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
 
 const CurrentMedicine = () => {
     const { treatment_state } = UseTreatment();
+    const { medications } = UseMedications();
     const { nextMedication, alertText } = useCurrentMedication();
     let nameParts;
     if (nextMedication) {
@@ -17,7 +18,7 @@ const CurrentMedicine = () => {
 
     const currentmed = images.app_patient_images.home.icon_med3;
     const currentMedBg = images.app_patient_images.home.bg_home_content_2;
-    
+
 
     return (
         <View style={styles.medicines_View}>
@@ -53,9 +54,16 @@ const CurrentMedicine = () => {
                             </View>
                             :
                             <View style={styles.noPillsAlert_View}>
-                                <Text style={styles.noPillsAlert_Title}>Não há medicamentos..</Text>
+                                <Text style={styles.noPillsAlert_Title}>{ medications.length !== 0 ? "Sem agendamentos" : "Sem medicamentos"}...</Text>
                                 <View style={{ width: '100%', marginBottom: '5%' }}>
-                                    <Text style={styles.noPillsAlert_Text}>Quando houver medicamentos o próximo medicamento a ser tomado será mostrado aqui!</Text>
+                                    <Text style={styles.noPillsAlert_Text}>
+                                        {
+                                            medications.length !== 0 ?
+                                            `Quando agendar seus medicamentos, o próximo a ser tomado será mostrado aqui!`
+                                            :
+                                            `Quando houver medicamentos, o próximo a ser tomado será mostrado aqui!`
+                                        }
+                                    </Text>
                                 </View>
                             </View>
                 }

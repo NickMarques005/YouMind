@@ -1,12 +1,14 @@
 import { MakeRequest } from "../Request";
 import {
     MessageTemplate,
+    Request_AddMessagesToNoteArgs,
     Request_GetConversationTreatmentArgs,
     Request_GetMessagesArgs,
     Request_SaveNewMessageArgs
 } from "types/chat/Chat_Types";
 import { Response } from "types/service/Request_Types";
 import { GetAccessToken } from "@utils/token/GetAccessToken";
+import { NoteTemplate } from "types/app/doctor/notepad/Notepad_Types";
 
 
 export const ChatService = {
@@ -40,6 +42,16 @@ export const ChatService = {
             undefined,
             token,
             { ...getMessagesData }
+        );
+    },
+
+    AddMessagesToNote: async (addMessagesData: Request_AddMessagesToNoteArgs): Promise<Response<NoteTemplate>> => {
+        const token = await GetAccessToken();
+        return MakeRequest<NoteTemplate>(
+            'chat/add-messages-to-note',
+            'POST',
+            addMessagesData,
+            token,
         );
     }
 }

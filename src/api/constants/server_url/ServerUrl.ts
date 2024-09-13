@@ -5,8 +5,6 @@ const USE_ENV = () => {
 
     const fullApiServerUrl = `${serverUrl}${apiRoute}`;
 
-    console.log(serverUrl);
-
     return {
         serverUrl,
         fullApiServerUrl

@@ -13,13 +13,16 @@ import { useNotepad } from '@features/app/providers/doctor/NotepadProvider';
 import { UseNotepadBehavior } from '../../hooks/UseNotepadBehavior';
 import { UseGlobalResponse } from '@features/app/providers/sub/ResponseProvider';
 import { UseNotesHandling } from '../../hooks/UseNotesHandling';
+import { useCurrentNote } from '@features/app/providers/doctor/CurrentNoteProvider';
 
 function MainNotepad() {
     const { userData } = UseForm();
     const { state } = useNotepad();
+    const { handleInitiateCurrentNote } = useCurrentNote();
     const { HandleResponseAppError, HandleResponseAppSuccess } = UseGlobalResponse();
     const { loading, setLoading } = UseLoading();
-    const { handleAddNoteVisible, addNoteVisible, handleSelectedNote } = UseNotepadBehavior();
+
+    const { handleAddNoteVisible, addNoteVisible, handleSelectedNote } = UseNotepadBehavior({ handleInitiateCurrentNote });
     const { handleAddNote } = UseNotesHandling({ setLoading, HandleResponseAppError, HandleResponseAppSuccess });
 
     const notepadBg = images.app_doctor_images.notepad.notepad_bg;

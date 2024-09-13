@@ -11,9 +11,17 @@ interface SolicitationProps {
     modalLoading: { loading: boolean };
     handleClearSelectedNotification: () => void;
     handleNotificationAccept: (notification: NotificationData, removeNotification?: () => void) => Promise<void>;
+    handleNotificationDecline: (notification: NotificationData, removeNotification?: () => void) => Promise<void>;
 }
 
-const Solicitation: React.FC<SolicitationProps> = ({ userData, selectedNotification, modalLoading, handleClearSelectedNotification, handleNotificationAccept }) => {
+const Solicitation: React.FC<SolicitationProps> = ({ 
+    userData, 
+    selectedNotification, 
+    modalLoading, 
+    handleClearSelectedNotification, 
+    handleNotificationAccept,
+    handleNotificationDecline
+}) => {
     return (
         <DefaultModal
             disableGestures={modalLoading.loading}
@@ -25,6 +33,7 @@ const Solicitation: React.FC<SolicitationProps> = ({ userData, selectedNotificat
                 titleCancel={selectedNotification.notification.data?.buttons?.button_decline || 'Cancelar'}
                 titleConfirm={selectedNotification.notification.data?.buttons?.button_accept || 'Aceitar'}
                 handleConfirm={() => handleNotificationAccept(selectedNotification.notification, selectedNotification.removeNotification)}
+                handleDecline={selectedNotification.notification.data?.has_decline ?  () => handleNotificationDecline(selectedNotification.notification, selectedNotification.removeNotification) : undefined}
                 icon={selectedNotification.notification.data?.icon}
                 userType={userData.type}
                 closeModal={handleClearSelectedNotification}

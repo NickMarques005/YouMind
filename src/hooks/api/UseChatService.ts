@@ -1,5 +1,5 @@
 import { ChatService } from "@api/services/chat/ChatServices"
-import { Request_GetConversationTreatmentArgs, Request_GetMessagesArgs, Request_SaveNewMessageArgs } from "types/chat/Chat_Types";
+import { Request_AddMessagesToNoteArgs, Request_GetConversationTreatmentArgs, Request_GetMessagesArgs, Request_SaveNewMessageArgs } from "types/chat/Chat_Types";
 import { SetLoading } from "types/loading/Loading_Types";
 import { UseRequest } from "./UseRequest"
 
@@ -33,5 +33,18 @@ export const UseChatService = (setLoading: SetLoading) => {
         });
     }
 
-    return { performGetConversationTreatment, performSaveNewMessage, performGetMessages };
+    const performAddMessagesToNote = async (args: Request_AddMessagesToNoteArgs) => {
+        return HandleRequest({
+            serviceFunction: ChatService.AddMessagesToNote,
+            setLoading,
+            params: [args]
+        });
+    }
+
+    return { 
+        performGetConversationTreatment, 
+        performSaveNewMessage, 
+        performGetMessages,
+        performAddMessagesToNote
+    };
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { UserData } from 'types/user/User_Types';
@@ -35,7 +35,7 @@ const TemplateChatUser = ({ treatment, userData, handleActiveChat }: ChatTemplat
                                     style={{ fontSize: 18, fontWeight: 'bold', color: userData?.type === 'patient' ? '#543c57' : '#3c4a57' }}
                                     numberOfLines={1}
                                     ellipsizeMode={'tail'}
-                                >{treatment.name}</Text>
+                                >{treatment.name || "Usuário"}</Text>
                                 <Text
                                     style={{ fontSize: 14, color: userData?.type === 'patient' ? '#99899c' : '#89939c' }}
                                     numberOfLines={1}
@@ -43,8 +43,7 @@ const TemplateChatUser = ({ treatment, userData, handleActiveChat }: ChatTemplat
                                 >{userChat && userChat.last_msg?.content}</Text>
                             </View>
                             <View style={{ width: '30%', alignItems: 'flex-end', paddingHorizontal: '3%' }}>
-
-                                <View style={{ alignItems: 'center', justifyContent: 'center', paddingBottom: '7%', }}>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', paddingBottom: '7%' }}>
                                     <Text style={{
                                         fontSize: 12,
                                         fontWeight: '300',

@@ -9,9 +9,8 @@ import { UseNotifications } from '@features/app/reducers/NotificationReducer';
 import NotificationList from './components/NotificationList';
 import NoNotifications from './components/NoNotifications';
 import { UseAuth } from '@features/root/providers/AuthenticationProvider';
-import { UseAppNavigation } from '../../../hooks/UseAppNavigation';
+import { UseAppNavigation } from '../../../hooks/navigation/UseAppNavigation';
 import DefaultLoading from '@components/loading/DefaultLoading';
-import DefaultModal from '@components/modals/default/DefaultModal';
 import Solicitation from './components/Solicitation';
 import { UseForm } from '@features/app/providers/sub/UserProvider';
 import { UseNotificationManager } from './hooks/UseNotificationManager';
@@ -23,6 +22,7 @@ const NotificationSession = () => {
     const { state } = UseNotifications();
     const { userType } = UseAuth();
     const modalLoading = UseLoading();
+    const declineLoading = UseLoading();
     const { loading, setLoading } = UseLoading(true);
     const deleteLoading = UseLoading();
     const typeNotificationsInitial: TypeNotification[] = [
@@ -34,7 +34,10 @@ const NotificationSession = () => {
 
     const colorLoading = userType === 'doctor' ? '#1e6569' : '#651e69';
     const { filteredNotifications, typeNotifications, handleFilterNotifications } = UseNotificationFilter({ typeNotificationsInitial, notifications: state.notifications, setLoading, loading });
-    const { handleClearSelectedNotification, handleNotificationAccept, handleNotificationPress, selectedNotification, groupNotificationsBySender} = UseNotificationManager({ setModalLoading: modalLoading.setLoading, setDeleteNotificationLoading: deleteLoading.setLoading , userType, userData});
+    const { handleClearSelectedNotification, handleNotificationAccept, handleNotificationDecline, handleNotificationPress, selectedNotification, groupNotificationsBySender} = UseNotificationManager({ 
+        setModalLoading: modalLoading.setLoading, setDeclineLoading: declineLoading.setLoading,
+        setDeleteNotificationLoading: deleteLoading.setLoading , 
+        userType, userData });
 
     console.log(state.notifications);
 
@@ -62,6 +65,7 @@ const NotificationSession = () => {
                     modalLoading={modalLoading}
                     handleClearSelectedNotification={handleClearSelectedNotification}
                     handleNotificationAccept={handleNotificationAccept}
+                    handleNotificationDecline={handleNotificationDecline}
                 />
             }
         </View>

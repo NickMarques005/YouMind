@@ -33,6 +33,7 @@ export const UseRequest = () => {
             throw err;
         } finally {
             if (stopLoading) {
+                console.log("***Retira loading***");
                 setLoading(false);
             }
         }

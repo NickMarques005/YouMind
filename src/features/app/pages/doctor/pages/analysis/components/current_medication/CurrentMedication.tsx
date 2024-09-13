@@ -69,28 +69,29 @@ const CurrentMedication = () => {
                         </View>
                         <View style={{ minHeight: screenHeight * 0.4 }}>
                             <View style={{ width: '100%', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#839ba3', paddingBottom: '3%' }}>
-                                <Text style={{ fontSize: 16, fontWeight: '600', textAlign: 'center', color: '#245f73'}}>
+                                <Text style={{ fontSize: 16, fontWeight: '600', textAlign: 'center', color: '#245f73' }}>
                                     {medication.currentMedication.name}
                                 </Text>
                             </View>
                             <View style={{ flex: 1, paddingHorizontal: '10%', justifyContent: 'space-between', paddingTop: '6%' }}>
-                                <View style={{marginBottom: '4%', width: '100%', flex: 1,}}>
+                                <View style={{ marginBottom: '4%', width: '100%', flex: 1, }}>
                                     <Text style={styles.medicationDetailsTitle}>Quantidade</Text>
                                     <Text style={styles.medicationDetailsText}>{`${medication.currentMedication.dosage}${medication.currentMedication.type === 'Líquido' ? 'ml' : 'mg'}`}</Text>
                                 </View>
-                                <View style={{marginBottom: '4%', width: '100%', flex: 1,}}>
+                                <View style={{ marginBottom: '4%', width: '100%', flex: 1, }}>
                                     <Text style={styles.medicationDetailsTitle}>Programação</Text>
                                     <View style={{ flexDirection: 'row', gap: 5, flexWrap: 'wrap' }}>
 
-                                        {medication.currentMedication.schedules.map((schedule, index) => (
-                                            <View key={index} style={{ padding: '2%', borderRadius: 5, backgroundColor: '#518994' }}>
-                                                <Text style={{ fontSize: 15, color: 'white' }} key={index}>{schedule}</Text>
-                                            </View>
+                                        {
+                                            medication.currentMedication.schedules?.map((schedule, index) => (
+                                                <View key={index} style={{ padding: '2%', borderRadius: 5, backgroundColor: '#518994' }}>
+                                                    <Text style={{ fontSize: 15, color: 'white' }} key={index}>{schedule}</Text>
+                                                </View>
 
-                                        ))}
+                                            ))}
                                     </View>
                                 </View>
-                                <View style={{marginBottom: '4%', width: '100%', flex: 1,}}>
+                                <View style={{ marginBottom: '4%', width: '100%', flex: 1, }}>
                                     <Text style={styles.medicationDetailsTitle}>Frequência</Text>
                                     <View></View>
                                     <Text style={styles.medicationDetailsText}>{`A cada ${medication.currentMedication.frequency} dia(s)`}</Text>

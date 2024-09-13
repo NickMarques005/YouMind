@@ -1,47 +1,46 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import React from 'react'
+import { UserType } from 'types/user/User_Types'
+import { responsiveSize, screenHeight } from '@utils/layout/Screen_Size';
+import StatusHeader from '../StatusHeader';
+import StatusContent from '../StatusContent';
+import { TreatmentScreenName } from 'types/navigation/Navigation_Types';
+import { TreatmentInfoTemplate } from 'types/treatment/Treatment_Types';
 
-const PatientStatus = () => {
+interface PatientStatusProps {
+    userType: UserType;
+    navigateToTreatmentScreen: (screenName: TreatmentScreenName) => void;
+    patientTreatment?: TreatmentInfoTemplate;
+}
+
+const PatientStatus = ({
+    userType,
+    navigateToTreatmentScreen,
+    patientTreatment }: PatientStatusProps) => {
+    const backIconSize = responsiveSize * 0.1;
+
     return (
-        <View style={styles.patientContentContainer}>
-            <View style={styles.dataContainer}>
-                <View>
-                    <Text style={styles.dataTitle}>Questionários Respondidos:</Text>
-                    <Text>{56}</Text>
-                </View>
-                <View>
-                    <Text style={styles.dataTitle}>Medicamentos Tomados:</Text>
-                    <Text>{34}</Text>
-                </View>
-                <View>
-                    <Text style={styles.dataTitle}>Tempo de Uso do YouMind T-Watch:</Text>
-                    <Text>20 horas</Text>
-                </View>
+        <ScrollView nestedScrollEnabled={true} style={{ flex: 1 }} >
+            <View style={styles.container}>
+                <StatusHeader
+                    navigateToTreatmentScreen={navigateToTreatmentScreen}
+                    backIconSize={backIconSize}
+                    userType={userType}
+                    patientTreatment={patientTreatment}
+                />
+                <StatusContent
+                    userType={userType}
+                    patientTreatment={patientTreatment}
+                />
             </View>
-            <View>
-                <Text style={styles.sessionTitle}>Histórico de Sessões</Text>
-                {/* Simular FlatList aqui */}
-                <Text>Simulando uma sessão...</Text>
-            </View>
-        </View>
-    );
-};
+        </ScrollView>
+    )
+}
 
 const styles = StyleSheet.create({
-    patientContentContainer: {
-        marginTop: 20,
-    },
-    dataContainer: {
-        marginBottom: 20,
-    },
-    dataTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    sessionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
+    container: {
+        minHeight: screenHeight * 0.9,
+        padding: 20,
     },
 });
 

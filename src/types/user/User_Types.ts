@@ -1,4 +1,4 @@
-import { SearchUserTreatmentInfo } from "types/treatment/Search_Types";
+import { SearchUserData, SearchUserTreatmentInfo } from "types/treatment/Search_Types";
 
 export type UserType = 'patient' | 'doctor' | undefined;
 
@@ -6,43 +6,20 @@ export type GenderType = 'Masculino' | 'Feminino' | 'Prefiro não informar' | 'O
 
 export type UserGender = 'Masculino' | 'Feminino' | 'Prefiro não informar' | string;
 
-export interface FilterUserPatient {
-    _id: string;
-    name: string;
-    email: string;
-    phone: number;
-    type: string;
-    avatar: string;
-    gender?: UserGender;
-    birth?: string;
-    doctor?: SearchUserTreatmentInfo;
-    is_treatment_running: boolean;
-}
-
-export interface FilterUserDoctor {
-    _id: string;
-    name: string;
-    email: string;
-    phone: number;
-    type: string;
-    avatar: string;
-    gender?: UserGender;
-    birth?: string;
-    total_treatments: SearchUserTreatmentInfo[];
-}
-
-export type FilteredUser = FilterUserPatient | FilterUserDoctor;
+export type FilteredUser = SearchUserData;
 
 export interface UserDoctor {
     _id: string;
     name: string;
     email: string;
-    phone: number;
+    phone: string;
     type: string;
     avatar: string;
     doctor_crm: string;
     birth?: string;
     gender?: UserGender;
+    private?: boolean;
+    private_treatment?: boolean;
     total_treatments: Array<string>;
 }
 
@@ -50,11 +27,13 @@ export interface UserPatient {
     _id: string;
     name: string;
     email: string;
-    phone: number;
+    phone: string;
     type: string;
     avatar: string;
     birth?: string;
     gender?: UserGender;
+    private?: boolean;
+    private_treatment?: boolean;
     is_treatment_running: boolean;
 }
 
@@ -64,12 +43,13 @@ export type UpdateUserData = (data: UserData | undefined) => void;
 
 //Requests:
 
-export interface Request_GetUserDataArgs {
-
-}
-
 export interface Request_FilterUsersArgs {
     search: string;
+}
+
+export interface Request_FetchSelectedUserDataArgs {
+    selectedUserId: string;
+    type?: string;
 }
 
 export interface Request_UpdateUserAvatar {
@@ -78,9 +58,13 @@ export interface Request_UpdateUserAvatar {
 
 export interface Request_UpdateUserDetails {
     name?: string;
-    phone?: number;
+    phone?: string;
     birth?: string;
     gender?: UserGender;
+}
+
+export interface Request_HandleProfileRestrictionArgs {
+    
 }
 
 //Responses:
@@ -91,8 +75,11 @@ export interface UserAvatarResponse {
 
 export interface UserDetailsResponse {
     name?: string;
-    phone?: number;
+    phone?: string;
     birth?: string;
     gender?: UserGender;
 }
 
+export interface HandleProfileRestrictionResponse {
+    private: boolean;
+}

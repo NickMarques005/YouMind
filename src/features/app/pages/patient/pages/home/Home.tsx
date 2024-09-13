@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import Title from './components/Title';
@@ -10,8 +10,8 @@ import images from '@assets/images';
 import { ImageBackground } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CurrentMedicine from './components/CurrentMedicine';
-import { useTabNavigation } from '@features/app/hooks/UseTabNavigator';
 import { UseMedications } from '@features/app/providers/patient/MedicationProvider';
+import { useTabNavigation } from '@features/app/hooks/navigation/UseTabNavigator';
 
 const Home = () => {
     const { userData } = UseForm();

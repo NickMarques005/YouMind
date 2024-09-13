@@ -1,7 +1,5 @@
-import React, { useState } from 'react'
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import images from '@assets/images';
 import { TreatmentInfoTemplate } from 'types/treatment/Treatment_Types';
 import { formatName } from '@utils/treatment/formatTreatment';

@@ -1,16 +1,18 @@
-import { MessageIcon } from "@components/modals/message/types/type_message_modal";
 import { UseNotifications } from "@features/app/reducers/NotificationReducer";
 import { UseNotificationService } from "@hooks/api/UseNotificationService"
+import { UseSolicitationService } from "@hooks/api/UseSolicitationService";
+import { MessageIconTypeKey } from "types/icon/Icon_Types";
 
 interface UseNotificationConfigProps {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     HandleResponseAppError: (value: string) => void;
-    HandleResponseAppSuccess?: (message: string, messageType: MessageIcon) => void;
+    HandleResponseAppSuccess?: (message: string, messageType: MessageIconTypeKey) => void;
 }
 
 export const UseNotificationConfig = ({ setLoading, HandleResponseAppError, HandleResponseAppSuccess }: UseNotificationConfigProps) => {
     const { dispatch } = UseNotifications();
-    const { performDeleteNotification, performDeleteNotifications, performTreatmentSolicitation } = UseNotificationService(setLoading);
+    const { performDeleteNotification, performDeleteNotifications } = UseNotificationService(setLoading);
+    const { performCreateSolicitation, performDeclineSolicitation }= UseSolicitationService(setLoading);
 
     const removeItem = (notificationId: string) => {
         try {
@@ -73,14 +75,15 @@ export const UseNotificationConfig = ({ setLoading, HandleResponseAppError, Hand
         }
     }
 
-    const handleTreatmentSolicitation = async (receiver_email: string, type: string, onSuccess?: () => void) => {
+    const handleTreatmentSolicitation = async (receiver_id: string, type: string, onSuccess?: () => void) => {
+        console.log("Treatment Solicitation!");
         try {
-            const response = await performTreatmentSolicitation({ receiver_email }, type);
+            const response = await performCreateSolicitation({ receiver_id, solicitationType: 'treatment' }, type);
             if (response.success) {
                 console.log("Solicitação enviada! ", response);
 
                 if (HandleResponseAppSuccess && response.message) {
-                    HandleResponseAppSuccess(response.message, response.type as MessageIcon);
+                    HandleResponseAppSuccess(response.message, response.type as MessageIconTypeKey);
                 }
                 if (onSuccess) {
                     onSuccess();

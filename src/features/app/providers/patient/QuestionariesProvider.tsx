@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, ReactNode, useReducer } from 'react';
 import { QuestionnaireItem } from 'types/app/patient/health/Question_Types';
 
 const initialState: QuestionnaireItem[] = [];
@@ -32,16 +32,24 @@ export const UseQuestionnaire = () => {
 const QuestionnaireReducer = (state: QuestionnaireState, action: QuestionnaireAction): QuestionnaireState => {
     switch (action.type) {
         case "ADD_QUESTIONNAIRE":
-            if (state.some(item => item.currentQuestionnaire._id === action.payload.currentQuestionnaire._id)) {
+            if (!action.payload.currentQuestionnaire || !action.payload.currentQuestionnaire._id) {
+                console.log("Dado do questionário inválido: ", action.payload);
                 return state; 
+            }
+            if (state.some(item => item.currentQuestionnaire._id === action.payload.currentQuestionnaire._id)) {
+                return state;
             }
             return [action.payload, ...state];
         case "REMOVE_QUESTIONNAIRE":
             return state.filter((item) => item.currentQuestionnaire._id !== action.payload._id);
         case 'ADD_MANY':
-            const newQuestionnaires = action.payload.filter(q => 
-                !state.some(existing => existing.currentQuestionnaire._id === q.currentQuestionnaire._id)
-            );
+            const newQuestionnaires = action.payload.filter(q => {
+                if (!q.currentQuestionnaire || !q.currentQuestionnaire._id) {
+                    console.log("Questionário inválido encontrado:", q);
+                    return false;
+                }
+                return !state.some(existing => existing.currentQuestionnaire._id === q.currentQuestionnaire._id);
+            });
             return [...newQuestionnaires, ...state];
         case 'UPDATE_QUESTIONNAIRE':
             return state.map(item =>

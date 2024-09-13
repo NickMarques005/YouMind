@@ -13,8 +13,8 @@ import { useMedicationForm } from '../../hooks/useMedicationForm';
 import MedicationForm from '../../components/MedicationForm';
 import { formatDateToISO, validateAndFormatISODate } from '@utils/date/DateFormatting';
 import { UseForm } from '@features/app/providers/sub/UserProvider';
-import { UserType } from 'types/user/User_Types';
-import { formatExpiresAt, formatFrequency } from '@utils/health/HandlingMedication';
+import { UserPatient, UserType } from 'types/user/User_Types';
+import { formatExpiresAt } from '@utils/health/HandlingMedication';
 
 
 const initialState: MedicationFormType = {
@@ -46,7 +46,7 @@ const AddMedication = () => {
         setLoading: addLoading.setLoading,
         setFetchLoading: fetchLoading.setLoading,
         HandleResponseAppError, HandleResponseAppSuccess, setSuggestions,
-        frequencyType, formatExpiresAt, durationType, duration
+        frequencyType, formatExpiresAt, durationType, duration, userPatient: userData as UserPatient
     });
 
     const { form, handleInputChange, dosageUnits, addScheduleToForm, deleteScheduleForm,

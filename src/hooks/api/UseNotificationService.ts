@@ -1,6 +1,6 @@
 import { NotificationService } from "@api/services/notification/NotificationServices";
 import { UseRequest } from "./UseRequest";
-import { Request_DeleteNotificationArgs, Request_DeleteNotificationsArgs, Request_NotificationTreatmentSolicitationArgs  } from "types/notification/Request_Types";
+import { Request_DeleteNotificationArgs, Request_DeleteNotificationsArgs  } from "types/notification/Request_Types";
 import { SetLoading } from "types/loading/Loading_Types";
 
 export const UseNotificationService = (setLoading: SetLoading) => {
@@ -31,15 +31,7 @@ export const UseNotificationService = (setLoading: SetLoading) => {
         });
     }
 
-    const performTreatmentSolicitation = async (args: Request_NotificationTreatmentSolicitationArgs, type: string) => {
-        return HandleRequest({
-            serviceFunction: NotificationService.TreatmentSolicitation,
-            setLoading,
-            params: [args, type]
-        });
-    }
-
-    return { performGetNotifications, performDeleteNotification, performTreatmentSolicitation, performDeleteNotifications };
+    return { performGetNotifications, performDeleteNotification, performDeleteNotifications };
 }
 
 

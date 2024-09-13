@@ -1,10 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
-import { useNotepad } from '@features/app/providers/doctor/NotepadProvider';
-import { UseLoading } from '@hooks/loading/UseLoading';
-import DefaultLoading from '@components/loading/DefaultLoading';
+import React from 'react';
+import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import { screenWidth } from '@utils/layout/Screen_Size';
 import images from '@assets/images';
 import { NoteTemplate } from 'types/app/doctor/notepad/Notepad_Types';
 import Note from './Note';
@@ -16,7 +12,6 @@ interface NoteListProps {
 }
 
 const NoteList = ({ notes, userType, handleSelectedNote }: NoteListProps) => {
-    const noteIcon = images.app_doctor_images.notepad.notepad_template;
     const noNotepads = images.app_doctor_images.notepad.no_notepads;
     const notePart = images.app_doctor_images.notepad.note_part;
 

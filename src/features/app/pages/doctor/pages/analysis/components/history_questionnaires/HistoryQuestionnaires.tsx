@@ -75,7 +75,7 @@ export default function HistoryQuestionnaires() {
                     currentPatientHistory && questionnaires.length !== 0 ?
                     <HistoryQuestionnaireList
                         questionnaires={questionnaires}
-                        loading={loading}
+                        loading={nextLoading.loading}
                         fetchQuestionnaires={fetchQuestionnaires}
                         hasMore={hasMore}
                         patientHistory={currentPatientHistory}

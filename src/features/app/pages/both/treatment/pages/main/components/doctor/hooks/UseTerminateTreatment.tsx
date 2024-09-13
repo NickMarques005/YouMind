@@ -3,7 +3,7 @@ import { UseAppNavigation } from "@features/app/hooks/UseAppNavigation";
 import { UseTreatmentNavigation } from "@features/app/pages/both/treatment/hooks/UseTreatmentNavigation";
 import { usePatientHistory } from "@features/app/providers/doctor/PatientHistoryProvider";
 import { UseTreatmentService } from "@hooks/api/UseTreatmentService";
-import { UseTreatment } from "@providers/TreatmentProvider";
+import { UseTreatment } from "@features/app/providers/sub/TreatmentProvider";
 import { useState } from "react";
 import { Verification } from "types/verification/Verification_Types";
 

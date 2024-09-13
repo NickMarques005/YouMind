@@ -8,6 +8,8 @@ import { MedicationProvider } from './patient/MedicationProvider';
 import { MedicationPendingProvider } from './patient/MedicationPendingProvider';
 import { CurrentMedicationProvider } from './patient/CurrentMedicationProvider';
 import { QuestionPerformanceProvider } from './patient/QuestionPerformanceProvider';
+import { MotivationalPhraseProvider } from './patient/MotivationalPhraseProvider';
+import { AnswerQuestionnaireProvider } from './patient/AnswerQuestionnaireProvider';
 
 const PatientProvider: React.FC<DefaultProviderProps> = ({ children }) => {
     return (
@@ -19,7 +21,11 @@ const PatientProvider: React.FC<DefaultProviderProps> = ({ children }) => {
                             <CurrentMedicationProvider>
                                 <QuestionnaireProvider>
                                     <QuestionPerformanceProvider>
-                                        {children}
+                                        <MotivationalPhraseProvider>
+                                            <AnswerQuestionnaireProvider>
+                                                {children}
+                                            </AnswerQuestionnaireProvider>
+                                        </MotivationalPhraseProvider>
                                     </QuestionPerformanceProvider>
                                 </QuestionnaireProvider>
                             </CurrentMedicationProvider>

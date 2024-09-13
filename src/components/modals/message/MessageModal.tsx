@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, Image, TouchableOpacity } from 'react-native';
 import { screenWidth } from '@utils/layout/Screen_Size';
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { runOnJS, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import images from '@assets/images';
 import LinearGradient from 'react-native-linear-gradient';
 import UseModalAnimation from '@hooks/animation/UseModalAnimation';
@@ -10,6 +10,7 @@ import { MessageModalProps } from './types/type_message_modal';
 import { message_modal_styles } from './styles/MessageModal';
 import { UseAuth } from '@features/root/providers/AuthenticationProvider';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { messageIconMap } from '@utils/icon/mainIcons';
 
 const MessageModal: React.FC<MessageModalProps> = ({ isVisible, message, onClose, messageType }) => {
     const { offset, opacity, closeAnimation } = UseModalAnimation({ isVisible, onClose });
@@ -46,19 +47,9 @@ const MessageModal: React.FC<MessageModalProps> = ({ isVisible, message, onClose
             runOnJS(closeAnimation)();
         });
 
-    const iconMap = {
-        success: 'check-circle-outline',
-        email_sent: 'email-outline',
-        info: 'information-outline',
-        treatment: 'hospital-box-outline',
-        warning: 'alert-outline',
-        medication: 'pill', 
-        questionnaire: 'clipboard-question-outline',
-    };
-
     const styles = message_modal_styles(userType);
     const logo = images.generic_images.logo.logo_mobile_color;
-
+    console.log(messageType);
     return (
         <Modal
             transparent={true}
@@ -77,7 +68,7 @@ const MessageModal: React.FC<MessageModalProps> = ({ isVisible, message, onClose
                             <View style={styles.containerLogo}>
                                 {messageType ? (
                                     <MaterialCommunityIcons
-                                        name={iconMap[messageType] || 'alert-circle-outline'}
+                                        name={messageIconMap[messageType] || 'alert-circle-outline'}
                                         size={40}
                                         color={userType === 'doctor' ? "#57afb5" : "#823d94"}
                                     />

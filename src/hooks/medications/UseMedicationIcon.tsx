@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import images from '@assets/images';
 import { MedicationType } from 'types/app/patient/health/Medicine_Types';
 
-export const useMedicationIcon = (type: MedicationType, userType?: string) => {
+export const useMedicationIcon = (type?: MedicationType, userType?: string) => {
     
     const icon = useMemo(() => {
         const capsule = images.app_patient_images.health.medicines.medicine_capsule_icon;

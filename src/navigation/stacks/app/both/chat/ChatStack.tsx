@@ -1,16 +1,16 @@
 import React from 'react'
 import { Stack } from '@navigation/Stack'
 import CurrentChat from '@features/app/pages/both/treatment/pages/chat/components/current_chat/CurrentChat';
-import { UserData } from 'types/user/User_Types';
-import { ChatUser } from 'types/chat/Chat_Types';
-import ChatProfile from '@features/app/pages/both/treatment/pages/chat/components/profile/ChatProfile';
+import TaggedMessages from '@features/app/pages/both/treatment/pages/chat/components/tagged_messages/TaggedMessages';
+import SendMessageToNote from '@features/app/pages/both/treatment/pages/chat/components/send_to_notes/SendMessageToNote';
 
 const ChatStack = () => {
 
     return (
         <Stack.Navigator initialRouteName={'current_chat'} screenOptions={{ headerShown: false }}>
             <Stack.Screen name="current_chat" component={CurrentChat} />
-            <Stack.Screen name="chat_profile" component={ChatProfile} />
+            <Stack.Screen name="tagged_messages" component={TaggedMessages} />
+            <Stack.Screen name="send_to_notes" component={SendMessageToNote} />
         </Stack.Navigator>
     )
 }

@@ -60,7 +60,6 @@ const Root = () => {
             LeaveModalVisible={showLeaveModal}
             HandleLeaveDecision={HandleLeaveDecision}
             />
-            
         )
 }
 

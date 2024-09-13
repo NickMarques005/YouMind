@@ -16,7 +16,7 @@ import { screenHeight } from '@utils/layout/Screen_Size';
 import LinearGradient from 'react-native-linear-gradient';
 import { formatDateToISO, validateAndFormatISODate } from '@utils/date/DateFormatting';
 import { UseForm } from '@features/app/providers/sub/UserProvider';
-import { UserType } from 'types/user/User_Types';
+import { UserPatient, UserType } from 'types/user/User_Types';
 import { formatExpiresAt } from '@utils/health/HandlingMedication';
 
 interface UpdateMedicationParams {
@@ -49,17 +49,18 @@ const UpdateMedication = () => {
         formatExpiresAt,
         frequencyType,
         durationType,
-        duration
+        duration,
+        userPatient: userData as UserPatient
     });
 
     const initialState: MedicationFormType = {
         name: currentMedication ? currentMedication.name : '',
         dosage: currentMedication ? currentMedication.dosage : '',
         expiresAt: undefined,
-        frequency: currentMedication ? currentMedication.frequency.toString() : '1',
+        frequency: currentMedication && currentMedication.frequency ? currentMedication.frequency.toString() : '1',
         type: currentMedication ? currentMedication.type : '',
-        schedules: currentMedication ? currentMedication.schedules : [],
-        start: currentMedication ? (currentMedication.start.split('T')[0]) : validateAndFormatISODate(formatDateToISO(new Date())) ,
+        schedules: currentMedication && currentMedication.schedules ? currentMedication.schedules : [],
+        start: currentMedication && currentMedication.start ? (currentMedication.start.split('T')[0]) : validateAndFormatISODate(formatDateToISO(new Date())) ,
         alarmDuration: currentMedication ? currentMedication.alarmDuration : 120,
         reminderTimes: currentMedication ? currentMedication.reminderTimes : 1
     };

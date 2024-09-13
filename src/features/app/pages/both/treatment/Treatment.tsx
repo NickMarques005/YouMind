@@ -1,12 +1,10 @@
 
 import React, { useCallback, useState } from 'react'
 import TreatmentStack from '@navigation/stacks/app/both/treatment/TreatmentStack'
-import { UseRedirectRoute } from './hooks/UseRedirectRoute'
-
+import { UseRedirectTreatmentRoute } from './hooks/UseRedirectTreatmentRoute'
 
 const Treatment = () => {
-
-    const { initialRoute } = UseRedirectRoute();
+    const { initialRoute } = UseRedirectTreatmentRoute();
 
     return (
         <>

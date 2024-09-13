@@ -3,7 +3,7 @@ import { runOnJS, useAnimatedStyle, useSharedValue, withTiming, Easing } from "r
 import { Question } from "types/app/patient/health/Question_Types";
 
 interface UseAnswerQuestionnaireAnimationsProps{
-    questions: Question[];
+    questions?: Question[];
 }
 
 export const useAnswerQuestionnaireAnimations = ({ questions }:UseAnswerQuestionnaireAnimationsProps) => {
@@ -29,7 +29,7 @@ export const useAnswerQuestionnaireAnimations = ({ questions }:UseAnswerQuestion
     }
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < questions.length - 1) {
+        if (questions && currentQuestionIndex < questions.length - 1) {
             fadeAnim.value = withTiming(0, { duration: 500, easing: Easing.ease }, () => {
                 runOnJS(updateQuestionIndex)(currentQuestionIndex + 1);
             });

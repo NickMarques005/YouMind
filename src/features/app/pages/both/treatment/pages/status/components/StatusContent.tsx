@@ -1,17 +1,40 @@
 import React from 'react';
 import { View } from 'react-native';
-import PatientStatus from './patient/PatientStatus';
-import DoctorStatus from './doctor/DoctorStatus';
 import { UserType } from 'types/user/User_Types';
+import { TreatmentStatusScreenName } from 'types/treatment/Status_Types';
+import { TreatmentInfoTemplate } from 'types/treatment/Treatment_Types';
+import PatientStatusContent from './patient/components/PatientStatusContent';
+import DoctorStatusContent from './doctor/components/DoctorStatusContent';
 
 interface StatusContentProps {
     userType: UserType;
+    handleStatusNavigation?: (screenName: TreatmentStatusScreenName) => void;
+    patientTreatment?: TreatmentInfoTemplate;
+    doctorCurrentTreatments?: TreatmentInfoTemplate[];
+    doctorEndedTreatments?: TreatmentInfoTemplate[];
 }
 
-const StatusContent = ({ userType }: StatusContentProps) => {
+const StatusContent = ({
+    userType,
+    handleStatusNavigation,
+    patientTreatment,
+    doctorCurrentTreatments,
+    doctorEndedTreatments
+}: StatusContentProps) => {
+
     return (
         <View style={{ flex: 1 }}>
-            {userType === 'patient' ? <PatientStatus /> : <DoctorStatus />}
+            {
+                userType === 'patient' ?
+                    <PatientStatusContent
+                        treatment={patientTreatment}
+                    /> :
+                    <DoctorStatusContent
+                        handleStatusNavigation={handleStatusNavigation}
+                        currentTreatments={doctorCurrentTreatments}
+                        endedTreatments={doctorEndedTreatments}
+                    />
+            }
         </View>
     );
 };

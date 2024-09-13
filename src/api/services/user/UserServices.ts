@@ -1,9 +1,15 @@
 
-import { FilteredUser, Request_FilterUsersArgs, Request_UpdateUserAvatar, Request_UpdateUserDetails, UserAvatarResponse, UserData, UserDetailsResponse } from "types/user/User_Types";
+import { 
+    FilteredUser, 
+    Request_FilterUsersArgs, Request_UpdateUserAvatar, 
+    Request_UpdateUserDetails, Request_FetchSelectedUserDataArgs, UserAvatarResponse, 
+    UserData, UserDetailsResponse, HandleProfileRestrictionResponse
+ } from "types/user/User_Types";
 import { MakeRequest } from "../Request";
 import { GetAccessToken } from "@utils/token/GetAccessToken";
 import FirebaseStorageService from "src/__firebase__/services/FirebaseStorageService";
 import generateUniqueUID from "@utils/security/handleUUID";
+import { SearchUserData } from "types/treatment/Search_Types";
 
 export const UserService = {
     FilterUsers: async (filterUsersData: Request_FilterUsersArgs, type: string) => {
@@ -15,6 +21,17 @@ export const UserService = {
             undefined,
             token,
             { ...filterUsersData, type }
+        );
+    },
+    FetchSelectedUserData: async (args: Request_FetchSelectedUserDataArgs) => {
+        const token = await GetAccessToken();
+
+        return MakeRequest<SearchUserData>(
+            `user/selected/data`,
+            'GET',
+            undefined,
+            token,
+            { ...args }
         );
     },
     FetchUserData: async () => {
@@ -62,5 +79,15 @@ export const UserService = {
             { ...userDetails },
             token
         )
-    }
+    },
+    HandleProfileRestriction: async (private_treatment?: boolean) => {
+        const token = await GetAccessToken();
+
+        return MakeRequest<HandleProfileRestrictionResponse>(
+            `user/update/private`, 
+            'POST',
+            { private_treatment },
+            token
+        );
+    },
 };

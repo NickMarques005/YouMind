@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react'
 import MenuDoctor from '../../../components/application/doctor/MenuDoctor';
 import { Stack } from '../../../navigation/Stack';
 import Notifications from '../../../components/notifications/components/Notifications';
-import { usePushNotifications } from '../../../features/app/hooks/UsePushNotificationRegistration';
+import { usePushNotifications } from '../../../features/app/hooks/notification/UsePushNotificationRegistration';
 import { UseAuth } from '../../../features/root/providers/AuthenticationProvider';
-import { saveNotifications } from '../../../features/app/hooks/SaveNotifications';
+import { saveNotifications } from '../../../features/app/hooks/notification/SaveNotifications';
 import { UpdateTreatment } from '../../../services/treatment/TreatmentServices';
 import USE_ENV from '../../../services/server_url/ServerUrl';
 import UseRegisterPushToken from '../../../services/notification/PushNotificationService';
 import UseSocketService from '../../../services/socket/SocketService';
 import { UseForm } from '../../../features/app/providers/sub/UserProvider';
-import { UseTreatment } from '../../../providers/TreatmentProvider';
+import { UseTreatment } from '../../../features/app/providers/sub/TreatmentProvider';
 
 function DoctorStack() {
     const { pushToken } = usePushNotifications();

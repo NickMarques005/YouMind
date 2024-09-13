@@ -7,13 +7,13 @@ import { GestureDetector, PanGesture } from 'react-native-gesture-handler';
 import { NoteBehavior } from './NoteVerification';
 
 interface HeaderProps {
-    currentNote: NoteTemplate;
-    newNote: NoteTemplate;
+    currentNote?: NoteTemplate;
+    newNote?: NoteTemplate;
     headerHeight: SharedValue<number>;
     handleBackNotePress: (verification?: () => void) => void;
     handleHeaderDragging: PanGesture;
     backIcon: any;
-    handleUpdateVerification: (currentNote: NoteTemplate, newNote: NoteTemplate) => void;
+    handleUpdateVerification: (currentNote?: NoteTemplate, newNote?: NoteTemplate) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({
                 <View style={styles.header}>
                     <View style={styles.titleView}>
                         <Text style={styles.title}>
-                            {currentNote.title}
+                            {currentNote ? currentNote.title : "Título"}
                         </Text>
                     </View>
                     <TouchableOpacity onPress={() => handleBackNotePress(() => handleUpdateVerification(currentNote, newNote))} style={styles.backButton}>
@@ -46,7 +46,9 @@ const Header: React.FC<HeaderProps> = ({
                     height: headerHeight
                 }]}>
                     <Text style={styles.description}>
-                        {currentNote.description}
+                        {
+                            currentNote ? currentNote.description : "Descrição"
+                        }
                     </Text>
                 </Animated.View>
             </LinearGradient>
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
     },
     descriptionView: {
         width: '100%',
-        
+
     },
     description: {
         color: '#e1e8eb',

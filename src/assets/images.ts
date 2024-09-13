@@ -89,6 +89,7 @@ const app_patient_images = {
         icon_med2: require('./img/app_patient/home/icon_med2.png'),
         icon_med3: require('./img/app_patient/home/icon_med3.png'),
         icon_call: require('./img/app_patient/home/icon_call.png'),
+        search_medications: require('./img/app_patient/home/search_medications.png'),
         bg_home_content_1: require('./img/app_patient/home/bg_home_content_1.png'),
         bg_home_content_2: require('./img/app_patient/home/bg_home_content_2.png'),
         bg_home_content_3: require('./img/app_patient/home/bg_home_content_3.png'),
@@ -266,7 +267,8 @@ const animations = {
     mini_loading: require('./animations/mini_loading.json'),
     alert: require('./animations/alert.json'),
     arrows: require('./animations/arrows.json'),
-    
+    wave_fiber: require('./animations/wave_fiber_animation.json'),
+    wave_background: require('./animations/wave_background_animation.json')
 }
 
 export default {app_doctor_images, app_patient_images, generic_images, animations};

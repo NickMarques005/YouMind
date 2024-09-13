@@ -7,10 +7,10 @@ import images from '@assets/images';
 
 interface BackModalProps {
     closeModal: () => void;
-    handleNavigateBackToApp: () => void;
+    handleLeaveAnswerQuestionnaire: () => void;
 }
 
-const BackModal = ({ closeModal, handleNavigateBackToApp }: BackModalProps) => {
+const BackModal = ({ closeModal, handleLeaveAnswerQuestionnaire }: BackModalProps) => {
     const questionnaireTemplate = images.app_patient_images.health.quiz.answer_questionnaire_template;
 
     return (
@@ -47,7 +47,7 @@ const BackModal = ({ closeModal, handleNavigateBackToApp }: BackModalProps) => {
                         end={{ x: 0, y: 1 }}
                         style={styles.gradientButton}
                     >
-                        <TouchableOpacity onPress={handleNavigateBackToApp} style={styles.button}>
+                        <TouchableOpacity onPress={handleLeaveAnswerQuestionnaire} style={styles.button}>
                             <Text style={styles.buttonText}>
                                 Sair
                             </Text>

@@ -1,3 +1,4 @@
+import { MessageIconTypes } from "types/icon/Icon_Types";
 import { UserType } from "types/user/User_Types";
 
 export interface MessageModalProps {
@@ -5,7 +6,5 @@ export interface MessageModalProps {
     message: string;
     onClose: () => void;
     userType: UserType;
-    messageType?: MessageIcon;
+    messageType?:  keyof MessageIconTypes;
 }
-
-export type MessageIcon = 'success' | 'email_sent' | 'info' | 'treatment' | 'warning' | 'medication' | 'questionnaire' | undefined;

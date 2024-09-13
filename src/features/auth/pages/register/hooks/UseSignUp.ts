@@ -1,10 +1,10 @@
-import { useNavigation, StackActions } from '@react-navigation/native';
 import { UserType } from 'types/user/User_Types';
 import { FormData } from 'types/auth/Form_Types';
 import { HandleValidation } from '@features/auth/hooks/UseValidation';
 import { Errors, HandleErrors } from 'types/error/Error_Types';
 import { UseAuthService } from '@hooks/api/UseAuthService';
 import { UseNavigateOnSuccess } from '@hooks/navigation/UseNavigateSuccess';
+import { UnformatPhoneNumber } from '@utils/user/DataFormatting';
 
 export const UseSignUp = (formData: FormData, userType: UserType, HandleErrors: HandleErrors, errors: Errors, setLoading: React.Dispatch<React.SetStateAction<boolean>>, setResponseError: (value: string) => void) => {
     const { authNavigateOnSuccess } = UseNavigateOnSuccess();
@@ -24,7 +24,7 @@ export const UseSignUp = (formData: FormData, userType: UserType, HandleErrors: 
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            phone: formData.phone,
+            phone: UnformatPhoneNumber(formData.phone as string),
             ...userType === 'doctor' && {doctor_crm: formData.doctor_crm}
         }
 

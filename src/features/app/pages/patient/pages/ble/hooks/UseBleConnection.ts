@@ -18,7 +18,10 @@ interface UseBleConnectionProps {
     userData?: UserData;
 }
 
-export const useBleConnection = ({ userData, HandleResponseAppError, handleRequestBluetoothPermissions, setCurrentDevice, setDeviceState, setDiscoveredPeripherals, setLoading }: UseBleConnectionProps) => {
+export const useBleConnection = ({ 
+    userData, HandleResponseAppError, 
+    handleRequestBluetoothPermissions, setCurrentDevice, 
+    setDeviceState, setDiscoveredPeripherals, setLoading }: UseBleConnectionProps) => {
     const { writeCharacteristic, readCharacteristic } = useBleOperations();
     const { serviceUUIDs, characteristicUUIDs, bluetoothConnected } = UseBluetoothDevice();
     const { getDeviceData } = useReadDeviceData({ setCurrentDevice });

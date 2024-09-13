@@ -1,14 +1,11 @@
+import { useSearch } from "@features/app/providers/sub/SearchProvider";
 import { useState } from "react";
 
 
 
 export const UseSearchHandling = () => {
-    const [modalSearch, setModalSearch] = useState(false);
+    const { modalSearch, handleModalSearch } = useSearch();
     const [treatmentMenu, setTreatmentMenu] = useState(false);
-
-    const handleModalSearch = () => {
-        setModalSearch(prev => !prev);
-    }
 
     const handleModalTreatmentMenu = () => {
         setTreatmentMenu(prev => !prev);

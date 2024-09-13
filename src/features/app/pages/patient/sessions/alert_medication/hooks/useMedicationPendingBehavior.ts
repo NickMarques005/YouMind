@@ -1,36 +1,44 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useMedicationPending } from '@features/app/providers/patient/MedicationPendingProvider';
-import { UseAppNavigation } from '@features/app/hooks/UseAppNavigation';
-import { AppStackNavigation } from 'types/navigation/Navigation_Types';
-import { SharedValue, useSharedValue } from 'react-native-reanimated';
-
-interface MedicationPendingBehavior {
-    medicationPending: any; 
-    navigateToAppScreen: (screenName: keyof AppStackNavigation) => void;
-    isConfirming: boolean;
-    confirmed: boolean;
-    setIsConfirming: React.Dispatch<React.SetStateAction<boolean>>;
-    setConfirmed: React.Dispatch<React.SetStateAction<boolean>>;
-    translateX: SharedValue<number>;
-    confirmProgress: SharedValue<number>;
-    declined: boolean;
-    setDeclined: React.Dispatch<React.SetStateAction<boolean>>;
-    clearMedicationPending: () => void;
+import { useSharedValue } from 'react-native-reanimated';
+import { Priority } from '@features/app/providers/bridge/PriorityProvider';
+interface MedicationPendingBehaviorParams {
+    removePriority: (priority: Priority) => void;
 }
 
-export const useMedicationPendingBehavior = (): MedicationPendingBehavior => {
-    const { medicationPending, clearMedicationPending } = useMedicationPending();
-    const { navigateToAppScreen } = UseAppNavigation();
-    const [isConfirming, setIsConfirming] = useState(false);
-    const [confirmed, setConfirmed] = useState(false);
-    const [declined, setDeclined]= useState(false);
+export const useMedicationPendingBehavior = ({ removePriority }: MedicationPendingBehaviorParams) => {
+    const { 
+        medicationPending, 
+        clearMedicationPending,
+        isConfirming,
+        setIsConfirming,
+        confirmed,
+        setConfirmed,
+        declined,
+        setDeclined,
+        formattedTime,
+        exitAlarmTime,
+        exit
+    } = useMedicationPending();
+    
     const translateX = useSharedValue(0);
     const confirmProgress = useSharedValue(0);
 
+    const handleLeaveAlert = () => {
+        removePriority('medicationPending');
+    }
+
+    useEffect(() => {
+        if(exit)
+        {
+            setTimeout(() => {
+                handleLeaveAlert();
+            }, exitAlarmTime.current * 0.7);
+        }
+    }, [exit]);
     
     return { 
-        medicationPending, 
-        navigateToAppScreen,
+        medicationPending,
         isConfirming,
         setIsConfirming,
         confirmed,
@@ -39,6 +47,8 @@ export const useMedicationPendingBehavior = (): MedicationPendingBehavior => {
         confirmProgress,
         declined,
         setDeclined,
-        clearMedicationPending
+        clearMedicationPending,
+        handleLeaveAlert,
+        formattedTime
     };
 };

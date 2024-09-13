@@ -4,7 +4,6 @@ import { useQuestionPerformance } from "@features/app/providers/patient/Question
 import { UsePerformProps } from "types/service/Request_Types";
 
 export const useUpdatePatientState = ({ setLoading, HandleConnectionAppError}: UsePerformProps) => {
-
     const { getPatientInitialData } = useGetPatientInitialData({ setLoading, HandleConnectionAppError});
     const { dispatch: questionnaireDispatch } = UseQuestionnaire();
     const { clearQuestionPerformance } = useQuestionPerformance();

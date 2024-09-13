@@ -20,11 +20,11 @@ type QuestionnaireCardProps = {
     onAnswerPress: (id: string, onSuccess?: ((template: QuestionnaireTemplate, questionnaireId: string, questionnaire?: Questionnaire) => void) | undefined) => Promise<void>;
     answerLoading: boolean;
     visualizeLoading: boolean;
-    handleAnswerQuestionnaire: (template: QuestionnaireTemplate, questionnaireId: string) => void;
+    handleSelectQuestionnaireToAnswer: (template: QuestionnaireTemplate, questionnaireId: string) => void;
     handleVisualizeCurrentQuestionnaire: (questionnaireId: string, questionnaire?: Questionnaire, template?: QuestionnaireTemplate, ) => void;
 };
 
-const QuestionnaireCard: React.FC<QuestionnaireCardProps> = ({ handleVisualizeCurrentQuestionnaire, handleAnswerQuestionnaire, answerLoading, visualizeLoading, onAnswerPress, questionnaire, index, totalLength, activeIndex }) => {
+const QuestionnaireCard: React.FC<QuestionnaireCardProps> = ({ handleVisualizeCurrentQuestionnaire, handleSelectQuestionnaireToAnswer, answerLoading, visualizeLoading, onAnswerPress, questionnaire, index, totalLength, activeIndex }) => {
 
     const cardIllustration = images.app_patient_images.health.quiz.quiz_card_illustration;
     const cardCheckedIllustration = images.app_patient_images.health.quiz.quiz_card_illustration_checked;
@@ -114,7 +114,7 @@ const QuestionnaireCard: React.FC<QuestionnaireCardProps> = ({ handleVisualizeCu
                             </View>
                             :
                             !questionnaire.currentQuestionnaire.checked ?
-                                <TouchableOpacity disabled={answerLoading || visualizeLoading} style={styles.cardButton} onPress={() => onAnswerPress(questionnaire.currentQuestionnaire._id, handleAnswerQuestionnaire)}>
+                                <TouchableOpacity disabled={answerLoading || visualizeLoading} style={styles.cardButton} onPress={() => onAnswerPress(questionnaire.currentQuestionnaire._id, handleSelectQuestionnaireToAnswer)}>
                                     {
                                         answerLoading ?
                                             <DefaultLoading size={30} color={'white'} />

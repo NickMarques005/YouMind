@@ -14,10 +14,11 @@ import MedicationInfo from './components/MedicationInfo';
 import MedicationSchedules from './components/MedicationSchedules';
 import MedicationAlarms from './components/MedicationAlarms';
 import DurationModal from './modals/DurationModal';
-import { UserType } from 'types/user/User_Types';
+import { UserPatient, UserType } from 'types/user/User_Types';
 import useMedicationInfoModal from '../hooks/useInfoModal';
 import useMedicationFormHandling from '../hooks/useMedicationFormHandling';
 import { MarkedDates, MarkingTypes } from 'react-native-calendars/src/types';
+import { UseForm } from '@features/app/providers/sub/UserProvider';
 
 interface MedicationFormProps {
     form: MedicationFormType;
@@ -58,7 +59,7 @@ interface MedicationFormProps {
 }
 
 const MedicationForm: React.FC<MedicationFormProps> = (medicationForm) => {
-    
+    const { userData } = UseForm();
     const sessionIconSize = responsiveSize * 0.13;
     const { handleInfoModalPress,
         isFrequencyModalVisible, modalFrequencyInfo, clearInfoModalType,
@@ -66,7 +67,8 @@ const MedicationForm: React.FC<MedicationFormProps> = (medicationForm) => {
     } = useMedicationInfoModal();
     const { formValidation, onSubmit } = useMedicationFormHandling({
         updateMedication: medicationForm.updateMedication,
-        addMedication: medicationForm.addMedication
+        addMedication: medicationForm.addMedication,
+        userPatient: userData as UserPatient
     });
 
     return (
@@ -84,6 +86,7 @@ const MedicationForm: React.FC<MedicationFormProps> = (medicationForm) => {
                         handleSuggestionSelection={medicationForm.handleSuggestionSelection}
                     />
                     <MedicationSchedules
+                        userPatient={userData as UserPatient}
                         form={medicationForm.form}
                         loading={medicationForm.loading}
                         frequencyType={medicationForm.frequencyType}

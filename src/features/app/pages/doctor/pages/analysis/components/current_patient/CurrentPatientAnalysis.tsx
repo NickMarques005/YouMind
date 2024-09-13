@@ -1,17 +1,13 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { responsiveSize, screenHeight } from '@utils/layout/Screen_Size'
-import { UseLoading } from '@hooks/loading/UseLoading'
-import { CurrentPatientItem, PatientHistory } from 'types/history/PatientHistory_Types';
+import { PatientHistory } from 'types/history/PatientHistory_Types';
 import { usePatientHistory } from '@features/app/providers/doctor/PatientHistoryProvider';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { AnalysisStackNavigation } from 'types/navigation/Navigation_Types';
 import { UseCurrentPatient } from './hooks/UseCurrentPatient';
 import { UseAnalysisNavigation } from '../../hooks/useAnalysisNavigation';
-import LinearGradient from 'react-native-linear-gradient';
 import images from '@assets/images';
-import { MaterialIcons } from '@expo/vector-icons';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import useOverallPerformanceMessage from '@hooks/analysis/useOverallPerformanceMessage';
 import { useCurrentPatientBehavior } from './hooks/useCurrentPatientBehavior';
 import CurrentPatientHeader from './components/CurrentPatientHeader';
@@ -29,12 +25,8 @@ export default function CurrentPatientAnalysis() {
     const currentPatientParams = route.params?.params;
     const { currentPatient } = UseCurrentPatient({ params: currentPatientParams });
 
-    const iconSize = responsiveSize * 0.085;
     const backIcon = images.generic_images.back.arrow_back_doctor;
-    const currentPatiendQuestionnaires = images.app_doctor_images.analysis.current_patient_questonnaires;
-    const currentPatientMedications = images.app_doctor_images.analysis.current_patient_medications;
     const backButtonSize = responsiveSize * 0.1;
-    const overallPerformanceSize = responsiveSize * 0.2;
 
     if (!currentPatient) {
         navigateToAnalysisScreen('main_analysis');
@@ -45,22 +37,17 @@ export default function CurrentPatientAnalysis() {
         return patientHistory;
     }
 
-    const [patientToAnalyze, setPatientToAnalyze] = useState<PatientHistory | undefined>();
-
+    
+    const [patientToAnalyze, setPatientToAnalyze] = useState<PatientHistory | undefined>(undefined);
+    const { navigateToCurrentPatientMedications, navigateToCurrentPatientQuestionnaires } = useCurrentPatientBehavior();
+    const { overallPerformanceMessage }= useOverallPerformanceMessage(patientToAnalyze?.overallPerformance);
+    
     useEffect(() => {
         if (currentPatient) {
             const patientHistory = filterCurrentPatient(state.patientHistory, currentPatient);
             setPatientToAnalyze(patientHistory);
         }
     }, [currentPatient, state.patientHistory]);
-
-    if (!currentPatient) {
-        navigateToAnalysisScreen('main_analysis');
-        return null;
-    }
-
-    const overallPerformanceMessage = useOverallPerformanceMessage(patientToAnalyze?.overallPerformance);
-    const { navigateToCurrentPatientMedications, navigateToCurrentPatientQuestionnaires } = useCurrentPatientBehavior();
 
     return (
         <View style={{ flex: 1, height: screenHeight * 0.9, }}>

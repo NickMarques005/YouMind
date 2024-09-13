@@ -3,21 +3,23 @@ import { UseForm } from '@features/app/providers/sub/UserProvider';
 import ErrorApp from '@components/errors/ErrorApp';
 import PatientProvider from '@features/app/providers/PatientProvider';
 import DoctorProvider from '@features/app/providers/DoctorProvider';
-import AppStack from '@navigation/stacks/app/AppStack';
 import { UseLoading } from '@hooks/loading/UseLoading';
 import LoadingScreen from '@components/loading/LoadingScreen';
 import { UseGlobalResponse } from './providers/sub/ResponseProvider';
-import UseUserData from './hooks/UseUserData';
-import { UseSaveNotifications } from './hooks/SaveNotifications';
-import { UsePushNotificationRegistration } from './hooks/UsePushNotificationRegistration';
+import UseUserData from './hooks/user/UseUserData';
+import { UseSaveNotifications } from './hooks/notification/SaveNotifications';
+import { UsePushNotificationRegistration } from './hooks/notification/UsePushNotificationRegistration';
 import ErrorModal from '@components/modals/error/ErrorModal';
 import { UserType } from 'types/user/User_Types';
 import MessageModal from '@components/modals/message/MessageModal';
-import { UseGetNotifications, UseGetTreatments } from './hooks/UseGetInitialData';
+import { UseGetNotifications, UseGetTreatments } from './hooks/fetch/UseGetInitialData';
 import { UseAuth } from '@features/root/providers/AuthenticationProvider';
-import { useNoticeManager } from './hooks/UseNoticeManager';
+import { useNoticeManager } from './hooks/notice/UseNoticeManager';
 import { useNotice } from './providers/sub/NoticeProvider';
 import NoticeModal from '@components/modals/notice/Notice';
+import { MessageIconTypes } from 'types/icon/Icon_Types';
+import BridgeSession from './bridge/BridgeSession';
+import { BridgeProvider } from './providers/bridge/BridgeProvider';
 
 const AppSession = () => {
     console.log("\n(APP SESSION)\n");
@@ -27,7 +29,7 @@ const AppSession = () => {
 
     const { uid } = UseAuth();
     const { userData, UpdateUserData } = UseForm();
-    const { loading, setLoading } = UseLoading();
+    const initialLoading = UseLoading();
     const noticeLoading = UseLoading();
 
     const { HandleConnectionAppError, ClearConnectionAppError,
@@ -35,10 +37,14 @@ const AppSession = () => {
         ClearResponseAppSuccess, connectionAppError, stateAppLoading } = UseGlobalResponse();
     const { selectedNotice, handleClearSelectedNotice } = useNotice();
     const { handleNoticeAccept, handleDontShow } = useNoticeManager({ setNoticeLoading: noticeLoading.setLoading, userData })
-    const { setNotificationListeners, returnNotificationListeners, RegisterPushTokenInFirebase } = UsePushNotificationRegistration({ setLoading, HandleConnectionAppError });
-    const { fetchUserData } = UseUserData({ setLoading, HandleConnectionAppError, UpdateUserData, setReloadData });
-    const { getNotificationsData } = UseGetNotifications({ setLoading, HandleConnectionAppError });
-    const { getTreatmentsData } = UseGetTreatments({ setLoading, HandleConnectionAppError });
+    const { getTreatmentsData } = UseGetTreatments({ setLoading: initialLoading.setLoading, HandleConnectionAppError });
+    const { fetchUserData } = UseUserData({ setLoading: initialLoading.setLoading, HandleConnectionAppError, UpdateUserData, setReloadData });
+    
+    /*
+    ### Notificações
+    */
+    const { getNotificationsData } = UseGetNotifications({ setLoading: initialLoading.setLoading, HandleConnectionAppError });
+    const { setNotificationListeners, returnNotificationListeners, RegisterPushTokenInFirebase } = UsePushNotificationRegistration({ setLoading: initialLoading.setLoading, HandleConnectionAppError });
     UseSaveNotifications();
 
     const initializeAppSession = async () => {
@@ -53,12 +59,11 @@ const AppSession = () => {
                     await getTreatmentsData(userData);
                 }
             }
-
         } catch (error) {
             console.error("Error initializing app session: ", error);
         }
         finally {
-            setLoading(false);
+            initialLoading.setLoading(false);
         }
     };
 
@@ -83,19 +88,22 @@ const AppSession = () => {
         <>
             {
                 !connectionAppError ?
-                    loading || !userData ?
+                    initialLoading.loading || !userData ?
                         <LoadingScreen />
                         :
                         <>
-
                             {
                                 userData.type === 'patient' ?
                                     <PatientProvider>
-                                        <AppStack type={userData.type} />
+                                        <BridgeProvider>
+                                            <BridgeSession />
+                                        </BridgeProvider>
                                     </PatientProvider>
                                     : userData.type === 'doctor' ?
                                         <DoctorProvider>
-                                            <AppStack type={userData.type} />
+                                            <BridgeProvider>
+                                                <BridgeSession />
+                                            </BridgeProvider>
                                         </DoctorProvider>
                                         :
                                         ""
@@ -121,7 +129,7 @@ const AppSession = () => {
                                                 isVisible={!!responseAppSuccess.message && typeof responseAppSuccess.message === 'string'}
                                                 message={responseAppSuccess.message}
                                                 onClose={ClearResponseAppSuccess}
-                                                messageType={responseAppSuccess.messageType}
+                                                messageType={responseAppSuccess.messageType as keyof MessageIconTypes}
                                             />
                                         }
                                         {
@@ -139,7 +147,7 @@ const AppSession = () => {
                             }
                         </>
                     :
-                    <ErrorApp loading={loading} error={connectionAppError} setTryConnection={setTryConnection} resolveError={ClearConnectionAppError} reloadData={resetConnection} />
+                    <ErrorApp loading={initialLoading.loading} error={connectionAppError} setTryConnection={setTryConnection} resolveError={ClearConnectionAppError} reloadData={resetConnection} />
             }
         </>
     )

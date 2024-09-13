@@ -1,7 +1,7 @@
 import { UseRequest } from "./UseRequest";
 import { UserService } from "@api/services/user/UserServices";
 import { SetLoading } from "types/loading/Loading_Types";
-import { Request_FilterUsersArgs, Request_UpdateUserAvatar, Request_UpdateUserDetails } from "types/user/User_Types";
+import { Request_FetchSelectedUserDataArgs, Request_FilterUsersArgs, Request_UpdateUserAvatar, Request_UpdateUserDetails } from "types/user/User_Types";
 
 export const UseUserService = (setLoading: SetLoading) => {
     const { HandleRequest } = UseRequest();
@@ -12,6 +12,14 @@ export const UseUserService = (setLoading: SetLoading) => {
             setLoading,
             params: [],
             stopLoading
+        });
+    };
+
+    const performFetchSelectedUserData = async (args: Request_FetchSelectedUserDataArgs) => {
+        return HandleRequest({
+            serviceFunction: UserService.FetchSelectedUserData,
+            setLoading,
+            params: [args]
         });
     };
 
@@ -41,7 +49,23 @@ export const UseUserService = (setLoading: SetLoading) => {
         });
     }
 
-    return { performFetchUserData, performFilterUsers, performUpdateUserAvatar, performUpdateUserDetails }
+    const performHandleProfileRestriction = async (private_treatment?: boolean) => {
+        return HandleRequest({
+            serviceFunction: UserService.HandleProfileRestriction,
+            setLoading,
+            params: [private_treatment]
+        });
+    };
+
+
+    return {
+        performFetchUserData,
+        performFetchSelectedUserData,
+        performFilterUsers,
+        performUpdateUserAvatar,
+        performUpdateUserDetails,
+        performHandleProfileRestriction
+    }
 }
 
 

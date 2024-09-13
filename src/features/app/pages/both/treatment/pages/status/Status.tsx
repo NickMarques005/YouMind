@@ -1,61 +1,72 @@
 import { UseForm } from '@features/app/providers/sub/UserProvider';
-import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { UseTreatmentNavigation } from '../../hooks/UseTreatmentNavigation';
-import useStatusBehavior from './hooks/useStatusBehavior';
-import StatusHeader from './components/StatusHeader';
-import StatusContent from './components/StatusContent';
 import { UserType } from 'types/user/User_Types';
+import LinearGradient from 'react-native-linear-gradient';
+import DoctorStatus from './components/doctor/DoctorStatus';
+import PatientStatus from './components/patient/PatientStatus';
+import { UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
+import { UseTreatmentEnded } from '@features/app/providers/sub/TreatmentEndedProvider';
+import { TreatmentInfoTemplate } from 'types/treatment/Treatment_Types';
 
 const Status = () => {
     const { userData } = UseForm();
     const { navigateToTreatmentScreen } = UseTreatmentNavigation();
+    const gradient = userData?.type === 'doctor' ? ['#5698b0', '#4b88a6', '#293f54'] : ['#a156b0', `#491e52`];
+    const { treatment_state } = UseTreatment();
+    const { treatmentEndedState } = UseTreatmentEnded();
+
+    const [patientTreatment, setPatientTreatment] = useState<TreatmentInfoTemplate | undefined>(() =>
+        treatment_state.treatments.length !== 0
+            ? treatment_state.treatments[0]
+            : treatmentEndedState.endedTreatments.length !== 0
+                ? treatmentEndedState.endedTreatments[0]
+                : undefined
+    );
+    
+    useEffect(() => {
+        if (userData?.type === 'patient') {
+            if (treatment_state.treatments.length !== 0) {
+                setPatientTreatment(treatment_state.treatments[0]);
+            } else if (treatmentEndedState.endedTreatments.length !== 0) {
+                setPatientTreatment(treatmentEndedState.endedTreatments[0]);
+            } else {
+                setPatientTreatment(undefined);
+            }
+        }
+    }, [treatment_state.treatments, treatmentEndedState.endedTreatments]);
 
     return (
-        <View style={styles.container}>
-            <StatusHeader
-                navigateToTreatmentScreen={navigateToTreatmentScreen}
-            />
+
+        <LinearGradient colors={gradient}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 0, y: 1 }} style={styles.gradientStatus}>
             {
-                userData &&
-                <StatusContent
-                    userType={userData.type as UserType}
-                />
+                userData?.type === 'doctor' ?
+                    <DoctorStatus
+                        userType={userData.type as UserType}
+                        navigateToTreatmentScreen={navigateToTreatmentScreen}
+                        currentTreatments={treatment_state.treatments}
+                        endedTreatments={treatmentEndedState.endedTreatments}
+                    />
+                    :
+                    <PatientStatus
+                        userType={userData?.type as UserType}
+                        navigateToTreatmentScreen={navigateToTreatmentScreen}
+                        patientTreatment={patientTreatment}
+                    />
             }
-        </View>
+        </LinearGradient>
+
+
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 20,
+    gradientStatus: {
+        flex: 1,
     },
-    header: {
-
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    info: {
-        marginTop: 10,
-        fontSize: 16,
-    },
-    dataContainer: {
-        marginTop: 20,
-    },
-    dataTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    sessionTitle: {
-        marginTop: 20,
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    patientContentContainer: {
-
-    }
 });
 
 export default Status;

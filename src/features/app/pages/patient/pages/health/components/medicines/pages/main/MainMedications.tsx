@@ -1,11 +1,11 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import NoMedications from './components/NoMedications';
 import { screenHeight, screenWidth } from '@utils/layout/Screen_Size';
 import { UseMedications } from '@features/app/providers/patient/MedicationProvider';
 import { UseMedicationNavigation } from '../../hooks/UseMedicationNavigation';
-import { FormatDateToSpeakDate, formatDateToInitialDate, formatDateToJustADay, formatDateToString, getDayweekInitial } from '@utils/date/DateFormatting';
+import { FormatDateToSpeakDate, formatDateToString } from '@utils/date/DateFormatting';
 import MedicationListToConsume from './components/MedicationListToConsume';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { UseLoading } from '@hooks/loading/UseLoading';
@@ -13,15 +13,19 @@ import useHandlingMedicationsToConsume from './hooks/useHandlingMedicationToCons
 import DefaultLoading from '@components/loading/DefaultLoading';
 import DateSelector from '@components/date/DateSelector';
 import useDateSelectionBehavior from './hooks/useDateSelectionBehavior';
+import { UseForm } from '@features/app/providers/sub/UserProvider';
+import { UserPatient } from 'types/user/User_Types';
 
 const MainMedications = () => {
+    const { userData } = UseForm();
     const { medications } = UseMedications();
     const { loading, setLoading } = UseLoading();
     const { navigateToMedicationScreen } = UseMedicationNavigation();
 
     const { selectedDate, handleSelectDate } = useDateSelectionBehavior();
-    const { medicationsToConsume } = useHandlingMedicationsToConsume({ medications, selectedDate, setLoading });
+    const { medicationsToConsume, areMedicationsScheduled } = useHandlingMedicationsToConsume({ medications, selectedDate, setLoading });
 
+    const userPatient = userData as UserPatient;
     const loadingIconSize = Math.min(screenHeight, screenWidth) * 0.1;
 
     return (
@@ -53,24 +57,30 @@ const MainMedications = () => {
                         />
                     </LinearGradient>
                     <View style={styles.currentSchedulesDiv}>
-                        {
-                            loading ?
-                                <DefaultLoading size={loadingIconSize} color={'#8f2e9e'} />
-                                :
-                                medications.length !== 0 ?
-                                    medicationsToConsume !== undefined ?
-                                        <View style={styles.SchedulesContent_View}>
-                                            {
+                        {loading ? (
+                            <DefaultLoading size={loadingIconSize} color={'#8f2e9e'} />
+                        ) : (
+                            medications.length !== 0 ? (
+                                userPatient.is_treatment_running ?
+                                    areMedicationsScheduled ? (
+                                        medicationsToConsume !== undefined ? (
+                                            <View style={styles.SchedulesContent_View}>
                                                 <MedicationListToConsume currentDateMedications={medicationsToConsume} selectedDate={selectedDate} />
-                                            }
-                                        </View>
-                                        :
-                                        <NoMedications.NoMedicationsToday
-                                            selectedDate={selectedDate}
-                                        />
+                                            </View>
+                                        ) : (
+                                            <NoMedications.NoMedicationsToday selectedDate={selectedDate} />
+                                        )
+                                    ) : (
+                                        <NoMedications.NoMedicationsScheduled />
+                                    )
                                     :
-                                    <NoMedications.NoMedicationsRegistered />
-                        }
+                                    (
+                                        <NoMedications.TreatmentIsNotRunningForScheduleMedications />
+                                    )
+                            ) : (
+                                <NoMedications.NoMedicationsRegistered />
+                            )
+                        )}
                     </View>
                 </View>
             </LinearGradient>

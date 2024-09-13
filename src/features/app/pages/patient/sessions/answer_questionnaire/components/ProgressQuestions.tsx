@@ -1,7 +1,5 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
-import images from '@assets/images';
 import { screenHeight } from '@utils/layout/Screen_Size';
 import { FormattedAnswer, Question } from 'types/app/patient/health/Question_Types';
 
@@ -28,34 +26,20 @@ const ProgressQuestions: React.FC<ProgressQuestionsProps> = ({
 }) => {
 
     return (
-        <>
-            <View style={{ height: screenHeight * 0.1, width: '100%', justifyContent: 'space-between', flexDirection: 'row', }}>
-                <TouchableOpacity style={{ width: '10%', height: '50%' }} onPress={handleConfirmBackToAppModal}>
-                    <Image source={backIcon} style={{ height: '100%', width: '100%', resizeMode: 'contain' }} />
-                </TouchableOpacity>
-                <TouchableOpacity style={{ width: '10%', height: '50%', alignItems: 'center', justifyContent: 'center' }} onPress={handleIntroduction}>
-                    <MaterialIcons
-                        name="help-outline"
-                        color="white"
-                        size={35}
-                        style={styles.icon} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.progressView}>
-                {questions.map((_, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={[
-                            styles.progressBar,
-                            currentQuestionIndex === index
-                                ? styles.activeProgressBar :
-                                answers[index].answer || isEverySubQuestionAnswered(index) ? styles.answeredProgressBar : {}
-                        ]}
-                        onPress={() => HandleSpecificQuestion(index)}
-                    />
-                ))}
-            </View>
-        </>
+        <View style={styles.progressView}>
+            {questions.map((_, index) => (
+                <TouchableOpacity
+                    key={index}
+                    style={[
+                        styles.progressBar,
+                        currentQuestionIndex === index
+                            ? styles.activeProgressBar :
+                            answers[index].answer || isEverySubQuestionAnswered(index) ? styles.answeredProgressBar : {}
+                    ]}
+                    onPress={() => HandleSpecificQuestion(index)}
+                />
+            ))}
+        </View>
     );
 }
 
@@ -79,10 +63,5 @@ const styles = StyleSheet.create({
     },
     activeProgressBar: {
         backgroundColor: '#e1a6f7',
-    },
-    icon: {
-        flex: 1,
-        textAlign: 'center',
-        aspectRatio: 1,
     },
 });

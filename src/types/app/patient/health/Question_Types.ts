@@ -49,6 +49,11 @@ export interface QuestionnaireItem {
     template?: QuestionnaireTemplate;
 }
 
+export interface AnswerQuestionnaire {
+    questionnaireId: string;
+    template: QuestionnaireTemplate;
+}
+
 export interface Request_GetQuestionnairesArgs {
     
 }

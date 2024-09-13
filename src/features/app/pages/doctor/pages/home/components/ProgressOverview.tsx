@@ -1,12 +1,14 @@
-import { View, Text, TouchableOpacity, ImageBackground, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import LinearGradient from 'react-native-linear-gradient'
-import { responsiveSize, screenHeight, screenWidth } from '@utils/layout/Screen_Size'
-import { AnimatedCircularProgress } from 'react-native-circular-progress'
-import images from '@assets/images'
-import { DoctorScreenName } from 'types/navigation/Navigation_Types'
-import { usePatientHistory } from '@features/app/providers/doctor/PatientHistoryProvider'
-import { usePatientProgress } from '@features/app/providers/doctor/PatientProgressProvider'
+import { View, Text, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import React, { useEffect } from 'react';
+import LinearGradient from 'react-native-linear-gradient';
+import { responsiveSize, screenHeight, screenWidth } from '@utils/layout/Screen_Size';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import images from '@assets/images';
+import { DoctorScreenName } from 'types/navigation/Navigation_Types';
+import { usePatientHistory } from '@features/app/providers/doctor/PatientHistoryProvider';
+import { usePatientProgress } from '@features/app/providers/doctor/PatientProgressProvider';
+import { UseTreatment } from '@features/app/providers/sub/TreatmentProvider';
+import { calculateAllPerformances, calculateCurrentTreatmentsPerformances } from '@utils/treatment/HandlingPerformance';
 
 interface ProgressOverviewProps {
     patientsProgress: number;
@@ -15,7 +17,7 @@ interface ProgressOverviewProps {
 }
 
 const ProgressOverview = ({ navigateTo, }: ProgressOverviewProps) => {
-
+    const { treatment_state } = UseTreatment();
     const { state } = usePatientHistory();
     const { setPatientsProgress, setMissMedications, missMedications, patientsProgress } = usePatientProgress();
     const homeBg2 = images.app_doctor_images.home.bg_home_content_2;
@@ -30,14 +32,14 @@ const ProgressOverview = ({ navigateTo, }: ProgressOverviewProps) => {
             return;
         }
 
-        const totalPerformance = state.patientHistory.reduce((sum, patient) => sum + patient.overallPerformance, 0);
-        const averagePerformance = totalPerformance / state.patientHistory.length;
+        const averagePerformance = calculateCurrentTreatmentsPerformances(treatment_state.treatments);
+        console.log(averagePerformance);
         setPatientsProgress(averagePerformance);
 
         const totalMissMedications = state.patientHistory.reduce((sum, patient) => sum + patient.lastWeekTaken, 0);
         setMissMedications(totalMissMedications);
         
-    }, [state.patientHistory]);
+    }, [state.patientHistory, treatment_state.treatments]);
 
     return (
         <View style={{ width: '100%', minHeight: screenHeight * 0.5, backgroundColor: '#a9c4cf', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', shadowColor: 'black', shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.2, shadowRadius: 3.84, elevation: 5, overflow: 'hidden' }}>
@@ -67,7 +69,6 @@ const ProgressOverview = ({ navigateTo, }: ProgressOverviewProps) => {
                                         <Text style={{ fontWeight: '900', fontSize: 24, color: '#559ecf' }}>{`${Math.round(fill)}%`}</Text>
                                     )}
                                 </AnimatedCircularProgress>
-
                                 <LinearGradient colors={['#62c5e3', '#135470']} style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 14, width: screenWidth * 0.4, borderRadius: 20, }}>
                                     <TouchableOpacity onPress={() => navigateTo('Análises')} style={{ width: '100%', alignItems: 'center' }}>
                                         <Text style={{ fontSize: 15, color: 'white' }}>Visualizar</Text>
